@@ -5,8 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VindegadeKS_WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Background="Wheat"
+        Title="Lektionsplanen" Height="1000" Width="800">
     <Grid>
+            <StackPanel x:Name="Menu" Orientation="Vertical">
+            <Button x:Name="Menu_Dash_Button" HorizontalAlignment="Left" Margin="10,10,0,0" Content="Dashboard" Height="35" Width="100" FontSize="16" Click="Menu_Dash_Button_Click"/>
+            <Button x:Name="Menu_Class_Button" HorizontalAlignment="Left" Margin="10,0,0,0" Content="Hold" Height="35" Width="100" FontSize="16" Click="Menu_Class_Button_Click"/>
+            <Button x:Name="Menu_Stu_Button" HorizontalAlignment="Left" Margin="10,0,0,0" Content="Elever" Height="35" Width="100" FontSize="16" Click="Menu_Stu_Button_Click"/>
+            <Button x:Name="Menu_Inst_Button" HorizontalAlignment="Left" Margin="10,0,0,0" Content="Underviser" Height="35" Width="100" FontSize="16" Click="Menu_Inst_Button_Click"/>
+            <Button x:Name="Menu_Apmt_Button" HorizontalAlignment="Left" Margin="10,0,0,0" Content="Aftaler" Height="35" Width="100" FontSize="16" Click="Menu_Apmt_Button_Click"/>
+            <Button x:Name="Menu_Les_Button" HorizontalAlignment="Left" Margin="10,0,0,0" Content="Lektioner" Height="35" Width="100" FontSize="16" Click="Menu_Les_Button_Click"/>
 
+        </StackPanel>
+        <Frame x:Name="PageView" Margin="120,0,0,0" NavigationUIVisibility="Hidden"/>
     </Grid>
 </Window>
