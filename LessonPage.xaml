@@ -10,6 +10,22 @@
       Title="LessonPage">
 
     <Grid>
-        
+        <StackPanel Background="AliceBlue" HorizontalAlignment="Left" Height="416" Margin="445,32,0,0" VerticalAlignment="Top" Width="212">
+
+        </StackPanel>
+        <StackPanel Background="AliceBlue" HorizontalAlignment="Left" Height="416" Margin="15,32,0,0" VerticalAlignment="Top" Width="412">
+
+        </StackPanel>
+        <Button Content="Button" HorizontalAlignment="Left" Margin="469,531,0,0" VerticalAlignment="Top" Height="52" Width="157"/>
+        <Button Content="Button" HorizontalAlignment="Left" Margin="472,604,0,0" VerticalAlignment="Top" Height="52" Width="158"/>
+        <Button Content="Button" HorizontalAlignment="Left" Margin="472,681,0,0" VerticalAlignment="Top" Height="52" Width="158"/>
+        <ComboBox HorizontalAlignment="Left" Margin="175,614,0,0" VerticalAlignment="Top" Width="165" Height="46"/>
+        <TextBox HorizontalAlignment="Left" Margin="186,548,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="144"/>
+        <TextBox HorizontalAlignment="Left" Margin="175,715,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="195"/>
+        <Label Content="Label" HorizontalAlignment="Left" Margin="68,548,0,0" VerticalAlignment="Top"/>
+        <Label Content="Label" HorizontalAlignment="Left" Margin="87,630,0,0" VerticalAlignment="Top"/>
+        <Label Content="Label" HorizontalAlignment="Left" Margin="87,707,0,0" VerticalAlignment="Top"/>
+        <Button Content="Button" HorizontalAlignment="Left" Margin="472,768,0,0" VerticalAlignment="Top" Height="52" Width="158"/>
+
     </Grid>
 </Page>
