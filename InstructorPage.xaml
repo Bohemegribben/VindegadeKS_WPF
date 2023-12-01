@@ -10,25 +10,29 @@
       Title="InstructorPage">
 
     <Grid>
-        <StackPanel Height="400" Width="640" HorizontalAlignment="Left" VerticalAlignment="Top" Background="BlanchedAlmond" Margin="20,20,0,0">
+        <StackPanel Height="460" Width="640" HorizontalAlignment="Left" VerticalAlignment="Top" Background="BlanchedAlmond" Margin="20,20,0,0">
+            <!-- Istedet for TextBlocke skal her nok bruges et Datagrid -->
             <TextBlock x:Name="Inst_DisFullInst1_TextBlock" HorizontalAlignment="Left" FontSize="20" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
-            <TextBlock x:Name="Inst_DisFullInst2_TextBlock" HorizontalAlignment="Left" FontSize="20" Margin="10,0,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
-            <TextBlock x:Name="Inst_DisFullInst3_TextBlock" HorizontalAlignment="Left" FontSize="20" Margin="10,0,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
+            <TextBlock x:Name="Inst_DisFullInst2_TextBlock" HorizontalAlignment="Left" FontSize="20" Margin="10,20,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
+            <TextBlock x:Name="Inst_DisFullInst3_TextBlock" HorizontalAlignment="Left" FontSize="20" Margin="10,20,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
         </StackPanel>
 
-        <Label x:Name="Inst_FirstName_Label" Content="Fornavn" HorizontalAlignment="Left" FontSize="20" Margin="50,500,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="Inst_LastName_Label" Content="Efternavn" HorizontalAlignment="Left" FontSize="20" Margin="50,570,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="Inst_Phone_Label" Content="Telefon" HorizontalAlignment="Left" FontSize="20" Margin="50,640,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="Inst_Email_Label" Content="Email" HorizontalAlignment="Left" FontSize="20" Margin="50,710,0,0" VerticalAlignment="Top"/>
+        <!-- Labels er kosmetiske i dette projekt, så navngivningen er ikke nødvendig -->
+        <Label x:Name="Inst_FirstName_Label" Content="Fornavn" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="20,500,0,0"/>
+        <Label x:Name="Inst_LastName_Label" Content="Efternavn" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="20,570,0,0"/>
+        <Label x:Name="Inst_Phone_Label" Content="Telefon" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="20,640,0,0"/>
+        <Label x:Name="Inst_Email_Label" Content="Email" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="20,710,0,0"/>
 
-        <TextBox x:Name="Inst_FirstName_TextBox" HorizontalAlignment="Left" FontSize="20" Margin="200,500,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200"/>
-        <TextBox x:Name="Inst_LastName_TextBox" HorizontalAlignment="Left" FontSize="20" Margin="200,570,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200"/>
-        <TextBox x:Name="Inst_Phone_TextBox" HorizontalAlignment="Left" FontSize="20" Margin="200,640,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200"/>
-        <TextBox x:Name="Inst_Email_TextBox" HorizontalAlignment="Left" FontSize="20" Margin="200,710,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200"/>
-
-        <Button x:Name="Inst_Create_Button" Content="TILFØJ" Width="185" Height="50" FontSize="20" HorizontalAlignment="Left" Margin="450,500,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="Inst_Save_Button" Content="GEM" Width="185" Height="50" FontSize="20" HorizontalAlignment="Left" Margin="450,570,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="Inst_Edit_Button" Content="REDIGER" Width="185" Height="50" FontSize="20" HorizontalAlignment="Left" Margin="450,640,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="Inst_Delete_Button" Content="SLET" Width="185" Height="50" FontSize="20" HorizontalAlignment="Left" Margin="450,710,0,0" VerticalAlignment="Top"/>
+        <!-- Textboxe til indtastning -->
+        <TextBox x:Name="Inst_FirstName_TextBox" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="140,500,0,0" Width="315" Height="50"/>
+        <TextBox x:Name="Inst_LastName_TextBox" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="140,570,0,0" Width="315" Height="50"/>
+        <TextBox x:Name="Inst_Phone_TextBox" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="140,640,0,0" Width="315" Height="50"/>
+        <TextBox x:Name="Inst_Email_TextBox" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="140,710,0,0" Width="315" Height="50"/>
+        
+        <!-- TILFØJ aktiverer tekstfelterne, GEM, REDIGER og SLET kommunikerer med databasen -->
+        <Button x:Name="Inst_Create_Button" Content="TILFØJ" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="20" Margin="0,500,20,0" Width="185" Height="50"/>
+        <Button x:Name="Inst_Save_Button" Content="GEM" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="20" Margin="0,570,20,0" Width="185" Height="50"/>
+        <Button x:Name="Inst_Edit_Button" Content="REDIGER" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="20" Margin="0,640,20,0" Width="185" Height="50"/>
+        <Button x:Name="Inst_Delete_Button" Content="SLET" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="20" Margin="0,710,20,0" Width="185" Height="50"/>
     </Grid>
 </Page>
