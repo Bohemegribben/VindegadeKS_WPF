@@ -11,9 +11,14 @@
 
     <Grid>
         <StackPanel Background="AliceBlue" HorizontalAlignment="Left" Height="416" Margin="445,32,0,0" VerticalAlignment="Top" Width="212">
+            <TextBlock TextWrapping="Wrap" Text="TextBlock"/>
+            <TextBlock TextWrapping="Wrap" Text="TextBlock"/>
 
         </StackPanel>
         <StackPanel Background="AliceBlue" HorizontalAlignment="Left" Height="416" Margin="15,32,0,0" VerticalAlignment="Top" Width="412">
+            <TextBlock x:Name="Les_DisName_TextBlock" TextWrapping="Wrap" Text="TextBlock"/>
+            <TextBlock x:Name="Les_DisType_TextBlock" TextWrapping="Wrap" Text="TextBlock"/>
+            <TextBlock x:Name="Les_DisDescription_TextBlock" TextWrapping="Wrap" Text="TextBlock"/>
 
         </StackPanel>
         <Button Content="Button" HorizontalAlignment="Left" Margin="469,531,0,0" VerticalAlignment="Top" Height="52" Width="157"/>
