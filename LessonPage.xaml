@@ -19,25 +19,29 @@
             <TextBlock TextWrapping="Wrap" Text="TextBlock"/>
             <Button Content="Button"/>
             <Button Content="Button"/>
-
         </StackPanel>
+        
+        <!-- Display with name, type + des from pre-existing lesson -->
         <StackPanel Background="AliceBlue" HorizontalAlignment="Left" Height="425" Margin="20,20,0,0" VerticalAlignment="Top" Width="435">
             <TextBlock x:Name="Les_DisName_TextBlock" TextWrapping="Wrap" Text="TextBlock"/>
             <TextBlock x:Name="Les_DisType_TextBlock" TextWrapping="Wrap" Text="TextBlock"/>
             <TextBlock x:Name="Les_DisDescription_TextBlock" TextWrapping="Wrap" Text="TextBlock"/>
-
         </StackPanel>
-        <Button Content="Button" HorizontalAlignment="Right" Margin="0,480,20,0" VerticalAlignment="Top" Height="50" Width="185"/>
-        <Button Content="Button" HorizontalAlignment="Right" Margin="0,550,20,0" VerticalAlignment="Top" Height="50" Width="185"/>
-        <Button Content="Button" HorizontalAlignment="Right" Margin="0,620,20,0" VerticalAlignment="Top" Height="50" Width="185"/>
-        <Button Content="Button" HorizontalAlignment="Right" Margin="0,690,20,0" VerticalAlignment="Top" Height="50" Width="185"/>
+        
+        <!-- Control buttons -->
+        <Button Content="Button" HorizontalAlignment="Right" Margin="0,465,20,0" VerticalAlignment="Top" Height="50" Width="185"/>
+        <Button Content="Button" HorizontalAlignment="Right" Margin="0,535,20,0" VerticalAlignment="Top" Height="50" Width="185"/>
+        <Button Content="Button" HorizontalAlignment="Right" Margin="0,605,20,0" VerticalAlignment="Top" Height="50" Width="185"/>
+        <Button Content="Button" HorizontalAlignment="Right" Margin="0,675,20,0" VerticalAlignment="Top" Height="50" Width="185"/>
 
-        <TextBox  HorizontalAlignment="Left" Margin="140,480,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="315" Height="50"/>
-        <ComboBox HorizontalAlignment="Left" Margin="140,550,0,0" VerticalAlignment="Top" Width="315" Height="50"/>
-        <TextBox  HorizontalAlignment="Left" Margin="140,620,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="315" Height="360"/>
+        <!-- Input boxes -->
+        <TextBox  HorizontalAlignment="Left" Margin="140,465,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10"/>
+        <ComboBox HorizontalAlignment="Left" Margin="140,535,0,0" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10"/>
+        <TextBox  HorizontalAlignment="Left" Margin="140,605,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="315" Height="375" FontSize="20" Padding="10"/>
 
-        <Label Content="Navn" HorizontalAlignment="Left" Margin="20,487,0,0" VerticalAlignment="Top" FontSize="20"/>
-        <Label Content="Type" HorizontalAlignment="Left" Margin="20,557,0,0" VerticalAlignment="Top" FontSize="20"/>
-        <Label Content="Beskrivelse" HorizontalAlignment="Left" Margin="20,627,0,0" VerticalAlignment="Top" FontSize="20"/>
+        <!-- Input box labels -->
+        <Label Content="Navn" HorizontalAlignment="Left" Margin="20,465,0,0" VerticalAlignment="Top" FontSize="20" Height="50" VerticalContentAlignment="Center"/>
+        <Label Content="Type" HorizontalAlignment="Left" Margin="20,535,0,0" VerticalAlignment="Top" FontSize="20" Height="50" VerticalContentAlignment="Center"/>
+        <Label Content="Beskrivelse" HorizontalAlignment="Left" Margin="20,605,0,0" VerticalAlignment="Top" FontSize="20" Height="50" VerticalContentAlignment="Center"/>
     </Grid>
 </Page>
