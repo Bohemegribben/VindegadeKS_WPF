@@ -10,27 +10,34 @@
       Title="LessonPage">
 
     <Grid>
-        <StackPanel Background="AliceBlue" HorizontalAlignment="Left" Height="416" Margin="445,32,0,0" VerticalAlignment="Top" Width="212">
+        <!-- Pre-existing lessons -->
+        <StackPanel Background="AliceBlue" HorizontalAlignment="Right" Height="425" Margin="0,20,20,0" VerticalAlignment="Top" Width="185">
+            <!-- When clicking a button, show data responding to lesson -->
+            <!-- Autocreate a new button with correct event -->
+            <!-- Idea: Giv all buttons same event, but send different ids? -->
             <TextBlock TextWrapping="Wrap" Text="TextBlock"/>
             <TextBlock TextWrapping="Wrap" Text="TextBlock"/>
+            <Button Content="Button"/>
+            <Button Content="Button"/>
 
         </StackPanel>
-        <StackPanel Background="AliceBlue" HorizontalAlignment="Left" Height="416" Margin="15,32,0,0" VerticalAlignment="Top" Width="412">
+        <StackPanel Background="AliceBlue" HorizontalAlignment="Left" Height="425" Margin="20,20,0,0" VerticalAlignment="Top" Width="435">
             <TextBlock x:Name="Les_DisName_TextBlock" TextWrapping="Wrap" Text="TextBlock"/>
             <TextBlock x:Name="Les_DisType_TextBlock" TextWrapping="Wrap" Text="TextBlock"/>
             <TextBlock x:Name="Les_DisDescription_TextBlock" TextWrapping="Wrap" Text="TextBlock"/>
 
         </StackPanel>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="469,531,0,0" VerticalAlignment="Top" Height="52" Width="157"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="472,604,0,0" VerticalAlignment="Top" Height="52" Width="158"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="472,681,0,0" VerticalAlignment="Top" Height="52" Width="158"/>
-        <ComboBox HorizontalAlignment="Left" Margin="175,614,0,0" VerticalAlignment="Top" Width="165" Height="46"/>
-        <TextBox HorizontalAlignment="Left" Margin="186,548,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="144"/>
-        <TextBox HorizontalAlignment="Left" Margin="175,715,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="195"/>
-        <Label Content="Label" HorizontalAlignment="Left" Margin="68,548,0,0" VerticalAlignment="Top"/>
-        <Label Content="Label" HorizontalAlignment="Left" Margin="87,630,0,0" VerticalAlignment="Top"/>
-        <Label Content="Label" HorizontalAlignment="Left" Margin="87,707,0,0" VerticalAlignment="Top"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="472,768,0,0" VerticalAlignment="Top" Height="52" Width="158"/>
+        <Button Content="Button" HorizontalAlignment="Right" Margin="0,480,20,0" VerticalAlignment="Top" Height="50" Width="185"/>
+        <Button Content="Button" HorizontalAlignment="Right" Margin="0,550,20,0" VerticalAlignment="Top" Height="50" Width="185"/>
+        <Button Content="Button" HorizontalAlignment="Right" Margin="0,620,20,0" VerticalAlignment="Top" Height="50" Width="185"/>
+        <Button Content="Button" HorizontalAlignment="Right" Margin="0,690,20,0" VerticalAlignment="Top" Height="50" Width="185"/>
 
+        <TextBox  HorizontalAlignment="Left" Margin="140,480,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="315" Height="50"/>
+        <ComboBox HorizontalAlignment="Left" Margin="140,550,0,0" VerticalAlignment="Top" Width="315" Height="50"/>
+        <TextBox  HorizontalAlignment="Left" Margin="140,620,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="315" Height="360"/>
+
+        <Label Content="Navn" HorizontalAlignment="Left" Margin="20,487,0,0" VerticalAlignment="Top" FontSize="20"/>
+        <Label Content="Type" HorizontalAlignment="Left" Margin="20,557,0,0" VerticalAlignment="Top" FontSize="20"/>
+        <Label Content="Beskrivelse" HorizontalAlignment="Left" Margin="20,627,0,0" VerticalAlignment="Top" FontSize="20"/>
     </Grid>
 </Page>
