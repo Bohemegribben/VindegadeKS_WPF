@@ -19,10 +19,22 @@
         </ListBox>
         
         <!-- Knap til sub page for valgte hold-->
-        <Button x:Name="Class_Subpage_button" Content="Fremvis valgt hold" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Margin="20,435,0,0" FontSize="20" Height="50" Width="185"> </Button>  
+        <Button x:Name="Class_Subpage_button" Content="Fremvis valgt hold" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Margin="20,435,0,0" FontSize="20" Height="50" Width="185">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
+        </Button>  
 
         <!-- Knap til oprettelse af nyt hold -->
-        <Button x:Name="Class_Create_button" Content="Opret nyt hold" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Margin="20,875,0,0" FontSize="20" Height="50" Width="185"></Button>
+        <Button x:Name="Class_Create_button" Content="Opret nyt hold" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Margin="20,875,0,0" FontSize="20" Height="50" Width="185">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
+        </Button>
 
         <!-- Labels til ComboBoxe -->
         <Label x:Name="Class_Year_Label" Content="År" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,555,0,0" Height="50"/>

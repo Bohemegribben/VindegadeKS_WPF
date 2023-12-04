@@ -5,10 +5,96 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:VindegadeKS_WPF"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+     Background="PaleTurquoise"
+      d:DesignHeight="1000" d:DesignWidth="680"
       Title="Class_Sub_ShowClass_Page">
 
     <Grid>
+
+        <!-- ListBox items -->
+        <ListBox Width="400" Height="900" Margin="20, 80, 20, 0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="20">
+            <ListBoxItem>ListBox Item #1</ListBoxItem>
+            <ListBoxItem>ListBox Item #2</ListBoxItem>
+            <ListBoxItem>ListBox Item #3</ListBoxItem>
+            <ListBoxItem>ListBox Item #4</ListBoxItem>
+            <ListBoxItem>ListBox Item #5</ListBoxItem>
+            <ListBoxItem>ListBox Item #6</ListBoxItem>
+            <ListBoxItem>ListBox Item #7</ListBoxItem>
+            <ListBoxItem>ListBox Item #8</ListBoxItem>
+            <ListBoxItem>ListBox Item #9</ListBoxItem>
+        </ListBox>
+
+        <!-- Labels -->
+        <Label  Name="Class_ListOfStudents_Label" Content="Liste med elever tilknyttet holdet" HorizontalAlignment="Left" Margin="20,50,0,0" VerticalAlignment="Top" Width="260" Height="30" FontWeight="Bold" FontSize="15"></Label>
+        <Label  Content="År" Margin="0,130,135,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Height="30" FontSize="15" FontWeight="Bold"></Label>
+        <Label  Content="Kvartal" Margin="0,170,135,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Height="30" FontSize="15" FontWeight="Bold"></Label>
+        <Label  Content="Holdnummer" Margin="0,210,135,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Height="30" FontSize="15" FontWeight="Bold"></Label>
+        <Label  Content="Kørekortstype" Margin="0,250,135,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Height="30" FontSize="15" FontWeight="Bold"></Label>
+        <Label  Content="Antal elever" Margin="0,290,135,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Height="30" FontSize="15" FontWeight="Bold"></Label>
         
+
+        <!-- TextBlocks -->
+        <Border BorderBrush="Black" Margin="20,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" BorderThickness="5" Height="40" Width="200">
+            <TextBlock Name="TextBlockClassName" FontWeight="Bold" HorizontalAlignment="Center" Text="Holdnavn" FontSize="20" ></TextBlock>
+            <Border.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Border.Resources>
+        </Border>
+
+        <!-- Buttons -->
+        <Button x:Name="Button_Edit_MasterData_Class" Content="REDIGER STAMDATA" FontWeight="Bold" Margin="20,85,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30" Click="Button_Edit_MasterData_Class_Click" >
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+
+        <Button x:Name="Button_Save_MasterData_Class" Content="GEM ÆNDRINGER" FontWeight="Bold" Margin="20,330,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+
+        <Button x:Name="Button_Add_Student_Class" Content="TILKNYT NY ELEV TIL HOLD" FontWeight="Bold" Margin="20,400,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+
+        <Button x:Name="Button_Remove_Student_Class" Content="FJERN ELEV FRA HOLD" FontWeight="Bold" Margin="20,440,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+
+        <Button x:Name="Button_Delete_Entire_Class" Content="SLET HOLD" Foreground="Red" FontWeight="Bold" Margin="20,930,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+
+
+
+
+        <!-- TextBoxe -->
+        <TextBox x:Name="Class_TextBox_Year" Margin="20,130,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" ></TextBox>
+        <TextBox x:Name="Class_TextBox_Quarter" Margin="20,170,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" ></TextBox>
+        <TextBox x:Name="Class_TextBox_ClassNumber" Margin="20,210,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" ></TextBox>
+        <TextBox x:Name="Class_TextBox_LicenseType" Margin="20,250,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" ></TextBox>
+        <TextBox x:Name="Class_TextBox_NumberOfStudents" Margin="20,290,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" ></TextBox>
+        
+        
+
     </Grid>
 </Page>

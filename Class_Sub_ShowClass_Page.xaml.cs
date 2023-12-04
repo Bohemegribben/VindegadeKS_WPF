@@ -23,6 +23,12 @@ namespace VindegadeKS_WPF
         public Class_Sub_ShowClass_Page()
         {
             InitializeComponent();
+            TextBlockClassName.Text= "Holdnavn";
+        }
+
+        private void Button_Edit_MasterData_Class_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
