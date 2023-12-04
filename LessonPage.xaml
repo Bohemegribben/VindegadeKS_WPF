@@ -10,6 +10,47 @@
       Title="LessonPage">
 
     <Grid>
+        <!-- Pre-existing lessons -->
+        <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Hidden" HorizontalAlignment="Right" VerticalAlignment="Top" Height="425" Margin="0,20,21,0" CanContentScroll="True">
+            <StackPanel Background="AliceBlue" HorizontalAlignment="Right" Height="425"  VerticalAlignment="Top" Width="167">
+                <!-- When clicking a button, show data responding to lesson -->
+                <!-- Autocreate a new button with correct event -->
+                <!-- Idea: Giv all buttons same event, but send different ids? -->
+                <TextBlock TextWrapping="Wrap" Text="TextBlock" FontSize="20" Height="50" Margin="0,10,0,0" Padding="10,0"/>
+                <TextBlock TextWrapping="Wrap" Text="TextBlock" FontSize="20" Height="50" Padding="10,0"/>
+                <Button Content="Button" FontSize="20" Height="50" />
+                <Button Content="Button" FontSize="20" Height="50" />
+                <Button Content="Button" FontSize="20" Height="50" />
+                <Button Content="Button" FontSize="20" Height="50" />
+                <Button Content="Button" FontSize="20" Height="50" />
+                <Button Content="Button" FontSize="20" Height="50" />
+                <Button Content="Button" FontSize="20" Height="50" />
+                <Button Content="Button" FontSize="20" Height="50" />
+                <Button Content="Button" FontSize="20" Height="50" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Display with name, type + des from pre-existing lesson -->
+        <StackPanel Background="AliceBlue" HorizontalAlignment="Left" Height="425" Margin="20,20,0,0" VerticalAlignment="Top" Width="435">
+            <TextBlock x:Name="Les_DisName_TextBlock" TextWrapping="Wrap" Text="Navn: Helle Nielsen" FontSize="20" Height="50" Margin="10, 10, 10, 0" />
+            <TextBlock x:Name="Les_DisType_TextBlock" TextWrapping="Wrap" Text="Type: Kørekort Q" FontSize="20" Height="50" Margin="10, 10, 10, 0"/>
+            <TextBlock x:Name="Les_DisDescription_TextBlock" TextWrapping="Wrap" Text="Beskrivelse: SAMPLE TEXT" FontSize="20" Height="285" Margin="10, 10, 10, 0"/>
+        </StackPanel>
         
+        <!-- Control buttons -->
+        <Button x:Name="Les_Add_Button" Content="TILFØJ" HorizontalAlignment="Right" Margin="0,465,20,0" VerticalAlignment="Top" Height="50" Width="185" FontSize="20" Click="Les_Add_Button_Click"/>
+        <Button x:Name="Les_Save_Button" Content="GEM" HorizontalAlignment="Right" Margin="0,535,20,0" VerticalAlignment="Top" Height="50" Width="185" FontSize="20" Click="Les_Save_Button_Click"/>
+        <Button x:Name="Les_Edit_Button" Content="REDIGER" HorizontalAlignment="Right" Margin="0,605,20,0" VerticalAlignment="Top" Height="50" Width="185" FontSize="20" Click="Les_Edit_Button_Click"/>
+        <Button x:Name="Les_Delete_Button" Content="SLET" HorizontalAlignment="Right" Margin="0,675,20,0" VerticalAlignment="Top" Height="50" Width="185" FontSize="20" Click="Les_Delete_Button_Click"/>
+
+        <!-- Input boxes -->
+        <TextBox  x:Name="Les_Name_TextBox" HorizontalAlignment="Left" Margin="140,465,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10" TextChanged="Les_Name_TextBox_TextChanged"/>
+        <ComboBox x:Name="Les_Type_ComboBox" HorizontalAlignment="Left" Margin="140,535,0,0" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10" SelectionChanged="Les_Type_ComboBox_SelectionChanged"/>
+        <TextBox  x:Name="Les_Description_TextBox"  HorizontalAlignment="Left" Margin="140,605,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="315" Height="375" FontSize="20" Padding="10" TextChanged="Les_Description_TextBox_TextChanged"/>
+
+        <!-- Input box labels -->
+        <Label Content="Navn" HorizontalAlignment="Left" Margin="20,465,0,0" VerticalAlignment="Top" FontSize="20" Height="50" VerticalContentAlignment="Center"/>
+        <Label Content="Type" HorizontalAlignment="Left" Margin="20,535,0,0" VerticalAlignment="Top" FontSize="20" Height="50" VerticalContentAlignment="Center"/>
+        <Label Content="Beskrivelse" HorizontalAlignment="Left" Margin="20,605,0,0" VerticalAlignment="Top" FontSize="20" Height="50" VerticalContentAlignment="Center"/>
     </Grid>
 </Page>
