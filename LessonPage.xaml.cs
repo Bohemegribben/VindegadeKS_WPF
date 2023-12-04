@@ -26,10 +26,14 @@ namespace VindegadeKS_WPF
 
             //Call the addItems method which create the ListBoxItems for your ListBox
             addItems();
+
+            ComboBoxFunction();
         }
 
 
         //Input
+        //Idea: Instead of when changed, in the save button get the values from the boxes
+        //      Making these method unnecessary
         private void Les_Name_TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
 
@@ -49,17 +53,17 @@ namespace VindegadeKS_WPF
         //Buttons
         private void Les_Add_Button_Click(object sender, RoutedEventArgs e)
         {
-
+            ClearInputFields();
         }
 
         private void Les_Save_Button_Click(object sender, RoutedEventArgs e)
         {
-
+            LockInputFields();
         }
 
         private void Les_Edit_Button_Click(object sender, RoutedEventArgs e)
         {
-
+            UnlockInputFields();
         }
 
         private void Les_Delete_Button_Click(object sender, RoutedEventArgs e)
@@ -79,9 +83,9 @@ namespace VindegadeKS_WPF
                 //Changes the text from the display window 
                 //After the equal sign; (#ListBoxName.SelectedItem as #itemClass).#attribute;
                 //The parts after a #, are the parts that needs to change based on your page
-                Les_DisName_TextBlock.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Name;
-                Les_DisType_TextBlock.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Type;
-                Les_DisDescription_TextBlock.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Description;
+                Les_DisName_TextBlock.Text = "Modul Navn: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Name;
+                Les_DisType_TextBlock.Text = "Kørekorts Type: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Type;
+                Les_DisDescription_TextBlock.Text = "Beskrivelse: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Description;
 
             }
         }
@@ -110,6 +114,48 @@ namespace VindegadeKS_WPF
             public string Name { get; set; }
             public string Description { get; set; }
             public string Type { get; set; }
+        }
+        #endregion
+
+        #region ComboBox
+        private void ComboBoxFunction()
+        {
+            List<LesComboBoxType> types = new List<LesComboBoxType>();
+            types.Add(new LesComboBoxType { Id = 1, DisplayValue = "One" });
+            types.Add(new LesComboBoxType { Id = 2, DisplayValue = "Two" });
+            types.Add(new LesComboBoxType { Id = 3, DisplayValue = "Three" });
+
+            Les_Type_ComboBox.ItemsSource = types;
+            Les_Type_ComboBox.DisplayMemberPath = "DisplayValue";
+        }
+
+        public class LesComboBoxType
+        {
+            public int Id { get; set; }
+            public string DisplayValue { get; set; }
+        }
+        #endregion
+
+        #region Quality of Life Methods
+        private void LockInputFields()
+        {
+            Les_Name_TextBox.IsEnabled = false;
+            Les_Type_ComboBox.IsEnabled = false;
+            Les_Description_TextBox.IsEnabled = false;
+        }
+
+        private void UnlockInputFields()
+        {
+            Les_Name_TextBox.IsEnabled = true;
+            Les_Type_ComboBox.IsEnabled = true;
+            Les_Description_TextBox.IsEnabled = true;
+        }
+
+        private void ClearInputFields()
+        {
+            Les_Name_TextBox.Clear();
+            Les_Type_ComboBox.SelectedItem= null;
+            Les_Description_TextBox.Clear();
         }
         #endregion
     }
