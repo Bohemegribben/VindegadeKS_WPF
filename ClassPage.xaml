@@ -5,11 +5,34 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:VindegadeKS_WPF"
       mc:Ignorable="d"
-      Background="Bisque"
+      Background="PaleTurquoise"
       d:DesignHeight="1000" d:DesignWidth="680"
       Title="ClassPage">
 
     <Grid>
         
+        <!-- ListBox -->
+        <ListBox Width="640" Height="350" Margin="0, 20, 20, 0" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="20">
+            <ListBoxItem>ListBox Item #1</ListBoxItem>
+            <ListBoxItem>ListBox Item #2</ListBoxItem>
+            <ListBoxItem>ListBox Item #3</ListBoxItem>
+        </ListBox>
+
+        <!-- Labels til ComboBoxe -->
+        <Label x:Name="Class_Year_Label" Content="År" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="60,465,0,0" Height="50"/>
+        <Label x:Name="Class_Quarter_Label" Content="Kvartal" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="60,535,0,0" Height="50"/>
+        <Label x:Name="Class_ClassNumber_Label" Content="Holdnummer" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="60,605,0,0" Height="50"/>
+        <Label x:Name="Class_LicenseType_Label" Content="Kørekortstype" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="60,675,0,0" Height="50"/>
+
+        <!-- comboboxe til valg af variable -->
+        <ComboBox x:Name="Class_Year_ComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="200,465,0,0" Width="315" Height="50"/>
+        <ComboBox x:Name="Class_Quarter_ComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="200,535,0,0" Width="315" Height="50"/>
+        <ComboBox x:Name="Class_ClassNumber_ComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="200,605,0,0" Width="315" Height="50"/>
+        <ComboBox x:Name="Class_LicenseType_ComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="200,675,0,0" Width="315" Height="50"/>
+        
+        
+
+
+
     </Grid>
 </Page>
