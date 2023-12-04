@@ -17,18 +17,24 @@
             <ListBoxItem>ListBox Item #2</ListBoxItem>
             <ListBoxItem>ListBox Item #3</ListBoxItem>
         </ListBox>
+        
+        <!-- Knap til sub page for valgte hold-->
+        <Button x:Name="Class_Subpage_button" Content="Fremvis valgt hold" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Margin="20,435,0,0" FontSize="20" Height="50" Width="185"> </Button>  
+
+        <!-- Knap til oprettelse af nyt hold -->
+        <Button x:Name="Class_Create_button" Content="Opret nyt hold" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Margin="20,875,0,0" FontSize="20" Height="50" Width="185"></Button>
 
         <!-- Labels til ComboBoxe -->
-        <Label x:Name="Class_Year_Label" Content="År" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="60,465,0,0" Height="50"/>
-        <Label x:Name="Class_Quarter_Label" Content="Kvartal" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="60,535,0,0" Height="50"/>
-        <Label x:Name="Class_ClassNumber_Label" Content="Holdnummer" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="60,605,0,0" Height="50"/>
-        <Label x:Name="Class_LicenseType_Label" Content="Kørekortstype" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="60,675,0,0" Height="50"/>
+        <Label x:Name="Class_Year_Label" Content="År" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,555,0,0" Height="50"/>
+        <Label x:Name="Class_Quarter_Label" Content="Kvartal" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,625,0,0" Height="50"/>
+        <Label x:Name="Class_ClassNumber_Label" Content="Holdnummer" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,695,0,0" Height="50"/>
+        <Label x:Name="Class_LicenseType_Label" Content="Kørekortstype" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,765,0,0" Height="50"/>
 
         <!-- comboboxe til valg af variable -->
-        <ComboBox x:Name="Class_Year_ComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="200,465,0,0" Width="315" Height="50"/>
-        <ComboBox x:Name="Class_Quarter_ComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="200,535,0,0" Width="315" Height="50"/>
-        <ComboBox x:Name="Class_ClassNumber_ComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="200,605,0,0" Width="315" Height="50"/>
-        <ComboBox x:Name="Class_LicenseType_ComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="200,675,0,0" Width="315" Height="50"/>
+        <ComboBox x:Name="Class_Year_ComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="200,555,0,0" Width="315" Height="50"/>
+        <ComboBox x:Name="Class_Quarter_ComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="200,625,0,0" Width="315" Height="50"/>
+        <ComboBox x:Name="Class_ClassNumber_ComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="200,695,0,0" Width="315" Height="50"/>
+        <ComboBox x:Name="Class_LicenseType_ComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="200,765,0,0" Width="315" Height="50"/>
         
         
 
