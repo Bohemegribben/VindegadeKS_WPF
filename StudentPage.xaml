@@ -32,10 +32,10 @@
         <TextBox x:Name="telefonTxtBox" HorizontalAlignment="Left" Height="35" Width="300" Margin="350,255,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="emailTxtBox" HorizontalAlignment="Left" Height="35" Width="300" Margin="350,314,0,0" VerticalAlignment="Top"/>
 
-        <Button x:Name="Stu_Add_Button" HorizontalAlignment="Left" Margin="268,576,0,388" Content="TILFØJ" Height="35" Width="100" FontSize="16" Click="Stu_Add_Button_Click"/>
-        <Button x:Name="Stu_Save_Button" HorizontalAlignment="Left" Margin="384,576,0,389" Content="GEM" Height="35" Width="100" FontSize="16" Click="Stu_Save_Button_Click"/>
-        <Button x:Name="Stu_Edit_Button" HorizontalAlignment="Left" Margin="495,576,0,388" Content="REDIGER" Height="35" Width="100" FontSize="16" Click="Stu_Edit_Button_Click"/>
-        <Button x:Name="Stu_Delete_Button" HorizontalAlignment="Left" Margin="603,576,0,388" Content="SLET" Height="35" Width="60" FontSize="16" Click="Stu_Delete_Button_Click">
+        <Button x:Name="Stu_Add_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="268,576,0,0" Content="TILFØJ" Height="35" Width="100" FontSize="16" Click="Stu_Add_Button_Click"/>
+        <Button x:Name="Stu_Save_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="384,576,0,0" Content="GEM" Height="35" Width="100" FontSize="16" Click="Stu_Save_Button_Click"/>
+        <Button x:Name="Stu_Edit_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="495,576,0,0" Content="REDIGER" Height="35" Width="100" FontSize="16" Click="Stu_Edit_Button_Click"/>
+        <Button x:Name="Stu_Delete_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="603,576,0,0" Content="SLET" Height="35" Width="60" FontSize="16" Click="Stu_Delete_Button_Click">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="Black"/>
@@ -44,11 +44,11 @@
             </Button.Background>
         </Button>
 
-        <Label x:Name="cprLabel" Content="CPR NR." Height="30" Width="105" Margin="305,42,270,928" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold" d:LayoutOverrides="HorizontalAlignment"/>
-        <Label x:Name="fornavnLabel" Content="Fornavn" Height="30" Width="105" Margin="305,102,270,868" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
-        <Label x:Name="efternavnLabel" Content="Efternavn" Height="30" Width="105" Margin="305,169,270,801" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
-        <Label x:Name="telefonLabel" Content="Telefon" Height="30" Width="105" Margin="305,226,270,744" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
-        <Label x:Name="emailLabel" Content="Email" Height="30" Width="105" Margin="305,286,270,684" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
+        <Label x:Name="cprLabel" HorizontalAlignment="Left" VerticalAlignment="Top" Content="CPR NR." Height="30" Width="105" Margin="305,42,0,0" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
+        <Label x:Name="fornavnLabel" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Fornavn" Height="30" Width="105" Margin="305,102,0,0" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
+        <Label x:Name="efternavnLabel" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Efternavn" Height="30" Width="105" Margin="305,169,0,0" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
+        <Label x:Name="telefonLabel" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Telefon" Height="30" Width="105" Margin="305,226,0,0" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
+        <Label x:Name="emailLabel" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Email" Height="30" Width="105" Margin="305,286,0,0" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
     </Grid>
 
 
