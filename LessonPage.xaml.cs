@@ -120,15 +120,19 @@ namespace VindegadeKS_WPF
         #region ComboBox
         private void ComboBoxFunction()
         {
+            //New list and datapoints for Combobox
             List<LesComboBoxType> types = new List<LesComboBoxType>();
             types.Add(new LesComboBoxType { Id = 1, DisplayValue = "One" });
             types.Add(new LesComboBoxType { Id = 2, DisplayValue = "Two" });
             types.Add(new LesComboBoxType { Id = 3, DisplayValue = "Three" });
 
+            //Set the ItemsSource
             Les_Type_ComboBox.ItemsSource = types;
+            //Sets which attribute is displayed
             Les_Type_ComboBox.DisplayMemberPath = "DisplayValue";
         }
 
+        //Class which defines the ComboBox Data
         public class LesComboBoxType
         {
             public int Id { get; set; }
@@ -137,6 +141,7 @@ namespace VindegadeKS_WPF
         #endregion
 
         #region Quality of Life Methods
+        //Locks all inputfields, so that they can't be edited
         private void LockInputFields()
         {
             Les_Name_TextBox.IsEnabled = false;
@@ -144,6 +149,7 @@ namespace VindegadeKS_WPF
             Les_Description_TextBox.IsEnabled = false;
         }
 
+        //Unlocks all inputfields, so that they can be edited
         private void UnlockInputFields()
         {
             Les_Name_TextBox.IsEnabled = true;
@@ -151,6 +157,7 @@ namespace VindegadeKS_WPF
             Les_Description_TextBox.IsEnabled = true;
         }
 
+        //Clears all inputfields
         private void ClearInputFields()
         {
             Les_Name_TextBox.Clear();
