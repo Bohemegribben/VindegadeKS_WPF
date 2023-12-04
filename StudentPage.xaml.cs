@@ -23,6 +23,74 @@ namespace VindegadeKS_WPF
         public StudentPage()
         {
             InitializeComponent();
+            this.DataContext = this; // Binder denne klasse til dens XAML view
+            LoadStudentsList(); // Indlæser listen af studerende ved opstart
+        }
+
+        private void LoadStudentsList() 
+        {
+            studentsListBox.Items.Clear(); // Fjerner eksiterende elementer
+
+
+        }
+
+        #region Search_Bar
+        private void watermarkTxtBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            //hvis man er trykket ind på "search bar textbox" skal "watermark textbox" ikke være synlig længere
+            watermarkTxtBox.Visibility = Visibility.Collapsed;
+
+            // og vores "search textbox skal være synlig
+            searchTxtBox.Visibility = Visibility.Visible;
+            searchTxtBox.Focus();
+        
+        }
+
+     
+
+        private void searchTxtBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            // Hvis search bar er tom
+            if (string.IsNullOrEmpty(searchTxtBox.Text)) 
+            {
+                // så skal search textbox ikke være synlig
+                searchTxtBox.Visibility = Visibility.Collapsed;
+
+                // watermark textbox skal være synlig
+                watermarkTxtBox.Visibility = Visibility.Visible;
+
+            }
+        }
+
+        #endregion
+
+        #region Buttons
+        private void Stu_Add_Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Stu_Save_Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Stu_Edit_Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Stu_Delete_Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        #endregion
+
+       
+
+        private void studentsListBox_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

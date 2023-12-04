@@ -10,6 +10,65 @@
       Title="StudentPage">
 
     <Grid>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="Black" Offset="1"/>
+                <GradientStop Color="#FF8DC4FC" Offset="0"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
+
+        <!--Search bar-->
+        <TextBox x:Name="searchTxtBox" LostFocus="searchTxtBox_LostFocus" HorizontalAlignment="Left" Height="30" Margin="53,36,0,0" VerticalAlignment="Top" Width="150"/>
+        <TextBox x:Name="watermarkTxtBox" GotFocus="watermarkTxtBox_GotFocus" HorizontalAlignment="Left" Height="30" Margin="53,36,0,0" Text="Search" VerticalAlignment="Top" Width="150" FontSize="16"/>
+        
+        <!--Scrolling box-->
+        <ListBox x:Name="studentsListBox" Width="185" Height="425" Margin="22,88, 0, 0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="20" SelectionChanged="studentsListBox_SelectionChanged_1">
+            
+            
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBox Text="{Binding Name}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        
+        
+        
+
+        <!--Labels-->
+        <Label x:Name="cprLabel" HorizontalAlignment="Left" VerticalAlignment="Top" Content="CPR NR." Height="30" Width="105" Margin="305,42,0,0" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
+        <Label x:Name="fornavnLabel" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Fornavn" Height="30" Width="105" Margin="305,102,0,0" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
+        <Label x:Name="efternavnLabel" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Efternavn" Height="30" Width="105" Margin="305,169,0,0" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
+        <Label x:Name="telefonLabel" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Telefon" Height="30" Width="105" Margin="305,226,0,0" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
+        <Label x:Name="emailLabel" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Email" Height="30" Width="105" Margin="305,286,0,0" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
+        
+        
+
+        <!-- Textboxes -->
+        <TextBox x:Name="cprTxtBox" HorizontalAlignment="Left" Height="35" Width="300" Margin="350,66,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="fornavnTxtBox" HorizontalAlignment="Left" Height="35" Width="300" Margin="350,128,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="efternavnTxtBox" HorizontalAlignment="Left" Height="35" Width="300" Margin="350,195,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="telefonTxtBox" HorizontalAlignment="Left" Height="35" Width="300" Margin="350,255,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="emailTxtBox" HorizontalAlignment="Left" Height="35" Width="300" Margin="350,314,0,0" VerticalAlignment="Top"/>
+
+        <!--Buttons--> 
+        <Button x:Name="Stu_Add_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="268,576,0,0" Content="TILFØJ" Height="35" Width="100" FontSize="16" Click="Stu_Add_Button_Click"/>
+        <Button x:Name="Stu_Save_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="384,576,0,0" Content="GEM" Height="35" Width="100" FontSize="16" Click="Stu_Save_Button_Click"/>
+        <Button x:Name="Stu_Edit_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="495,576,0,0" Content="REDIGER" Height="35" Width="100" FontSize="16" Click="Stu_Edit_Button_Click"/>
+        <Button x:Name="Stu_Delete_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="603,576,0,0" Content="SLET" Height="35" Width="60" FontSize="16" Click="Stu_Delete_Button_Click">
+            <Button.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="Black"/>
+                    <GradientStop Color="White" Offset="1"/>
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
+        
         
     </Grid>
+
+
+
+
 </Page>
