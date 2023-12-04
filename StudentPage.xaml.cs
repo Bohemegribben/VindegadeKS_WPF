@@ -34,6 +34,7 @@ namespace VindegadeKS_WPF
 
         }
 
+        #region Search_Bar
         private void watermarkTxtBox_GotFocus(object sender, RoutedEventArgs e)
         {
             //hvis man er trykket ind på "search bar textbox" skal "watermark textbox" ikke være synlig længere
@@ -61,6 +62,9 @@ namespace VindegadeKS_WPF
             }
         }
 
+        #endregion
+
+        #region Buttons
         private void Stu_Add_Button_Click(object sender, RoutedEventArgs e)
         {
 
@@ -80,8 +84,11 @@ namespace VindegadeKS_WPF
         {
 
         }
+        #endregion
 
-        private void studentsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+       
+
+        private void studentsListBox_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
         {
 
         }
