@@ -10,6 +10,31 @@
       Title="DashboardPage">
 
     <Grid>
-        
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FF8FCCCC" Offset="1"/>
+                <GradientStop Color="#FF8BF3F3" Offset="0"/>
+                <GradientStop Color="#FFBAC9C9" Offset="0.448"/>
+                <GradientStop Color="#FF60CACA" Offset="0.171"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <!-- Labels -->
+        <Label x:Name="dash_label_aftalerIdag" Content="Aftaler I dag" HorizontalAlignment="Left" VerticalAlignment="Top" Height="35" Margin="32,13,0,0" FontSize="18" FontWeight="Bold"/>
+        <Label x:Name="dash_label_hold" Content="Hold" HorizontalAlignment="Left" VerticalAlignment="Top" Height="35" Margin="508,13,0,0" FontSize="18" FontWeight="Bold"/>
+        <Label x:Name="dash_label_mangerXfraElever" Content="Mangler Fra Elever" HorizontalAlignment="Left" VerticalAlignment="Top" Height="35" Margin="32,295,0,0" FontSize="18" FontWeight="Bold"/>
+        <Label x:Name="dash_label_noter" Content="Noter" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="32,565,0,0" FontSize="18" FontWeight="Bold"/>
+        <Label x:Name="dash_label_sygemeldinger" Content="Sygemeldinger" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="506,565,0,0" FontSize="18" FontWeight="Bold"/>
+
+        <!-- Textboxes-->
+        <TextBlock x:Name="dash_txtBlock_aftalerIdag" Height="200" Width="450" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="25,47,0,0" Text="Lorem ipsum dolor sit amet, consectetur adipisicing elit."  Background="#FFEFC5F4"/>
+        <TextBlock x:Name="dash_txtBlock_manglerXfraElever" Height="200" Width="630" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="25,331,0,0" Text="Lorem ipsum dolor sit amet, consectetur adipisicing elit."  Background="#FFF7E89A"/>
+        <TextBlock x:Name="dash_txtBlock_noter" Height="200" Width="450" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="25,605,0,0" Text="Lorem ipsum dolor sit amet, consectetur adipisicing elit."  Background="#FFF4B7F7" />
+        <TextBlock x:Name="dash_txtBlock_sygemeldinger" Height="200" Width= "150" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="505,605,0,0" Text="Lorem ipsum dolor sit amet."  Background="#FFB1FC9B" />
+
+
+        <!--Listbox -->
+        <ListBox  Height="200" Width="150" HorizontalAlignment="Left" VerticalAlignment="Top"  Margin="505,47,0,0" d:ItemsSource="{d:SampleData ItemCount=5}" />
+
     </Grid>
 </Page>
