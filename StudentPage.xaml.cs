@@ -29,7 +29,7 @@ namespace VindegadeKS_WPF
 
         private void LoadStudentsList() 
         {
-            studentsListBox.Items.Clear(); // Fjerner eksiterende elementer
+            stu_listBoxt_students.Items.Clear(); // Fjerner eksiterende elementer
 
 
         }
@@ -38,11 +38,11 @@ namespace VindegadeKS_WPF
         private void watermarkTxtBox_GotFocus(object sender, RoutedEventArgs e)
         {
             //hvis man er trykket ind på "search bar textbox" skal "watermark textbox" ikke være synlig længere
-            watermarkTxtBox.Visibility = Visibility.Collapsed;
+            stu_txtBox_watermark.Visibility = Visibility.Collapsed;
 
             // og vores "search textbox skal være synlig
-            searchTxtBox.Visibility = Visibility.Visible;
-            searchTxtBox.Focus();
+            stu_txtBox_search.Visibility = Visibility.Visible;
+            stu_txtBox_search.Focus();
         
         }
 
@@ -51,13 +51,13 @@ namespace VindegadeKS_WPF
         private void searchTxtBox_LostFocus(object sender, RoutedEventArgs e)
         {
             // Hvis search bar er tom
-            if (string.IsNullOrEmpty(searchTxtBox.Text)) 
+            if (string.IsNullOrEmpty(stu_txtBox_search.Text)) 
             {
                 // så skal search textbox ikke være synlig
-                searchTxtBox.Visibility = Visibility.Collapsed;
+                stu_txtBox_search.Visibility = Visibility.Collapsed;
 
                 // watermark textbox skal være synlig
-                watermarkTxtBox.Visibility = Visibility.Visible;
+                stu_txtBox_search.Visibility = Visibility.Visible;
 
             }
         }
