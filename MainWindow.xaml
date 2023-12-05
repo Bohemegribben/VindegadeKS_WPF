@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Background="Wheat"
         ResizeMode="CanMinimize"
-        Title="Lektionsplanen" Height="889" Width="815">
+        Title="Lektionsplanen" Height="1039" Width="815">
         <!-- Due to height/width weirdness, it needs to be 39 taller -->
         <!-- and 15 wider than the frame -->
         <!-- No know cause, may be cause the top line is counted in height? -->
