@@ -24,12 +24,16 @@ namespace VindegadeKS_WPF
         {
             InitializeComponent();
 
-            //Call the addItems method which create the ListBoxItems for your ListBox
-            addItems();
+            //Call the ListBoxFunction method which create the ListBoxItems for your ListBox
+            ListBoxFunction();
+
+            ComboBoxFunction();
         }
 
 
         //Input
+        //Idea: Instead of when changed, in the save button get the values from the boxes
+        //      Making these method unnecessary
         private void Les_Name_TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
 
@@ -49,21 +53,24 @@ namespace VindegadeKS_WPF
         //Buttons
         private void Les_Add_Button_Click(object sender, RoutedEventArgs e)
         {
-
+            LockInputFields();
         }
 
         private void Les_Save_Button_Click(object sender, RoutedEventArgs e)
         {
-
+            Les_DisName_TextBlock.Text = "Modul Navn: " + Les_Name_TextBox.Text;
+            Les_DisType_TextBlock.Text = "Kørekorts Type: " + Les_Type_ComboBox.Text;
+            Les_DisDescription_TextBlock.Text = "Beskrivelse: " + Les_Description_TextBox.Text;
         }
 
         private void Les_Edit_Button_Click(object sender, RoutedEventArgs e)
         {
-
+            UnlockInputFields();
         }
 
         private void Les_Delete_Button_Click(object sender, RoutedEventArgs e)
         {
+            ClearInputFields();
 
         }
 
@@ -79,15 +86,15 @@ namespace VindegadeKS_WPF
                 //Changes the text from the display window 
                 //After the equal sign; (#ListBoxName.SelectedItem as #itemClass).#attribute;
                 //The parts after a #, are the parts that needs to change based on your page
-                Les_DisName_TextBlock.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Name;
-                Les_DisType_TextBlock.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Type;
-                Les_DisDescription_TextBlock.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Description;
+                Les_DisName_TextBlock.Text = "Modul Navn: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Name;
+                Les_DisType_TextBlock.Text = "Kørekorts Type: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Type;
+                Les_DisDescription_TextBlock.Text = "Beskrivelse: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Description;
 
             }
         }
 
         //Method to create, control and add items to the ListBox
-        private void addItems()
+        private void ListBoxFunction()
         {
             //Make a list with the Item Class from below called items (Name doesn't matter)
             //LesListBoxItems in my case
@@ -98,7 +105,18 @@ namespace VindegadeKS_WPF
             items.Add(new LesListBoxItems() { Name = "A", Type = "A", Description = "A" });
             items.Add(new LesListBoxItems() { Name = "B", Type = "B", Description = "B" });
             items.Add(new LesListBoxItems() { Name = "C", Type = "C", Description = "C" });
+            items.Add(new LesListBoxItems() { Name = "D", Type = "D", Description = "D" });
+            items.Add(new LesListBoxItems() { Name = "E", Type = "E", Description = "E" });
+            items.Add(new LesListBoxItems() { Name = "F", Type = "F", Description = "F" });
 
+            //Only necessary for multi-attribute ListBoxItem
+            //Set up the attribute 'SetUp' which is used to determine the appearance of the ListBoxItem 
+            //Forloop to go through all items in the items-list, to add and fill the 'SetUp' attribute
+            for (int i = 0;items.Count> i;i++)
+            {
+                items[i].SetUp = $"{items[i].Name}\n{items[i].Type}\n{items[i].Description}";
+            }
+            
             //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
             Les_DisLes_ListBox.ItemsSource = items; 
         }
@@ -108,8 +126,59 @@ namespace VindegadeKS_WPF
         {
             //The attributes of the items for the ListBox
             public string Name { get; set; }
-            public string Description { get; set; }
             public string Type { get; set; }
+            public string Description { get; set; }
+            //Extra attribute, used for visuals (Only needed for multi-attribute views)
+            public string SetUp { get; set; }
+        }
+        #endregion
+
+        #region ComboBox
+        private void ComboBoxFunction()
+        {
+            //New list and datapoints for Combobox
+            List<LesComboBoxType> types = new List<LesComboBoxType>();
+            types.Add(new LesComboBoxType { Id = 1, DisplayValue = "One" });
+            types.Add(new LesComboBoxType { Id = 2, DisplayValue = "Two" });
+            types.Add(new LesComboBoxType { Id = 3, DisplayValue = "Three" });
+
+            //Set the ItemsSource
+            Les_Type_ComboBox.ItemsSource = types;
+            //Sets which attribute is displayed
+            Les_Type_ComboBox.DisplayMemberPath = "DisplayValue";
+        }
+
+        //Class which defines the ComboBox Data
+        public class LesComboBoxType
+        {
+            public int Id { get; set; }
+            public string DisplayValue { get; set; }
+        }
+        #endregion
+
+        #region Quality of Life Methods
+        //Locks all inputfields, so that they can't be edited
+        private void LockInputFields()
+        {
+            Les_Name_TextBox.IsEnabled = false;
+            Les_Type_ComboBox.IsEnabled = false;
+            Les_Description_TextBox.IsEnabled = false;
+        }
+
+        //Unlocks all inputfields, so that they can be edited
+        private void UnlockInputFields()
+        {
+            Les_Name_TextBox.IsEnabled = true;
+            Les_Type_ComboBox.IsEnabled = true;
+            Les_Description_TextBox.IsEnabled = true;
+        }
+
+        //Clears all inputfields
+        private void ClearInputFields()
+        {
+            Les_Name_TextBox.Clear();
+            Les_Type_ComboBox.SelectedItem = null;
+            Les_Description_TextBox.Clear();
         }
         #endregion
     }
