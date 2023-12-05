@@ -10,12 +10,15 @@
       Title="InstructorPage">
 
     <Grid>
-        <StackPanel Height="425" Width="640" HorizontalAlignment="Left" VerticalAlignment="Top" Background="BlanchedAlmond" Margin="20,20,0,0">
-            <!-- Istedet for TextBlocke skal her nok bruges et Datagrid -->
-            <TextBlock x:Name="Inst_DisFullInst1_TextBlock" HorizontalAlignment="Left" FontSize="20" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
-            <TextBlock x:Name="Inst_DisFullInst2_TextBlock" HorizontalAlignment="Left" FontSize="20" Margin="10,20,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
-            <TextBlock x:Name="Inst_DisFullInst3_TextBlock" HorizontalAlignment="Left" FontSize="20" Margin="10,20,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
-        </StackPanel>
+        <!-- ListBox  -->
+        <ListBox x:Name="Inst_DisInst_ListBox" HorizontalAlignment="Left" VerticalAlignment="Top" Background="BlanchedAlmond" FontSize="20" Margin="20,20,0,0" Height="425" Width="640">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <!-- Change what it's binding to based on what you want written in the ListBoxItem -->
+                    <TextBlock Text="{Binding Setup}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
         <!-- Labels er kosmetiske i dette projekt, så navngivningen er ikke nødvendig -->
         <Label x:Name="Inst_FirstName_Label" Content="Fornavn" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,465,0,0" Height="50"/>
