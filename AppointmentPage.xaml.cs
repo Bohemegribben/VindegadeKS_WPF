@@ -23,7 +23,7 @@ namespace VindegadeKS_WPF
         public AppointmentPage()
         {
             InitializeComponent();
-
+            ComboBoxFunction();
             ListBoxFunction();
         }
 
@@ -88,6 +88,62 @@ namespace VindegadeKS_WPF
             public DateTime DateTime { get; set; }
             //Extra attribute, used for visuals (Only needed for multi-attribute views)
             public string SetUp { get; set; }
+        }
+
+        private void ComboBoxFunction()
+        {
+            //New list and datapoints for Combobox
+            List<ApmtComboBoxLesson> lessons = new List<ApmtComboBoxLesson>();
+            lessons.Add(new ApmtComboBoxLesson { Id = 1, DisplayValue = "One" });
+            lessons.Add(new ApmtComboBoxLesson { Id = 2, DisplayValue = "Two" });
+            lessons.Add(new ApmtComboBoxLesson { Id = 3, DisplayValue = "Three" });
+            //Set the ItemsSource
+            Apmt_PickLesson_ComboBox.ItemsSource = lessons;
+            //Sets which attribute is displayed
+            Apmt_PickLesson_ComboBox.DisplayMemberPath = "DisplayValue";
+
+            List<ApmtComboBoxClass> classes = new List<ApmtComboBoxClass>();
+            classes.Add(new ApmtComboBoxClass { Id = 1, DisplayValue = "One" });
+            classes.Add(new ApmtComboBoxClass { Id = 2, DisplayValue = "Two" });
+            classes.Add(new ApmtComboBoxClass { Id = 3, DisplayValue = "Three" });
+            Apmt_PickClass_ComboBox.ItemsSource = classes;
+            Apmt_PickClass_ComboBox.DisplayMemberPath = "DisplayValue";
+
+            List<ApmtComboBoxStudent> students = new List<ApmtComboBoxStudent>();
+            students.Add(new ApmtComboBoxStudent { Id = 1, DisplayValue = "One" });
+            students.Add(new ApmtComboBoxStudent { Id = 2, DisplayValue = "Two" });
+            students.Add(new ApmtComboBoxStudent { Id = 3, DisplayValue = "Three" });
+            Apmt_PickStudent_ComboBox.ItemsSource = students;
+            Apmt_PickStudent_ComboBox.DisplayMemberPath = "DisplayValue";
+
+            List<ApmtComboBoxInstructor> instructors = new List<ApmtComboBoxInstructor>();
+            instructors.Add(new ApmtComboBoxInstructor { Id = 1, DisplayValue = "One" });
+            instructors.Add(new ApmtComboBoxInstructor { Id = 2, DisplayValue = "Two" });
+            instructors.Add(new ApmtComboBoxInstructor { Id = 3, DisplayValue = "Three" });
+            Apmt_PickInstructor_ComboBox.ItemsSource = instructors;
+            Apmt_PickInstructor_ComboBox.DisplayMemberPath = "DisplayValue";
+        }
+
+        //Class which defines the ComboBox Data
+        public class ApmtComboBoxLesson
+        {
+            public int Id { get; set; }
+            public string DisplayValue { get; set; }
+        }
+        public class ApmtComboBoxClass
+        {
+            public int Id { get; set; }
+            public string DisplayValue { get; set; }
+        }
+        public class ApmtComboBoxStudent
+        {
+            public int Id { get; set; }
+            public string DisplayValue { get; set; }
+        }
+        public class ApmtComboBoxInstructor
+        {
+            public int Id { get; set; }
+            public string DisplayValue { get; set; }
         }
 
         private void Apmt_ShowLessonType_TextBox_TextChanged(object sender, TextChangedEventArgs e)
