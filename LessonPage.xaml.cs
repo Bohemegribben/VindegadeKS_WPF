@@ -53,12 +53,14 @@ namespace VindegadeKS_WPF
         //Buttons
         private void Les_Add_Button_Click(object sender, RoutedEventArgs e)
         {
-            ClearInputFields();
+            LockInputFields();
         }
 
         private void Les_Save_Button_Click(object sender, RoutedEventArgs e)
         {
-            LockInputFields();
+            Les_DisName_TextBlock.Text = "Modul Navn: " + Les_Name_TextBox.Text;
+            Les_DisType_TextBlock.Text = "Kørekorts Type: " + Les_Type_ComboBox.Text;
+            Les_DisDescription_TextBlock.Text = "Beskrivelse: " + Les_Description_TextBox.Text;
         }
 
         private void Les_Edit_Button_Click(object sender, RoutedEventArgs e)
@@ -68,6 +70,7 @@ namespace VindegadeKS_WPF
 
         private void Les_Delete_Button_Click(object sender, RoutedEventArgs e)
         {
+            ClearInputFields();
 
         }
 
@@ -174,7 +177,7 @@ namespace VindegadeKS_WPF
         private void ClearInputFields()
         {
             Les_Name_TextBox.Clear();
-            Les_Type_ComboBox.SelectedItem= null;
+            Les_Type_ComboBox.SelectedItem = null;
             Les_Description_TextBox.Clear();
         }
         #endregion
