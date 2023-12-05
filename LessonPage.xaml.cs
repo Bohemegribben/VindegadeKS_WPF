@@ -24,8 +24,8 @@ namespace VindegadeKS_WPF
         {
             InitializeComponent();
 
-            //Call the addItems method which create the ListBoxItems for your ListBox
-            addItems();
+            //Call the ListBoxFunction method which create the ListBoxItems for your ListBox
+            ListBoxFunction();
 
             ComboBoxFunction();
         }
@@ -91,7 +91,7 @@ namespace VindegadeKS_WPF
         }
 
         //Method to create, control and add items to the ListBox
-        private void addItems()
+        private void ListBoxFunction()
         {
             //Make a list with the Item Class from below called items (Name doesn't matter)
             //LesListBoxItems in my case
@@ -102,7 +102,18 @@ namespace VindegadeKS_WPF
             items.Add(new LesListBoxItems() { Name = "A", Type = "A", Description = "A" });
             items.Add(new LesListBoxItems() { Name = "B", Type = "B", Description = "B" });
             items.Add(new LesListBoxItems() { Name = "C", Type = "C", Description = "C" });
+            items.Add(new LesListBoxItems() { Name = "D", Type = "D", Description = "D" });
+            items.Add(new LesListBoxItems() { Name = "E", Type = "E", Description = "E" });
+            items.Add(new LesListBoxItems() { Name = "F", Type = "F", Description = "F" });
 
+            //Only necessary for multi-attribute ListBoxItem
+            //Set up the attribute 'SetUp' which is used to determine the appearance of the ListBoxItem 
+            //Forloop to go through all items in the items-list, to add and fill the 'SetUp' attribute
+            for (int i = 0;items.Count> i;i++)
+            {
+                items[i].SetUp = $"{items[i].Name}\n{items[i].Type}\n{items[i].Description}";
+            }
+            
             //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
             Les_DisLes_ListBox.ItemsSource = items; 
         }
@@ -112,8 +123,10 @@ namespace VindegadeKS_WPF
         {
             //The attributes of the items for the ListBox
             public string Name { get; set; }
-            public string Description { get; set; }
             public string Type { get; set; }
+            public string Description { get; set; }
+            //Extra attribute, used for visuals (Only needed for multi-attribute views)
+            public string SetUp { get; set; }
         }
         #endregion
 
