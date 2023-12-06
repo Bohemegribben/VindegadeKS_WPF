@@ -60,7 +60,6 @@ namespace VindegadeKS_WPF
             if (edit == false) { SaveInstructor(CurrentInstructor); }
             else { EditInstructor(CurrentInstructor); }
 
-            SaveInstructor(CurrentInstructor);
             ClearInputFields();
             LockInputFields();
             ListBoxFunction();
@@ -85,7 +84,7 @@ namespace VindegadeKS_WPF
             DeleteInstructor(CurrentInstructor.InstId);
             ListBoxFunction();
         }
-        
+
         public void SaveInstructor(Instructor instructorToBeCreated)
         {
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
@@ -130,6 +129,46 @@ namespace VindegadeKS_WPF
             ClearInputFields();
         }
 
+        public void RetrieveInstructorData(int dBRowNumber)
+        {
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                con.Open();
+                SqlCommand cmd = new SqlCommand("SELECT PK_InstID, InstFirstName, InstLastName, InstPhone, InstEmail FROM VK_Instructors ORDER BY PK_InstID ASC OFFSET @dBRowNumber ROWS FETCH NEXT 1 ROW ONLY", con);
+
+                if (dBRowNumber < 0)
+                {
+                    dBRowNumber = 0;
+                }
+                cmd.Parameters.AddWithValue("@dBRowNumber", dBRowNumber);
+
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        instructorToBeRetrieved = new Instructor(0, "", "", "", "")
+                        {
+                            InstId = int.Parse(dr["PK_InstID"].ToString()),
+                            InstFirstName = dr["InstFirstName"].ToString(),
+                            InstLastName = dr["InstLastName"].ToString(),
+                            InstPhone = dr["InstPhone"].ToString(),
+                            InstEmail = dr["InstEmail"].ToString(),
+                        };
+                    }
+                }
+            }
+        }
+
+        public class InstListBoxItems
+        {
+            public int Id { get; set; }
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+            public string Phone { get; set; }
+            public string Email { get; set; }
+            public string Setup { get; set; }
+        }
+
         private void ListBoxFunction()
         {
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
@@ -158,48 +197,6 @@ namespace VindegadeKS_WPF
                 Inst_DisInst_ListBox.ItemsSource = items;
             }
         }
-
-        public class InstListBoxItems
-        {
-
-            public int Id { get; set; }
-            public string FirstName { get; set; }
-            public string LastName { get; set; }
-            public string Phone { get; set; }
-            public string Email { get; set; }
-            public string Setup { get; set; }
-        }
-
-        public void RetrieveInstructorData(int index)
-        {
-            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
-            {
-                con.Open();
-                SqlCommand cmd = new SqlCommand("SELECT PK_InstID, InstFirstName, InstLastName, InstPhone, InstEmail FROM VK_Instructors ORDER BY PK_InstID ASC OFFSET @Index ROWS FETCH NEXT 1 ROW ONLY", con);
-                
-                if (index < 0)
-                {
-                    index = 0;
-                }
-                cmd.Parameters.AddWithValue("@Index", index);
-                
-                using (SqlDataReader dr = cmd.ExecuteReader())
-                {
-                    while (dr.Read())
-                    {
-                        instructorToBeRetrieved = new Instructor(0, "", "", "", "")
-                        {
-                            InstId = int.Parse(dr["PK_InstID"].ToString()),
-                            InstFirstName = dr["InstFirstName"].ToString(),
-                            InstLastName = dr["InstLastName"].ToString(),
-                            InstPhone = dr["InstPhone"].ToString(),
-                            InstEmail = dr["InstEmail"].ToString(),
-                        };
-                    }
-                }
-            }
-        }
-        
 
         // Clears inputfields after saving to DB
         private void ClearInputFields()
