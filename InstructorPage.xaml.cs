@@ -80,9 +80,16 @@ namespace VindegadeKS_WPF
 
         private void Inst_Delete_Button_Click(object sender, RoutedEventArgs e)
         {
-            CurrentInstructor.InstId = currentItem;
-            DeleteInstructor(CurrentInstructor.InstId);
-            ListBoxFunction();
+            CurrentInstructor.InstId = currentItem;     // CurrentInstructor.InstId sættes lig med currentItem,
+                                                        // currentItem blev defineret da ListBox.SelectedItem
+                                                        // blev valgt ved museklik
+
+            DeleteInstructor(CurrentInstructor.InstId); // DeleteInstructor kaldes med argumentet CurrentInstructor.InstId,
+                                                        // CurrentInstructor.InstId bruges til at finde databaseentiteten
+                                                        // med tilsvarende InstId via DeleteInstructor-metoden
+
+            ListBoxFunction();                          // ListBoxFunction kaldes for at opdatere listboxens indhold
+                                                        // efter sletningen er udført
         }
 
         public void SaveInstructor(Instructor instructorToBeCreated)
@@ -116,17 +123,26 @@ namespace VindegadeKS_WPF
             }
         }
 
-        public void DeleteInstructor(int instructorIdToBeDeleted)
+        public void DeleteInstructor(int instructorIdToBeDeleted) // DeleteInstructor-metoden defineres med parameteren int instructorIdToBeDeleted,
+                                                                  // Metoden tager CurrentInstructor.InstId (som har referencesemantisk lighed med currentItem)
+                                                                  // som argument, når den kaldes
         {
+            // Sql-Connection definerer forbindelsen 'con' til databasen
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
-                con.Open();
-                SqlCommand cmd = new SqlCommand("DELETE FROM VK_Instructors WHERE PK_InstId = @PK_InstId", con);
-                cmd.Parameters.AddWithValue("@PK_InstId", instructorIdToBeDeleted);
-                cmd.ExecuteScalar();
+                con.Open(); // 'Open' åbner forbindelsen 'con' til databasen
+                SqlCommand cmd = new SqlCommand("DELETE FROM VK_Instructors WHERE PK_InstId = @PK_InstId", con); // SqlCommand definerer Sql-query-indholdet
+                                                                                                                 // (en DELETE-kommando rettet mod en specifik
+                                                                                                                 // tabel i databasen) af 'cmd', som skal
+                                                                                                                 // sendes via forbindelsen 'con'
+
+                cmd.Parameters.AddWithValue("@PK_InstId", instructorIdToBeDeleted); // cmd.Parameters.AddWithValue sætter en SQL-variabel (@PK_InstId) lig
+                                                                                    // med parameteren 'instructorIdToBeDeleted', der får sit argument, når
+                                                                                    // metoden bliver kaldt
+                cmd.ExecuteScalar(); // ExecuteScalar-metoden kører kommandoen cmd
             }
 
-            ClearInputFields();
+            ClearInputFields(); // Input-felterne cleares for at indikere, at sletningen er gennemført
         }
 
         public void RetrieveInstructorData(int dBRowNumber)
@@ -198,7 +214,6 @@ namespace VindegadeKS_WPF
             }
         }
 
-        // Clears inputfields after saving to DB
         private void ClearInputFields()
         {
             Inst_FirstName_TextBox.Clear();
@@ -207,7 +222,6 @@ namespace VindegadeKS_WPF
             Inst_Email_TextBox.Clear();
         }
 
-        //Locks all inputfields, so that they cannot be edited
         private void LockInputFields()
         {
             Inst_FirstName_TextBox.IsEnabled = false;
@@ -216,7 +230,6 @@ namespace VindegadeKS_WPF
             Inst_Email_TextBox.IsEnabled = false;
         }
 
-        //Unlocks all inputfields, so that they can be edited
         private void UnlockInputFields()
         {
             Inst_FirstName_TextBox.IsEnabled = true;
