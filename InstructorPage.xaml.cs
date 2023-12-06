@@ -33,6 +33,17 @@ namespace VindegadeKS_WPF
 
         public Instructor CurrentInstructor = new Instructor();
         Instructor instructorToBeRetrieved;
+        bool edit = false;
+        int currentItem;
+
+
+        private void Inst_DisInst_ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (Inst_DisInst_ListBox.SelectedItem != null)
+            {
+                currentItem = (Inst_DisInst_ListBox.SelectedItem as InstListBoxItems).Id;
+            }
+        }
 
         private void Inst_Create_Button_Click(object sender, RoutedEventArgs e)
         {
@@ -45,20 +56,34 @@ namespace VindegadeKS_WPF
             CurrentInstructor.InstLastName = Inst_LastName_TextBox.Text;
             CurrentInstructor.InstPhone = Inst_Phone_TextBox.Text;
             CurrentInstructor.InstEmail = Inst_Email_TextBox.Text;
+
+            if (edit == false) { SaveInstructor(CurrentInstructor); }
+            else { EditInstructor(CurrentInstructor); }
+
             SaveInstructor(CurrentInstructor);
             ClearInputFields();
             LockInputFields();
             ListBoxFunction();
+
+            edit = false;
         }
 
         private void Inst_Edit_Button_Click(object sender, RoutedEventArgs e)
         {
-
+            UnlockInputFields();
+            edit = true;
+            CurrentInstructor.InstId = currentItem;
+            Inst_FirstName_TextBox.Text = (Inst_DisInst_ListBox.SelectedItem as InstListBoxItems).FirstName;
+            Inst_LastName_TextBox.Text = (Inst_DisInst_ListBox.SelectedItem as InstListBoxItems).LastName;
+            Inst_Phone_TextBox.Text = (Inst_DisInst_ListBox.SelectedItem as InstListBoxItems).Phone;
+            Inst_Email_TextBox.Text = (Inst_DisInst_ListBox.SelectedItem as InstListBoxItems).Email;
         }
 
         private void Inst_Delete_Button_Click(object sender, RoutedEventArgs e)
         {
-
+            CurrentInstructor.InstId = currentItem;
+            DeleteInstructor(CurrentInstructor.InstId);
+            ListBoxFunction();
         }
         
         public void SaveInstructor(Instructor instructorToBeCreated)
@@ -77,6 +102,34 @@ namespace VindegadeKS_WPF
             }
         }
 
+        public void EditInstructor(Instructor instructorToBeUpdated)
+        {
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                con.Open();
+                SqlCommand cmd = new SqlCommand("UPDATE VK_Instructors SET InstFirstName = @InstFirstName, InstLastName = @InstLastName, InstPhone = @InstPhone, InstEmail = @InstEmail WHERE PK_InstID = @InstId", con);
+                cmd.Parameters.AddWithValue("@InstFirstName", instructorToBeUpdated.InstFirstName);
+                cmd.Parameters.AddWithValue("@InstLastName", instructorToBeUpdated.InstLastName);
+                cmd.Parameters.AddWithValue("@InstPhone", instructorToBeUpdated.InstPhone);
+                cmd.Parameters.AddWithValue("@InstEmail", instructorToBeUpdated.InstEmail);
+                cmd.Parameters.AddWithValue("@InstId", instructorToBeUpdated.InstId);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public void DeleteInstructor(int instructorIdToBeDeleted)
+        {
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                con.Open();
+                SqlCommand cmd = new SqlCommand("DELETE FROM VK_Instructors WHERE PK_InstId = @PK_InstId", con);
+                cmd.Parameters.AddWithValue("@PK_InstId", instructorIdToBeDeleted);
+                cmd.ExecuteScalar();
+            }
+
+            ClearInputFields();
+        }
+
         private void ListBoxFunction()
         {
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
@@ -93,6 +146,7 @@ namespace VindegadeKS_WPF
 
                     items.Add(new InstListBoxItems()
                     {
+                        Id = instructorToBeRetrieved.InstId,
                         FirstName = instructorToBeRetrieved.InstFirstName,
                         LastName = instructorToBeRetrieved.InstLastName,
                         Phone = instructorToBeRetrieved.InstPhone,
@@ -107,7 +161,8 @@ namespace VindegadeKS_WPF
 
         public class InstListBoxItems
         {
-            //The attributes of the items for the ListBox
+
+            public int Id { get; set; }
             public string FirstName { get; set; }
             public string LastName { get; set; }
             public string Phone { get; set; }
