@@ -11,7 +11,7 @@
 
     <Grid>
         <!-- ListBox  -->
-        <ListBox x:Name="Inst_DisInst_ListBox" HorizontalAlignment="Left" VerticalAlignment="Top" Background="BlanchedAlmond" FontSize="20" Margin="20,20,0,0" Height="425" Width="640">
+        <ListBox x:Name="Inst_DisInst_ListBox" HorizontalAlignment="Left" VerticalAlignment="Top" Background="BlanchedAlmond" FontSize="20" Margin="20,20,0,0" Height="425" Width="640" SelectionChanged="Inst_DisInst_ListBox_SelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <!-- Change what it's binding to based on what you want written in the ListBoxItem -->
