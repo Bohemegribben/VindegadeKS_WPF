@@ -26,27 +26,10 @@ namespace VindegadeKS_WPF
 
         public Lesson CurrentLesson = new Lesson();
         Lesson lesToBeRetrieved;
+        bool edit = false;
+        int currentItem;
 
-        //Input
-        //Idea: Instead of when changed, in the save button get the values from the boxes
-        //      Making these method unnecessary
-        private void Les_Name_TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-        private void Les_Type_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void Les_Description_TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-
-        //Buttons
+         //Buttons
         private void Les_Add_Button_Click(object sender, RoutedEventArgs e)
         {
             UnlockInputFields(); 
@@ -61,15 +44,29 @@ namespace VindegadeKS_WPF
             CurrentLesson.LesName = Les_Name_TextBox.Text;
             CurrentLesson.LesType = Les_Type_ComboBox.Text;
             CurrentLesson.LesDescription = Les_Description_TextBox.Text;
-            SaveNewLesson(CurrentLesson);
+
+            if(edit == false ) { SaveNewLesson(CurrentLesson); }
+            else { UpdateLesson(CurrentLesson); }
+
             ClearInputFields();
             LockInputFields();
             ListBoxFunction();
+
+            edit = false;
+
+            Les_Name_TextBox.Text = "Modul ";
+            Les_Type_ComboBox.SelectedIndex = 0;
+            Les_Description_TextBox.Text = "Læringsmål ";
         }
 
         private void Les_Edit_Button_Click(object sender, RoutedEventArgs e)
         {
-            
+            UnlockInputFields();
+            edit = true;
+            CurrentLesson.LesId = currentItem;
+            Les_Name_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Name;
+            Les_Type_ComboBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Type;
+            Les_Description_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Description;
         }
 
         private void Les_Delete_Button_Click(object sender, RoutedEventArgs e)
@@ -93,6 +90,7 @@ namespace VindegadeKS_WPF
                 Les_DisName_TextBlock.Text = "Modul Navn: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Name;
                 Les_DisType_TextBlock.Text = "Kørekorts Type: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Type;
                 Les_DisDescription_TextBlock.Text = "Beskrivelse: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Description;
+                currentItem = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Id;
 
             }
         }
@@ -114,10 +112,12 @@ namespace VindegadeKS_WPF
                 {
                     RetrieveLessonData(i);
                     //Add new items from the item class with specific attributes to the list
-                    items.Add(new LesListBoxItems() { Name = lesToBeRetrieved.LesName, Type = lesToBeRetrieved.LesType, Description = lesToBeRetrieved.LesDescription });
+                    items.Add(new LesListBoxItems() { Id = lesToBeRetrieved.LesId, Name = lesToBeRetrieved.LesName, Type = lesToBeRetrieved.LesType, Description = lesToBeRetrieved.LesDescription });
+                    
                     //Only necessary for multi-attribute ListBoxItem
                     //Set up the attribute 'SetUp' which is used to determine the appearance of the ListBoxItem 
-                    items[i].SetUp = $"{items[i].Name}\n{items[i].Type}\n{items[i].Description}";
+                    //Mine isn't, so it's out commented
+                    //items[i].SetUp = $"{items[i].Name}\n{items[i].Type}\n{items[i].Description}";
                 }
 
                 //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
@@ -129,11 +129,13 @@ namespace VindegadeKS_WPF
         public class LesListBoxItems
         {
             //The attributes of the items for the ListBox
+            public int Id { get; set; }
             public string Name { get; set; }
             public string Type { get; set; }
             public string Description { get; set; }
+
             //Extra attribute, used for visuals (Only needed for multi-attribute views)
-            public string SetUp { get; set; }
+            //public string SetUp { get; set; }
         }
         #endregion
 
@@ -142,20 +144,23 @@ namespace VindegadeKS_WPF
         {
             //New list and datapoints for Combobox
             List<LesComboBoxType> types = new List<LesComboBoxType>();
-            types.Add(new LesComboBoxType { Id = 1, DisplayValue = "One" });
-            types.Add(new LesComboBoxType { Id = 2, DisplayValue = "Two" });
-            types.Add(new LesComboBoxType { Id = 3, DisplayValue = "Three" });
+            types.Add(new LesComboBoxType { LicenseType = "B", DisplayValue = "Kørekort B" });
+            types.Add(new LesComboBoxType { LicenseType = "A", DisplayValue = "Kørekort A" });
+            types.Add(new LesComboBoxType { LicenseType = "A1", DisplayValue = "Kørekort A1" });
+            types.Add(new LesComboBoxType { LicenseType = "A2", DisplayValue = "Kørekort A2" });
 
             //Set the ItemsSource
             Les_Type_ComboBox.ItemsSource = types;
             //Sets which attribute is displayed
             Les_Type_ComboBox.DisplayMemberPath = "DisplayValue";
+            //Sets default choice
+            Les_Type_ComboBox.SelectedIndex = 0;
         }
 
         //Class which defines the ComboBox Data
         public class LesComboBoxType
         {
-            public int Id { get; set; }
+            public string LicenseType { get; set; }
             public string DisplayValue { get; set; }
         }
         #endregion
@@ -228,6 +233,20 @@ namespace VindegadeKS_WPF
                         };
                     }
                 }
+            }
+        }
+
+        public void UpdateLesson(Lesson lesToBeUpdated)
+        {
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                con.Open();
+                SqlCommand cmd = new SqlCommand("UPDATE VK_Lessons SET LesName = @LesName, LesType = @LesType, LesDescription = @LesDescription WHERE PK_LesID = @LesId", con);
+                cmd.Parameters.AddWithValue("@LesName", lesToBeUpdated.LesName);
+                cmd.Parameters.AddWithValue("@LesType", lesToBeUpdated.LesType);
+                cmd.Parameters.AddWithValue("@LesDescription", lesToBeUpdated.LesDescription);
+                cmd.Parameters.AddWithValue("@LesId", lesToBeUpdated.LesId);
+                cmd.ExecuteNonQuery();
             }
         }
         #endregion
