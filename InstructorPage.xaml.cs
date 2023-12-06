@@ -27,44 +27,12 @@ namespace VindegadeKS_WPF
         public InstructorPage()
         {
             InitializeComponent();
-            RetrieveInstructorData(0);
             LockInputFields();
+            ListBoxFunction();
         }
 
         public Instructor CurrentInstructor = new Instructor();
-
-        //Method to create, control and add instructors to the ListBox
-        private void AddInstructors()
-        {
-            //Make a list with the Item Class from below called items (Name doesn't matter)
-            //LesListBoxItems in my case
-            List<InstListBoxInstructors> instructors = new List<InstListBoxInstructors>();
-
-            //Add new items from the item class with specific attributes to the list
-            //Will later be remade to automatically add items based on the database
-            instructors.Add(new InstListBoxInstructors() { FirstName = "A", LastName = "A", Phone = "A", Email = "A" });
-            instructors.Add(new InstListBoxInstructors() { FirstName = "B", LastName = "B", Phone = "B", Email = "B" });
-            instructors.Add(new InstListBoxInstructors() { FirstName = "C", LastName = "C", Phone = "C", Email = "C" });
-
-            for (int i = 0; instructors.Count > i; i++)
-            {
-                instructors[i].Setup = $"{instructors[i].FirstName} {instructors[i].LastName}\n{instructors[i].Phone}\n{instructors[i].Email}";
-            }
-
-            //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
-            Inst_DisInst_ListBox.ItemsSource = instructors;
-        }
-
-        //Class to define the content of the ListBoxItems for the ListBox
-        public class InstListBoxInstructors
-        {
-            //The attributes of the items for the ListBox
-            public string FirstName { get; set; }
-            public string LastName { get; set; }
-            public string Phone { get; set; }
-            public string Email { get; set; }
-            public string Setup { get; set; }
-        }
+        Instructor instructorToBeRetrieved;
 
         private void Inst_Create_Button_Click(object sender, RoutedEventArgs e)
         {
@@ -78,7 +46,9 @@ namespace VindegadeKS_WPF
             CurrentInstructor.InstPhone = Inst_Phone_TextBox.Text;
             CurrentInstructor.InstEmail = Inst_Email_TextBox.Text;
             SaveInstructor(CurrentInstructor);
-            ClearInput();
+            ClearInputFields();
+            LockInputFields();
+            ListBoxFunction();
         }
 
         private void Inst_Edit_Button_Click(object sender, RoutedEventArgs e)
@@ -107,16 +77,50 @@ namespace VindegadeKS_WPF
             }
         }
 
-        
+        private void ListBoxFunction()
+        {
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                con.Open();
+                SqlCommand count = new SqlCommand("SELECT COUNT(PK_InstID) FROM VK_Instructors", con);
+                int intCount = (int)count.ExecuteScalar();
+
+                List<InstListBoxItems> items = new List<InstListBoxItems>();
+
+                for (int i = 0; i < intCount; i++)
+                {
+                    RetrieveInstructorData(i);
+
+                    items.Add(new InstListBoxItems()
+                    {
+                        FirstName = instructorToBeRetrieved.InstFirstName,
+                        LastName = instructorToBeRetrieved.InstLastName,
+                        Phone = instructorToBeRetrieved.InstPhone,
+                        Email = instructorToBeRetrieved.InstEmail
+                    });
+
+                    items[i].Setup = $"{items[i].FirstName} {items[i].LastName}\n{items[i].Phone}\n{items[i].Email}";
+                }
+                Inst_DisInst_ListBox.ItemsSource = items;
+            }
+        }
+
+        public class InstListBoxItems
+        {
+            //The attributes of the items for the ListBox
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+            public string Phone { get; set; }
+            public string Email { get; set; }
+            public string Setup { get; set; }
+        }
+
         public void RetrieveInstructorData(int index)
         {
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
                 con.Open();
                 SqlCommand cmd = new SqlCommand("SELECT PK_InstID, InstFirstName, InstLastName, InstPhone, InstEmail FROM VK_Instructors ORDER BY PK_InstID ASC OFFSET @Index ROWS FETCH NEXT 1 ROW ONLY", con);
-                
-                SqlCommand count = new SqlCommand("SELECT COUNT(PK_InstID) FROM VK_Instructors", con);
-                int intCount = (int)count.ExecuteScalar();
                 
                 if (index < 0)
                 {
@@ -126,11 +130,9 @@ namespace VindegadeKS_WPF
                 
                 using (SqlDataReader dr = cmd.ExecuteReader())
                 {
-                    List<InstListBoxInstructors> instructors = new List<InstListBoxInstructors>();
-
                     while (dr.Read())
                     {
-                        Instructor instructorToBeRetrieved = new Instructor(0, "", "", "", "")
+                        instructorToBeRetrieved = new Instructor(0, "", "", "", "")
                         {
                             InstId = int.Parse(dr["PK_InstID"].ToString()),
                             InstFirstName = dr["InstFirstName"].ToString(),
@@ -138,19 +140,6 @@ namespace VindegadeKS_WPF
                             InstPhone = dr["InstPhone"].ToString(),
                             InstEmail = dr["InstEmail"].ToString(),
                         };
-
-                        for (int i = 0; i < intCount; i++)
-                        {
-                            instructors.Add(new InstListBoxInstructors() {
-                                FirstName = dr["InstFirstName"].ToString(),
-                                LastName = dr["InstLastName"].ToString(),
-                                Phone = dr["InstPhone"].ToString(),
-                                Email = dr["InstEmail"].ToString()
-                            });
-
-                            instructors[i].Setup = $"{instructors[i].FirstName} {instructors[i].LastName}\n{instructors[i].Phone}\n{instructors[i].Email}";
-                            Inst_DisInst_ListBox.ItemsSource = instructors;
-                        }
                     }
                 }
             }
@@ -158,7 +147,7 @@ namespace VindegadeKS_WPF
         
 
         // Clears inputfields after saving to DB
-        private void ClearInput()
+        private void ClearInputFields()
         {
             Inst_FirstName_TextBox.Clear();
             Inst_LastName_TextBox.Clear();
