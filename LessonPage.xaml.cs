@@ -1,17 +1,11 @@
-﻿using System;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.Identity.Client;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Configuration;
+using System.Data;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace VindegadeKS_WPF
 {
@@ -23,13 +17,15 @@ namespace VindegadeKS_WPF
         public LessonPage()
         {
             InitializeComponent();
-
+            LockInputFields();
             //Call the ListBoxFunction method which create the ListBoxItems for your ListBox
             ListBoxFunction();
 
             ComboBoxFunction();
         }
 
+        public Lesson CurrentLesson = new Lesson();
+        Lesson lesToBeRetrieved;
 
         //Input
         //Idea: Instead of when changed, in the save button get the values from the boxes
@@ -53,7 +49,7 @@ namespace VindegadeKS_WPF
         //Buttons
         private void Les_Add_Button_Click(object sender, RoutedEventArgs e)
         {
-            LockInputFields();
+            UnlockInputFields(); 
         }
 
         private void Les_Save_Button_Click(object sender, RoutedEventArgs e)
@@ -61,16 +57,24 @@ namespace VindegadeKS_WPF
             Les_DisName_TextBlock.Text = "Modul Navn: " + Les_Name_TextBox.Text;
             Les_DisType_TextBlock.Text = "Kørekorts Type: " + Les_Type_ComboBox.Text;
             Les_DisDescription_TextBlock.Text = "Beskrivelse: " + Les_Description_TextBox.Text;
+
+            CurrentLesson.LesName = Les_Name_TextBox.Text;
+            CurrentLesson.LesType = Les_Type_ComboBox.Text;
+            CurrentLesson.LesDescription = Les_Description_TextBox.Text;
+            SaveNewLesson(CurrentLesson);
+            ClearInputFields();
+            LockInputFields();
+            ListBoxFunction();
         }
 
         private void Les_Edit_Button_Click(object sender, RoutedEventArgs e)
         {
-            UnlockInputFields();
+            
         }
 
         private void Les_Delete_Button_Click(object sender, RoutedEventArgs e)
         {
-            ClearInputFields();
+            //ClearInputFields();
 
         }
 
@@ -96,29 +100,29 @@ namespace VindegadeKS_WPF
         //Method to create, control and add items to the ListBox
         private void ListBoxFunction()
         {
-            //Make a list with the Item Class from below called items (Name doesn't matter)
-            //LesListBoxItems in my case
-            List<LesListBoxItems> items = new List<LesListBoxItems>();
-
-            //Add new items from the item class with specific attributes to the list
-            //Will later be remade to automatically add items based on the database
-            items.Add(new LesListBoxItems() { Name = "A", Type = "A", Description = "A" });
-            items.Add(new LesListBoxItems() { Name = "B", Type = "B", Description = "B" });
-            items.Add(new LesListBoxItems() { Name = "C", Type = "C", Description = "C" });
-            items.Add(new LesListBoxItems() { Name = "D", Type = "D", Description = "D" });
-            items.Add(new LesListBoxItems() { Name = "E", Type = "E", Description = "E" });
-            items.Add(new LesListBoxItems() { Name = "F", Type = "F", Description = "F" });
-
-            //Only necessary for multi-attribute ListBoxItem
-            //Set up the attribute 'SetUp' which is used to determine the appearance of the ListBoxItem 
-            //Forloop to go through all items in the items-list, to add and fill the 'SetUp' attribute
-            for (int i = 0;items.Count> i;i++)
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
-                items[i].SetUp = $"{items[i].Name}\n{items[i].Type}\n{items[i].Description}";
+                con.Open();
+                SqlCommand count = new SqlCommand("SELECT COUNT(PK_LesID) from VK_Lessons", con);
+                int intCount = (int)count.ExecuteScalar();
+
+                //Make a list with the Item Class from below called items (Name doesn't matter)
+                //LesListBoxItems in my case
+                List<LesListBoxItems> items = new List<LesListBoxItems>();
+
+                for (int i = 0; i < intCount; i++)
+                {
+                    RetrieveLessonData(i);
+                    //Add new items from the item class with specific attributes to the list
+                    items.Add(new LesListBoxItems() { Name = lesToBeRetrieved.LesName, Type = lesToBeRetrieved.LesType, Description = lesToBeRetrieved.LesDescription });
+                    //Only necessary for multi-attribute ListBoxItem
+                    //Set up the attribute 'SetUp' which is used to determine the appearance of the ListBoxItem 
+                    items[i].SetUp = $"{items[i].Name}\n{items[i].Type}\n{items[i].Description}";
+                }
+
+                //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
+                Les_DisLes_ListBox.ItemsSource = items;
             }
-            
-            //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
-            Les_DisLes_ListBox.ItemsSource = items; 
         }
 
         //Class to define the content of the ListBoxItems for the ListBox
@@ -179,6 +183,52 @@ namespace VindegadeKS_WPF
             Les_Name_TextBox.Clear();
             Les_Type_ComboBox.SelectedItem = null;
             Les_Description_TextBox.Clear();
+        }
+        #endregion
+
+        #region Database
+        public void SaveNewLesson(Lesson lesToBeCreated)
+        {
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                con.Open();
+                SqlCommand cmd = new SqlCommand("INSERT INTO VK_Lessons (LesName, LesType, LesDescription)" +
+                                                 "VALUES(@LesName,@LesType,@LesDescription)" +
+                                                 "SELECT @@IDENTITY", con);
+                cmd.Parameters.Add("@LesName", SqlDbType.NVarChar).Value = lesToBeCreated.LesName;
+                cmd.Parameters.Add("@LesType", SqlDbType.NVarChar).Value = lesToBeCreated.LesType;
+                cmd.Parameters.Add("@LesDescription", SqlDbType.NVarChar).Value = lesToBeCreated.LesDescription;
+                lesToBeCreated.LesId = Convert.ToInt32(cmd.ExecuteScalar());
+            }
+        }
+
+        public void RetrieveLessonData(int index)
+        {
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                con.Open();
+                SqlCommand cmd = new SqlCommand("SELECT PK_LesID, LesName, LesType, LesDescription FROM VK_Lessons ORDER BY PK_LesID ASC OFFSET @Index ROWS FETCH NEXT 1 ROW ONLY", con);
+
+                if (index < 0)
+                {
+                    index = 0;
+                }
+                cmd.Parameters.AddWithValue("@Index", index);
+                
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        lesToBeRetrieved = new Lesson(0, "", "", "")
+                        {
+                            LesId = int.Parse(dr["PK_LesID"].ToString()),
+                            LesName = dr["LesName"].ToString(),
+                            LesType = dr["LesType"].ToString(),
+                            LesDescription = dr["LesDescription"].ToString(),
+                        };
+                    }
+                }
+            }
         }
         #endregion
     }
