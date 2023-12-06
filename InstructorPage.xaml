@@ -33,9 +33,9 @@
         <TextBox x:Name="Inst_Email_TextBox" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="140,675,0,0" Width="315" Height="50"/>
 
         <!-- TILFØJ aktiverer tekstfelterne, GEM, REDIGER og SLET kommunikerer med databasen -->
-        <Button x:Name="Inst_Create_Button" Content="TILFØJ" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="20" Margin="0,465,20,0" Width="185" Height="50"/>
-        <Button x:Name="Inst_Save_Button" Content="GEM" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="20" Margin="0,535,20,0" Width="185" Height="50"/>
-        <Button x:Name="Inst_Edit_Button" Content="REDIGER" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="20" Margin="0,605,20,0" Width="185" Height="50"/>
-        <Button x:Name="Inst_Delete_Button" Content="SLET" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="20" Margin="0,675,20,0" Width="185" Height="50"/>
+        <Button x:Name="Inst_Create_Button" Content="TILFØJ" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="20" Margin="0,465,20,0" Width="185" Height="50" Click="Inst_Create_Button_Click"/>
+        <Button x:Name="Inst_Save_Button" Content="GEM" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="20" Margin="0,535,20,0" Width="185" Height="50" Click="Inst_Save_Button_Click"/>
+        <Button x:Name="Inst_Edit_Button" Content="REDIGER" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="20" Margin="0,605,20,0" Width="185" Height="50" Click="Inst_Edit_Button_Click"/>
+        <Button x:Name="Inst_Delete_Button" Content="SLET" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="20" Margin="0,675,20,0" Width="185" Height="50" Click="Inst_Delete_Button_Click"/>
     </Grid>
 </Page>

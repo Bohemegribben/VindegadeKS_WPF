@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 namespace VindegadeKS_WPF
 {
     /// <summary>
@@ -23,9 +27,11 @@ namespace VindegadeKS_WPF
         public InstructorPage()
         {
             InitializeComponent();
-
-            AddInstructors();
+            RetrieveInstructorData();
+            LockInputFields();
         }
+
+        public Instructor CurrentInstructor = new Instructor();
 
         //Method to create, control and add instructors to the ListBox
         private void AddInstructors()
@@ -58,6 +64,124 @@ namespace VindegadeKS_WPF
             public string Phone { get; set; }
             public string Email { get; set; }
             public string Setup { get; set; }
+        }
+
+        private void Inst_Create_Button_Click(object sender, RoutedEventArgs e)
+        {
+            UnlockInputFields();
+        }
+
+        private void Inst_Save_Button_Click(object sender, RoutedEventArgs e)
+        {
+            CurrentInstructor.InstFirstName = Inst_FirstName_TextBox.Text;
+            CurrentInstructor.InstLastName = Inst_LastName_TextBox.Text;
+            CurrentInstructor.InstPhone = Inst_Phone_TextBox.Text;
+            CurrentInstructor.InstEmail = Inst_Email_TextBox.Text;
+            SaveInstructor(CurrentInstructor);
+            ClearInput();
+        }
+
+        private void Inst_Edit_Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Inst_Delete_Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        
+        public void SaveInstructor(Instructor instructorToBeCreated)
+        {
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                con.Open();
+                SqlCommand cmd = new SqlCommand("INSERT INTO VK_Instructors (InstFirstName, InstLastName, InstPhone, InstEmail)" +
+                                                 "VALUES(@InstFirstName,@InstLastName,@InstPhone,@InstEmail)" +
+                                                 "SELECT @@IDENTITY", con);
+                cmd.Parameters.Add("@InstFirstName", SqlDbType.NVarChar).Value = instructorToBeCreated.InstFirstName;
+                cmd.Parameters.Add("@InstLastName", SqlDbType.NVarChar).Value = instructorToBeCreated.InstLastName;
+                cmd.Parameters.Add("@InstPhone", SqlDbType.NVarChar).Value = instructorToBeCreated.InstPhone;
+                cmd.Parameters.Add("@InstEmail", SqlDbType.NVarChar).Value = instructorToBeCreated.InstEmail;
+                instructorToBeCreated.InstId = Convert.ToInt32(cmd.ExecuteScalar());
+            }
+        }
+
+        public void RetrieveInstructorData()
+        {
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                con.Open();
+                SqlCommand cmd = new SqlCommand("SELECT PK_InstID, InstFirstName, InstLastName, InstPhone, InstEmail FROM VK_Instructors ORDER BY PK_InstID ASC", con);
+                SqlCommand count = new SqlCommand("SELECT COUNT(PK_InstID) from VK_Instructors", con);
+                int intCount = count.ExecuteNonQuery();
+
+                /*
+                if (index < 0)
+                {
+                    index = 0;
+                }
+                cmd.Parameters.AddWithValue("@Index", index);
+                */
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    List<InstListBoxInstructors> instructors = new List<InstListBoxInstructors>();
+
+                    if (dr.Read())
+                    {
+                        Instructor instructorToBeRetrieved = new Instructor(0, "", "", "", "")
+                        {
+                            InstId = int.Parse(dr["PK_InstID"].ToString()),
+                            InstFirstName = dr["InstFirstName"].ToString(),
+                            InstLastName = dr["InstLastName"].ToString(),
+                            InstPhone = dr["InstPhone"].ToString(),
+                            InstEmail = dr["InstEmail"].ToString(),
+                        };
+
+                        for (int i = 0; i < intCount; i++)
+                        {
+                            instructors.Add(new InstListBoxInstructors() {
+                                FirstName = dr["InstFirstName"].ToString(),
+                                LastName = dr["InstLastName"].ToString(),
+                                Phone = dr["InstPhone"].ToString(),
+                                Email = dr["InstEmail"].ToString()
+                            });
+
+                            instructors[i].Setup = $"{instructors[i].FirstName} {instructors[i].LastName}\n{instructors[i].Phone}\n{instructors[i].Email}";
+                        }
+
+                        Inst_DisInst_ListBox.ItemsSource = instructors;
+                    }
+
+                    else
+                    { }
+                }
+            }
+        }
+
+        private void ClearInput()
+        {
+            Inst_FirstName_TextBox.Clear();
+            Inst_LastName_TextBox.Clear();
+            Inst_Phone_TextBox.Clear();
+            Inst_Email_TextBox.Clear();
+        }
+
+        private void LockInputFields()
+        {
+            Inst_FirstName_TextBox.IsEnabled = false;
+            Inst_LastName_TextBox.IsEnabled = false;
+            Inst_Phone_TextBox.IsEnabled = false;
+            Inst_Email_TextBox.IsEnabled = false;
+        }
+
+        //Unlocks all inputfields, so that they can be edited
+        private void UnlockInputFields()
+        {
+            Inst_FirstName_TextBox.IsEnabled = true;
+            Inst_LastName_TextBox.IsEnabled = true;
+            Inst_Phone_TextBox.IsEnabled = true;
+            Inst_Email_TextBox.IsEnabled = true;
         }
     }
 }
