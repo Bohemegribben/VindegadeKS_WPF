@@ -7,6 +7,7 @@ using System.Data;
 using System.Windows;
 using System.Windows.Controls;
 
+
 namespace VindegadeKS_WPF
 {
     /// <summary>
@@ -17,66 +18,129 @@ namespace VindegadeKS_WPF
         public LessonPage()
         {
             InitializeComponent();
+
+            //Locks the input fields, so the user can't interact before pressing a button
             LockInputFields();
-            //Call the ListBoxFunction method which create the ListBoxItems for your ListBox
+            
+            //Calls the ListBoxFunction method which create the ListBoxItems for your ListBox
             ListBoxFunction();
 
+            //Calls the ComboBoxFunction method which sets up the ComboBox on your page 
+            //If you have multiple ComboBoxes on your page, each method will have its own name
             ComboBoxFunction();
+
+            //Disables the buttons which aren't relevant yet
+            Les_Save_Button.IsEnabled = false;
+            Les_Edit_Button.IsEnabled = false;
+            Les_Delete_Button.IsEnabled = false;
         }
 
-        public Lesson CurrentLesson = new Lesson();
+        //Create CurrentLesson to contain current object - Needed in: Save_Button_Click & Edit_Button_Click
+        Lesson CurrentLesson = new Lesson();
+        //Moved out here instead of staying in 'Retrieve', so ListBoxFunction can access - Needed in: ListBoxFunction & RetrieveData
         Lesson lesToBeRetrieved;
+        //Keeps track of if CurrentLesson is a new object or an old one being edited - Needed in: Add_Button_Click, Save_Button_Click, Edit_Button_Click & ListBox_SelectionChanged
         bool edit = false;
+        //Keeps track of the id of ListBoxItem while it's selected - Edit_Button_Click & ListBox_SelectionChanged
         int currentItem;
 
-         //Buttons
+        #region  Buttons
+        //Enableds user to add new Lesson
         private void Les_Add_Button_Click(object sender, RoutedEventArgs e)
         {
-            UnlockInputFields(); 
+            //Unlocks the input fields
+            UnlockInputFields();
+
+            //Sets edit to false, as it is impossible for it to be true currently
+            edit = false;
+
+            //Controls which button the user can interact with - User needs to save, but shouldn't interact with Edit/Delete as Add is adding a new Lesson
+            Les_Save_Button.IsEnabled = true;
+            Les_Edit_Button.IsEnabled= false;
+            Les_Delete_Button.IsEnabled= false;
         }
 
+        //Saves the Lesson from the input fields
         private void Les_Save_Button_Click(object sender, RoutedEventArgs e)
         {
+            //Updates the displaypanel to reflect the newly saved Lesson
             Les_DisName_TextBlock.Text = "Modul Navn: " + Les_Name_TextBox.Text;
             Les_DisType_TextBlock.Text = "Kørekorts Type: " + Les_Type_ComboBox.Text;
             Les_DisDescription_TextBlock.Text = "Beskrivelse: " + Les_Description_TextBox.Text;
 
+            //Sets CurrentLesson equal to the input fields
             CurrentLesson.LesName = Les_Name_TextBox.Text;
             CurrentLesson.LesType = Les_Type_ComboBox.Text;
             CurrentLesson.LesDescription = Les_Description_TextBox.Text;
 
-            if(edit == false ) { SaveNewLesson(CurrentLesson); }
-            else { UpdateLesson(CurrentLesson); }
+            //If-statement checks if CurrentLesson is a new Lesson or an old Lesson being edited, by checking the edit-bool
+            //If it's not being edited run SaveNewLesson(CurrentLesson), else UpdateLesson(CurrentLesson)
+            if (edit == false ) { SaveNewLesson(CurrentLesson); }
+            else { EditLesson(CurrentLesson); }
 
-            ClearInputFields();
+            //Lock the input fields and rerun ListBoxFunction to make sure it has all items with correct info
             LockInputFields();
             ListBoxFunction();
 
+            //Sets edit to false, as it is impossible for it to be true currently
             edit = false;
 
+            //Sets the default text in input fields to minimize user effort 
             Les_Name_TextBox.Text = "Modul ";
             Les_Type_ComboBox.SelectedIndex = 0;
             Les_Description_TextBox.Text = "Læringsmål ";
+
+            //Controls which button the user can interact with - User needs to be able to Add more Lessons, but nothing else
+            Les_Add_Button.IsEnabled = true;
+            Les_Save_Button.IsEnabled = false;
+            Les_Edit_Button.IsEnabled = false;
+            Les_Delete_Button.IsEnabled = false;
         }
 
+        //Lets the user edit previously created Lessons
         private void Les_Edit_Button_Click(object sender, RoutedEventArgs e)
         {
+            //Unlocks the input fields
             UnlockInputFields();
+
+            //Sets edit to true, as the user is currently editing the Lesson
             edit = true;
+
+            //Sets CurrentLessons ID to currentItem
             CurrentLesson.LesId = currentItem;
+
+            //Sets the input fields to equal the info from the ListBoxItems
             Les_Name_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Name;
             Les_Type_ComboBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Type;
             Les_Description_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Description;
+
+            //Controls which button the user can interact with - User needs able to save, but nothing else
+            Les_Add_Button.IsEnabled = false;
+            Les_Save_Button.IsEnabled = true;
+            Les_Edit_Button.IsEnabled = false;
+
         }
 
+        //Lets the user delete previously created Lessons
         private void Les_Delete_Button_Click(object sender, RoutedEventArgs e)
         {
-            //ClearInputFields();
+            //NOT CREATED YET
+            //Evt kun mulig hvis edit = true?
 
+            /*
+            //Clears the input fields
+            ClearInputFields();
+            //Controls which button the user can interact with - User needs able to add new Lesson, but nothing else
+            Les_Add_Button.IsEnabled = true;
+            Les_Save_Button.IsEnabled = false;
+            Les_Edit_Button.IsEnabled = false;
+            Les_Delete_Button.IsEnabled = false;
+            */
         }
+        #endregion
 
         #region ListBox
-        //What happens when you select an item in the ListBox
+        //Controls what happens when you select an item in the ListBox
         private void Les_DisLes_ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //Safety check, to make sure that the selected item exists
@@ -90,28 +154,46 @@ namespace VindegadeKS_WPF
                 Les_DisName_TextBlock.Text = "Modul Navn: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Name;
                 Les_DisType_TextBlock.Text = "Kørekorts Type: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Type;
                 Les_DisDescription_TextBlock.Text = "Beskrivelse: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Description;
+                
+                //Sets currentItem to equal the ID of selected item
                 currentItem = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Id;
 
+                //Sets edit to false, as it is impossible for it to be true currently
+                edit = false;
+
+                //Controls which button the user can interact with - User needs able to edit and delete, but not save
+                Les_Save_Button.IsEnabled = false;
+                Les_Edit_Button.IsEnabled = true;
+                Les_Delete_Button.IsEnabled = true;
             }
         }
 
         //Method to create, control and add items to the ListBox
         private void ListBoxFunction()
         {
+            //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
+                //Opens said connection
                 con.Open();
+
+                //Creates a count SqlCommand, which gets the number of rows in the table 
                 SqlCommand count = new SqlCommand("SELECT COUNT(PK_LesID) from VK_Lessons", con);
+                //Saves count command result to int
                 int intCount = (int)count.ExecuteScalar();
 
                 //Make a list with the Item Class from below called items (Name doesn't matter)
                 //LesListBoxItems in my case
                 List<LesListBoxItems> items = new List<LesListBoxItems>();
 
+                //Forloop which adds intCount number of new items to items-list
                 for (int i = 0; i < intCount; i++)
                 {
+                    //Calls RetrieveLessonData method, sending i as index
                     RetrieveLessonData(i);
-                    //Add new items from the item class with specific attributes to the list
+
+                    //Adds a new item from the item class with specific attributes to the list
+                    //The data added comes from RetrieveLessonData
                     items.Add(new LesListBoxItems() { Id = lesToBeRetrieved.LesId, Name = lesToBeRetrieved.LesName, Type = lesToBeRetrieved.LesType, Description = lesToBeRetrieved.LesDescription });
                     
                     //Only necessary for multi-attribute ListBoxItem
@@ -140,6 +222,7 @@ namespace VindegadeKS_WPF
         #endregion
 
         #region ComboBox
+        //Setup the ComboBox
         private void ComboBoxFunction()
         {
             //New list and datapoints for Combobox
@@ -160,6 +243,7 @@ namespace VindegadeKS_WPF
         //Class which defines the ComboBox Data
         public class LesComboBoxType
         {
+            //The attributes of the ComboBoxItems for the ComboBox
             public string LicenseType { get; set; }
             public string DisplayValue { get; set; }
         }
@@ -192,40 +276,57 @@ namespace VindegadeKS_WPF
         #endregion
 
         #region Database
+        //Create new row in the database from lesToBeCreated
         public void SaveNewLesson(Lesson lesToBeCreated)
         {
+            //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
+                //Opens said connection
                 con.Open();
+                //Creates a cmd SqlCommand, which enableds the ability to INSERT INTO the table with the corresponding attributes 
                 SqlCommand cmd = new SqlCommand("INSERT INTO VK_Lessons (LesName, LesType, LesDescription)" +
                                                  "VALUES(@LesName,@LesType,@LesDescription)" +
                                                  "SELECT @@IDENTITY", con);
+
+                //Add corresponding attribute to the database through the use of cmd
                 cmd.Parameters.Add("@LesName", SqlDbType.NVarChar).Value = lesToBeCreated.LesName;
                 cmd.Parameters.Add("@LesType", SqlDbType.NVarChar).Value = lesToBeCreated.LesType;
                 cmd.Parameters.Add("@LesDescription", SqlDbType.NVarChar).Value = lesToBeCreated.LesDescription;
+                //Tells the database to execute the sql commands and ansign an int to LesId and set lesToBeCreated.LesId to said ID
                 lesToBeCreated.LesId = Convert.ToInt32(cmd.ExecuteScalar());
             }
         }
 
-        public void RetrieveLessonData(int index)
+        //Retrieves the data of a specific row in the database where the row number is equal to dbRowNum + 1
+        public void RetrieveLessonData(int dbRowNum)
         {
+            //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
+                //Opens said connection
                 con.Open();
-                SqlCommand cmd = new SqlCommand("SELECT PK_LesID, LesName, LesType, LesDescription FROM VK_Lessons ORDER BY PK_LesID ASC OFFSET @Index ROWS FETCH NEXT 1 ROW ONLY", con);
+                //Creates a cmd SqlCommand, which SELECTs a specific row 
+                SqlCommand cmd = new SqlCommand("SELECT PK_LesID, LesName, LesType, LesDescription FROM VK_Lessons ORDER BY PK_LesID ASC OFFSET @dbRowNum ROWS FETCH NEXT 1 ROW ONLY", con);
 
-                if (index < 0)
+                //Set dbRowNum to 0 if under 0
+                if (dbRowNum < 0)
                 {
-                    index = 0;
+                    dbRowNum = 0;
                 }
-                cmd.Parameters.AddWithValue("@Index", index);
-                
+                //Gives @dbRowNum the value of dbRowNum
+                cmd.Parameters.AddWithValue("@dbRowNum", dbRowNum);
+
+                //Set up a data reader called dr, which reads the data from cmd (the previous sql command)
                 using (SqlDataReader dr = cmd.ExecuteReader())
                 {
+                    //While-loop running while dr is reading 
                     while (dr.Read())
                     {
+                        //Sets lesToBeRetrieve a new empty Lesson, which is then filled
                         lesToBeRetrieved = new Lesson(0, "", "", "")
                         {
+                            //Sets the attributes of lesToBeRetrieved equal to the data from the current row of the database
                             LesId = int.Parse(dr["PK_LesID"].ToString()),
                             LesName = dr["LesName"].ToString(),
                             LesType = dr["LesType"].ToString(),
@@ -236,16 +337,25 @@ namespace VindegadeKS_WPF
             }
         }
 
-        public void UpdateLesson(Lesson lesToBeUpdated)
+        //Edits the data of a previously existing Lesson
+        public void EditLesson(Lesson lesToBeUpdated)
         {
+            //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
+                //Opens said connection
                 con.Open();
+
+                //Creates a cmd SqlCommand, which UPDATEs the attributes of a specific row in the table, based on the LesId
                 SqlCommand cmd = new SqlCommand("UPDATE VK_Lessons SET LesName = @LesName, LesType = @LesType, LesDescription = @LesDescription WHERE PK_LesID = @LesId", con);
+
+                //Gives @attribute the value of attribute
                 cmd.Parameters.AddWithValue("@LesName", lesToBeUpdated.LesName);
                 cmd.Parameters.AddWithValue("@LesType", lesToBeUpdated.LesType);
                 cmd.Parameters.AddWithValue("@LesDescription", lesToBeUpdated.LesDescription);
                 cmd.Parameters.AddWithValue("@LesId", lesToBeUpdated.LesId);
+                
+                //Tells the database to execute the cmd sql command
                 cmd.ExecuteNonQuery();
             }
         }
