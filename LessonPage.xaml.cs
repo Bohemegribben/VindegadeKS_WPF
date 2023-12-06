@@ -22,6 +22,10 @@ namespace VindegadeKS_WPF
             ListBoxFunction();
 
             ComboBoxFunction();
+
+            Les_Save_Button.IsEnabled = false;
+            Les_Edit_Button.IsEnabled = false;
+            Les_Delete_Button.IsEnabled = false;
         }
 
         public Lesson CurrentLesson = new Lesson();
@@ -32,7 +36,10 @@ namespace VindegadeKS_WPF
          //Buttons
         private void Les_Add_Button_Click(object sender, RoutedEventArgs e)
         {
-            UnlockInputFields(); 
+            UnlockInputFields();
+            Les_Save_Button.IsEnabled = true;
+            Les_Edit_Button.IsEnabled= false;
+            Les_Delete_Button.IsEnabled= false;
         }
 
         private void Les_Save_Button_Click(object sender, RoutedEventArgs e)
@@ -57,6 +64,11 @@ namespace VindegadeKS_WPF
             Les_Name_TextBox.Text = "Modul ";
             Les_Type_ComboBox.SelectedIndex = 0;
             Les_Description_TextBox.Text = "Læringsmål ";
+
+            Les_Add_Button.IsEnabled = true;
+            Les_Save_Button.IsEnabled = false;
+            Les_Edit_Button.IsEnabled = false;
+            Les_Delete_Button.IsEnabled = false;
         }
 
         private void Les_Edit_Button_Click(object sender, RoutedEventArgs e)
@@ -67,12 +79,22 @@ namespace VindegadeKS_WPF
             Les_Name_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Name;
             Les_Type_ComboBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Type;
             Les_Description_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Description;
+
+            Les_Add_Button.IsEnabled=false;
+            Les_Save_Button.IsEnabled = true;
+            Les_Edit_Button.IsEnabled = false;
+
         }
 
         private void Les_Delete_Button_Click(object sender, RoutedEventArgs e)
         {
             //ClearInputFields();
-
+            /*
+            Les_Add_Button.IsEnabled = true;
+            Les_Save_Button.IsEnabled = false;
+            Les_Edit_Button.IsEnabled = false;
+            Les_Delete_Button.IsEnabled = false;
+            */
         }
 
         #region ListBox
@@ -90,8 +112,12 @@ namespace VindegadeKS_WPF
                 Les_DisName_TextBlock.Text = "Modul Navn: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Name;
                 Les_DisType_TextBlock.Text = "Kørekorts Type: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Type;
                 Les_DisDescription_TextBlock.Text = "Beskrivelse: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Description;
+                
                 currentItem = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Id;
-
+                
+                Les_Save_Button.IsEnabled = false;
+                Les_Edit_Button.IsEnabled = true;
+                Les_Delete_Button.IsEnabled = true;
             }
         }
 
