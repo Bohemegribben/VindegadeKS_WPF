@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:VindegadeKS_WPF"
       mc:Ignorable="d"
       Background="DimGray"
-      d:DesignHeight="1000" d:DesignWidth="680"
+      d:DesignHeight="850" d:DesignWidth="680"
       Title="LessonPage">
 
     <Grid>
@@ -21,7 +21,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <!-- Change what it's binding to based on what you want written in the ListBoxItem -->
-                    <TextBlock Text="{Binding SetUp}" />
+                    <TextBlock Text="{Binding Name}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
         <!-- Remember to close the ListBox -->
@@ -47,8 +47,8 @@
         <Label Content="Beskrivelse" HorizontalAlignment="Left" Margin="20,605,0,0" VerticalAlignment="Top" FontSize="20" Height="50" VerticalContentAlignment="Center"/>
         
         <!-- Input boxes -->
-        <TextBox  x:Name="Les_Name_TextBox" HorizontalAlignment="Left" Margin="140,465,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10" TextChanged="Les_Name_TextBox_TextChanged"/>
-        <ComboBox x:Name="Les_Type_ComboBox" HorizontalAlignment="Left" Margin="140,535,0,0" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10" SelectionChanged="Les_Type_ComboBox_SelectionChanged"/>
-        <TextBox  x:Name="Les_Description_TextBox"  HorizontalAlignment="Left" Margin="140,605,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="315" Height="375" FontSize="20" Padding="10" AcceptsReturn="True" TextChanged="Les_Description_TextBox_TextChanged"/>
+        <TextBox  x:Name="Les_Name_TextBox" Text="Modul " HorizontalAlignment="Left" Margin="140,465,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10"/>
+        <ComboBox x:Name="Les_Type_ComboBox" HorizontalAlignment="Left" Margin="140,535,0,0" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10"/>
+        <TextBox  x:Name="Les_Description_TextBox" Text="Læringsmål " HorizontalAlignment="Left" Margin="140,605,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="315" Height="225" FontSize="20" Padding="10" AcceptsReturn="True"/>
     </Grid>
 </Page>
