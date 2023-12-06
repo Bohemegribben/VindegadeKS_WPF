@@ -27,7 +27,7 @@ namespace VindegadeKS_WPF
         public InstructorPage()
         {
             InitializeComponent();
-            RetrieveInstructorData();
+            RetrieveInstructorData(0);
             LockInputFields();
         }
 
@@ -107,27 +107,28 @@ namespace VindegadeKS_WPF
             }
         }
 
-        public void RetrieveInstructorData()
+        
+        public void RetrieveInstructorData(int index)
         {
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
                 con.Open();
-                SqlCommand cmd = new SqlCommand("SELECT PK_InstID, InstFirstName, InstLastName, InstPhone, InstEmail FROM VK_Instructors ORDER BY PK_InstID ASC", con);
-                SqlCommand count = new SqlCommand("SELECT COUNT(PK_InstID) from VK_Instructors", con);
-                int intCount = count.ExecuteNonQuery();
-
-                /*
+                SqlCommand cmd = new SqlCommand("SELECT PK_InstID, InstFirstName, InstLastName, InstPhone, InstEmail FROM VK_Instructors ORDER BY PK_InstID ASC OFFSET @Index ROWS FETCH NEXT 1 ROW ONLY", con);
+                
+                SqlCommand count = new SqlCommand("SELECT COUNT(PK_InstID) FROM VK_Instructors", con);
+                int intCount = (int)count.ExecuteScalar();
+                
                 if (index < 0)
                 {
                     index = 0;
                 }
                 cmd.Parameters.AddWithValue("@Index", index);
-                */
+                
                 using (SqlDataReader dr = cmd.ExecuteReader())
                 {
                     List<InstListBoxInstructors> instructors = new List<InstListBoxInstructors>();
 
-                    if (dr.Read())
+                    while (dr.Read())
                     {
                         Instructor instructorToBeRetrieved = new Instructor(0, "", "", "", "")
                         {
@@ -148,17 +149,15 @@ namespace VindegadeKS_WPF
                             });
 
                             instructors[i].Setup = $"{instructors[i].FirstName} {instructors[i].LastName}\n{instructors[i].Phone}\n{instructors[i].Email}";
+                            Inst_DisInst_ListBox.ItemsSource = instructors;
                         }
-
-                        Inst_DisInst_ListBox.ItemsSource = instructors;
                     }
-
-                    else
-                    { }
                 }
             }
         }
+        
 
+        // Clears inputfields after saving to DB
         private void ClearInput()
         {
             Inst_FirstName_TextBox.Clear();
@@ -167,6 +166,7 @@ namespace VindegadeKS_WPF
             Inst_Email_TextBox.Clear();
         }
 
+        //Locks all inputfields, so that they cannot be edited
         private void LockInputFields()
         {
             Inst_FirstName_TextBox.IsEnabled = false;
