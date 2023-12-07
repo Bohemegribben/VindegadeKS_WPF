@@ -13,6 +13,7 @@ namespace VindegadeKS_WPF
         public string InstLastName { get; set; }
         public string InstPhone { get; set; }
         public string InstEmail { get; set; }
+        public string Setup { get; set; } // bruges af instructor-page til opsætning af listbox
 
         public Instructor(int _instId, string _instFirstName, string _instLastName, string _instPhone, string _instEmail)
         {

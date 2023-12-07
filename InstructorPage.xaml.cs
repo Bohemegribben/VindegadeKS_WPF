@@ -41,7 +41,7 @@ namespace VindegadeKS_WPF
         {
             if (Inst_DisInst_ListBox.SelectedItem != null)
             {
-                currentItem = (Inst_DisInst_ListBox.SelectedItem as InstListBoxItems).Id;
+                currentItem = (Inst_DisInst_ListBox.SelectedItem as Instructor).InstId;
             }
         }
 
@@ -72,10 +72,10 @@ namespace VindegadeKS_WPF
             UnlockInputFields();
             edit = true;
             CurrentInstructor.InstId = currentItem;
-            Inst_FirstName_TextBox.Text = (Inst_DisInst_ListBox.SelectedItem as InstListBoxItems).FirstName;
-            Inst_LastName_TextBox.Text = (Inst_DisInst_ListBox.SelectedItem as InstListBoxItems).LastName;
-            Inst_Phone_TextBox.Text = (Inst_DisInst_ListBox.SelectedItem as InstListBoxItems).Phone;
-            Inst_Email_TextBox.Text = (Inst_DisInst_ListBox.SelectedItem as InstListBoxItems).Email;
+            Inst_FirstName_TextBox.Text = (Inst_DisInst_ListBox.SelectedItem as Instructor).InstFirstName;
+            Inst_LastName_TextBox.Text = (Inst_DisInst_ListBox.SelectedItem as Instructor).InstLastName;
+            Inst_Phone_TextBox.Text = (Inst_DisInst_ListBox.SelectedItem as Instructor).InstPhone;
+            Inst_Email_TextBox.Text = (Inst_DisInst_ListBox.SelectedItem as Instructor).InstEmail;
         }
 
         private void Inst_Delete_Button_Click(object sender, RoutedEventArgs e)
@@ -175,16 +175,6 @@ namespace VindegadeKS_WPF
             }
         }
 
-        public class InstListBoxItems
-        {
-            public int Id { get; set; }
-            public string FirstName { get; set; }
-            public string LastName { get; set; }
-            public string Phone { get; set; }
-            public string Email { get; set; }
-            public string Setup { get; set; }
-        }
-
         private void ListBoxFunction()
         {
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
@@ -193,24 +183,24 @@ namespace VindegadeKS_WPF
                 SqlCommand count = new SqlCommand("SELECT COUNT(PK_InstID) FROM VK_Instructors", con);
                 int intCount = (int)count.ExecuteScalar();
 
-                List<InstListBoxItems> items = new List<InstListBoxItems>();
+                List<Instructor> instructors = new List<Instructor>();
 
                 for (int i = 0; i < intCount; i++)
                 {
                     RetrieveInstructorData(i);
 
-                    items.Add(new InstListBoxItems()
+                    instructors.Add(new Instructor()
                     {
-                        Id = instructorToBeRetrieved.InstId,
-                        FirstName = instructorToBeRetrieved.InstFirstName,
-                        LastName = instructorToBeRetrieved.InstLastName,
-                        Phone = instructorToBeRetrieved.InstPhone,
-                        Email = instructorToBeRetrieved.InstEmail
+                        InstId = instructorToBeRetrieved.InstId,
+                        InstFirstName = instructorToBeRetrieved.InstFirstName,
+                        InstLastName = instructorToBeRetrieved.InstLastName,
+                        InstPhone = instructorToBeRetrieved.InstPhone,
+                        InstEmail = instructorToBeRetrieved.InstEmail
                     });
 
-                    items[i].Setup = $"{items[i].FirstName} {items[i].LastName}\n{items[i].Phone}\n{items[i].Email}";
+                    instructors[i].Setup = $"{instructors[i].InstFirstName} {instructors[i].InstLastName}\n{instructors[i].InstPhone}\n{instructors[i].InstEmail}";
                 }
-                Inst_DisInst_ListBox.ItemsSource = items;
+                Inst_DisInst_ListBox.ItemsSource = instructors;
             }
         }
 
