@@ -30,7 +30,9 @@ namespace VindegadeKS_WPF
 
         ClassStuConnection conToBeRetrieved;
         Class classToBeRetrieved;
-        string currentItem = ClassPage.currentItem;
+        Class currentClass = new Class();
+        string currentItem = "Spring20-3"; //Send something when opening page
+        string newName;
 
         public class ClassStuConnection
         {
@@ -46,16 +48,26 @@ namespace VindegadeKS_WPF
 
         private void Class_Sub_Edit_Button_Click(object sender, RoutedEventArgs e)
         {
-            RetrieveClassData(currentItem);
+            RetrieveClassData(0); //String int weirdness (currentItem)
             Class_Sub_Year_TextBox.Text = classToBeRetrieved.ClassYear;
             Class_Sub_Quarter_TextBox.Text = classToBeRetrieved.ClassQuarter.ToString();
             Class_Sub_ClassNumber_TextBox.Text = classToBeRetrieved.ClassNumber;
             Class_Sub_LicenseType_TextBox.Text = classToBeRetrieved.ClassLicenseType.ToString();
+            Class_Sub_ClassNumber_TextBox.IsEnabled = true;
+            Class_Sub_Year_TextBox.IsEnabled = true;
         }
 
         private void Class_Sub_Save_Button_Click(object sender, RoutedEventArgs e)
         {
-            UpdateClass(currentItem);
+            Class_Sub_ClassNumber_TextBox.IsEnabled = false;
+            Class_Sub_Year_TextBox.IsEnabled = false;
+            currentClass.ClassName = currentItem;
+            currentClass.ClassYear = Class_Sub_Year_TextBox.Text;
+            currentClass.ClassQuarter = (Quarter)Enum.Parse(typeof(Quarter), Class_Sub_Quarter_TextBox.Text);
+            currentClass.ClassLicenseType = (LicenseType)Enum.Parse(typeof(LicenseType), Class_Sub_LicenseType_TextBox.Text);
+            currentClass.ClassNumber = Class_Sub_ClassNumber_TextBox.Text;
+            newName = $"{currentClass.ClassQuarter}{currentClass.ClassYear}-{currentClass.ClassNumber}";
+            UpdateClass(currentClass);
         }
 
         #region Database
@@ -142,13 +154,17 @@ namespace VindegadeKS_WPF
 
         #region Class
         //Retrieves the data of a specific row in the database where the row number is equal to dbRowNum + 1
-        public void RetrieveClassData(string dbRowNum)
+        public void RetrieveClassData(int dbRowNum)
         {
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
                 con.Open();
                 SqlCommand cmd = new SqlCommand("SELECT PK_ClassName, ClassYear, ClassNumber, ClassQuarter, ClassLicenseType FROM VK_Classes ORDER BY PK_ClassName ASC OFFSET @dbRowNum ROWS FETCH NEXT 1 ROW ONLY", con);
 
+                if(dbRowNum < 0) 
+                {
+                    dbRowNum = 0;
+                }
                 cmd.Parameters.AddWithValue("@dbRowNum", dbRowNum);
 
                 using (SqlDataReader dr = cmd.ExecuteReader())
@@ -178,10 +194,11 @@ namespace VindegadeKS_WPF
                 con.Open();
 
                 //Creates a cmd SqlCommand, which UPDATEs the attributes of a specific row in the table, based on the LesId
-                SqlCommand cmd = new SqlCommand("UPDATE VK_Classes SET ClassYear = @ClassYear, ClassNumber = @ClassNumber, ClassQuarter = @ClassQuarter, ClassLicenseType = @ClassLicenseType WHERE PK_ClassName = @PK_ClassName", con);
+                SqlCommand cmd = new SqlCommand("UPDATE VK_Classes SET ClassYear = @ClassYear, ClassNumber = @ClassNumber, ClassQuarter = @ClassQuarter, ClassLicenseType = @ClassLicenseType, PK_ClassName = @NewClassName WHERE PK_ClassName = @PK_ClassName", con);
 
                 //Gives @attribute the value of attribute
-                cmd.Parameters.AddWithValue("@PK_ClassName", classToBeUpdated.ClassName);
+                cmd.Parameters.AddWithValue("@PK_ClassName", currentItem);
+                cmd.Parameters.AddWithValue("@NewClassName", newName);
                 cmd.Parameters.AddWithValue("@ClassYear", classToBeUpdated.ClassYear);
                 cmd.Parameters.AddWithValue("@ClassNumber", classToBeUpdated.ClassNumber);
                 cmd.Parameters.AddWithValue("@ClassQuarter", classToBeUpdated.ClassQuarter);
@@ -190,11 +207,11 @@ namespace VindegadeKS_WPF
                 //Tells the database to execute the cmd sql command
                 cmd.ExecuteNonQuery();
 
-                SqlCommand updateName = new SqlCommand("UPDATE VK_Classes SET PK_ClassName = @PK_ClassName WHERE ClassYear = @ClassYear AND ClassNumber = @ClassNumber AND ClassQuarter = @ClassQuarter AND ClassLicenseType = @ClassLicenseType", con);
+                /*SqlCommand updateName = new SqlCommand("UPDATE VK_Classes SET PK_ClassName = @PK_ClassName WHERE ClassYear = @ClassYear AND ClassNumber = @ClassNumber AND ClassQuarter = @ClassQuarter AND ClassLicenseType = @ClassLicenseType", con);
 
                 updateName.Parameters.AddWithValue("@PK_ClassName", $"{classToBeUpdated.ClassQuarter}{classToBeUpdated.ClassYear}-{classToBeUpdated.ClassNumber}");
 
-                cmd.ExecuteNonQuery();
+                cmd.ExecuteNonQuery();*/
             }
         }
         //Deletes the selected connection from the database

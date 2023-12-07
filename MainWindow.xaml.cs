@@ -90,5 +90,10 @@ namespace VindegadeKS_WPF
             Menu_Les_Button.Background = Brushes.LightGray;
             Menu_Apmt_Button.Background = Brushes.LightGray;
         }
+
+        private void Menu_ClassSub_Button_Click(object sender, RoutedEventArgs e)
+        {
+            PageView.Content = new Class_Sub_ShowClass_Page();
+        }
     }
 }

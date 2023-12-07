@@ -20,6 +20,7 @@
             <Button x:Name="Menu_Class_Button" HorizontalAlignment="Left" Margin="10,0,0,0" Content="HOLD" Height="35" Width="100" FontSize="16" Click="Menu_Class_Button_Click"/>
             <Button x:Name="Menu_Inst_Button" HorizontalAlignment="Left" Margin="10,0,0,0" Content="UNDERVISER" Height="35" Width="100" FontSize="16" Click="Menu_Inst_Button_Click"/>
             <Button x:Name="Menu_Les_Button" HorizontalAlignment="Left" Margin="10,0,0,0" Content="LEKTIONER" Height="35" Width="100" FontSize="16" Click="Menu_Les_Button_Click"/>
+            <Button x:Name="Menu_ClassSub_Button" HorizontalAlignment="Left" Margin="10,0,0,0" Content="ClassSub" Height="35" Width="100" FontSize="16" Click="Menu_ClassSub_Button_Click"/>
         </StackPanel>
         <Frame x:Name="PageView" Margin="120,0,0,0" NavigationUIVisibility="Hidden"/>
     </Grid>
