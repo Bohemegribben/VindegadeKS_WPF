@@ -126,7 +126,7 @@ namespace VindegadeKS_WPF
                 {
                     while (dr.Read())
                     {
-                        classToBeRetrieved = new Class(default, "", "", default)
+                        classToBeRetrieved = new Class(default, "", "", default, default) // problemer
                         {
                             ClassName = dr["PK_ClassName"].ToString(),
                             ClassYear = dr["ClassYear"].ToString(),

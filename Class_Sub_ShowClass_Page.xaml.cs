@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 namespace VindegadeKS_WPF
 {
     /// <summary>
@@ -216,7 +217,5 @@ namespace VindegadeKS_WPF
         #endregion
 
         #endregion
-
-       
     }
 }
