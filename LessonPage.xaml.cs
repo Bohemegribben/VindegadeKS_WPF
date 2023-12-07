@@ -65,8 +65,8 @@ namespace VindegadeKS_WPF
         {
             //Updates the displaypanel to reflect the newly saved Lesson
             Les_DisName_TextBlock.Text = "Modul Navn: " + Les_Name_TextBox.Text;
-            Les_DisType_TextBlock.Text = "Kørekorts Type: " + Les_Type_ComboBox.Text;
-            Les_DisDescription_TextBlock.Text = "Beskrivelse: " + Les_Description_TextBox.Text;
+            Les_DisType_TextBlock.Text = "Modul Type: " + Les_Type_ComboBox.Text;
+            Les_DisDescription_TextBlock.Text = "Modul Beskrivelse: " + Les_Description_TextBox.Text;
 
             //Sets CurrentLesson equal to the input fields
             CurrentLesson.LesName = Les_Name_TextBox.Text;
@@ -118,24 +118,27 @@ namespace VindegadeKS_WPF
             Les_Add_Button.IsEnabled = false;
             Les_Save_Button.IsEnabled = true;
             Les_Edit_Button.IsEnabled = false;
+            Les_Delete_Button.IsEnabled = false;
 
         }
 
-        //Lets the user delete previously created Lessons
+        //Lets the user delete previously created Lessons - More details in InstructorPage.xaml.cs
         private void Les_Delete_Button_Click(object sender, RoutedEventArgs e)
         {
-            //NOT CREATED YET
-            //Evt kun mulig hvis edit = true?
+            //Sets CurrentLesson ID to the currently selected item
+            CurrentLesson.LesId = currentItem;
 
-            /*
-            //Clears the input fields
+            //Runs DeleteLesson while feeding it CurrentLesson ID
+            DeleteLesson(CurrentLesson.LesId);
+            ListBoxFunction();
             ClearInputFields();
+            
             //Controls which button the user can interact with - User needs able to add new Lesson, but nothing else
             Les_Add_Button.IsEnabled = true;
             Les_Save_Button.IsEnabled = false;
             Les_Edit_Button.IsEnabled = false;
             Les_Delete_Button.IsEnabled = false;
-            */
+            
         }
         #endregion
 
@@ -152,8 +155,8 @@ namespace VindegadeKS_WPF
                 //After the equal sign; (#ListBoxName.SelectedItem as #itemClass).#attribute;
                 //The parts after a #, are the parts that needs to change based on your page
                 Les_DisName_TextBlock.Text = "Modul Navn: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Name;
-                Les_DisType_TextBlock.Text = "Kørekorts Type: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Type;
-                Les_DisDescription_TextBlock.Text = "Beskrivelse: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Description;
+                Les_DisType_TextBlock.Text = "Modul Type: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Type;
+                Les_DisDescription_TextBlock.Text = "Modul Beskrivelse: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Description;
                 
                 //Sets currentItem to equal the ID of selected item
                 currentItem = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Id;
@@ -227,10 +230,9 @@ namespace VindegadeKS_WPF
         {
             //New list and datapoints for Combobox
             List<LesComboBoxType> types = new List<LesComboBoxType>();
-            types.Add(new LesComboBoxType { LicenseType = "B", DisplayValue = "Kørekort B" });
-            types.Add(new LesComboBoxType { LicenseType = "A", DisplayValue = "Kørekort A" });
-            types.Add(new LesComboBoxType { LicenseType = "A1", DisplayValue = "Kørekort A1" });
-            types.Add(new LesComboBoxType { LicenseType = "A2", DisplayValue = "Kørekort A2" });
+            types.Add(new LesComboBoxType { TypeInDatabase = "Teori", DisplayValue = "Teorisk modul" });
+            types.Add(new LesComboBoxType { TypeInDatabase = "Praktisk_Hold", DisplayValue = "Praktisk m/ hold" });
+            types.Add(new LesComboBoxType { TypeInDatabase = "Praktisk_Solo", DisplayValue = "Praktisk m/ individuel studerende" });
 
             //Set the ItemsSource
             Les_Type_ComboBox.ItemsSource = types;
@@ -244,7 +246,7 @@ namespace VindegadeKS_WPF
         public class LesComboBoxType
         {
             //The attributes of the ComboBoxItems for the ComboBox
-            public string LicenseType { get; set; }
+            public string TypeInDatabase { get; set; }
             public string DisplayValue { get; set; }
         }
         #endregion
@@ -357,6 +359,26 @@ namespace VindegadeKS_WPF
                 
                 //Tells the database to execute the cmd sql command
                 cmd.ExecuteNonQuery();
+            }
+        }
+
+        //Deletes the selected item from the database
+        public void DeleteLesson(int lesToBeDeleted)
+        {
+            //Setting up a connection to the database
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                //Opens said connection
+                con.Open();
+                
+                //Creates a cmd SqlCommand, which DELETEs a specific row in the table, based on the LesId
+                SqlCommand cmd = new SqlCommand("DELETE FROM VK_Lessons WHERE PK_LesId = @PK_LesId", con);
+
+                //Gives @PK_LesId the value of lesToBeDeleted
+                cmd.Parameters.AddWithValue("@PK_LesId", lesToBeDeleted);
+                
+                //Tells the database to execute the cmd sql command
+                cmd.ExecuteScalar();
             }
         }
         #endregion
