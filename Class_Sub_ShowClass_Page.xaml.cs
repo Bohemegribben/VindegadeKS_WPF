@@ -48,11 +48,14 @@ namespace VindegadeKS_WPF
         {
             RetrieveClassData(currentItem);
             Class_Sub_Year_TextBox.Text = classToBeRetrieved.ClassYear;
+            Class_Sub_Quarter_TextBox.Text = classToBeRetrieved.ClassQuarter.ToString();
+            Class_Sub_ClassNumber_TextBox.Text = classToBeRetrieved.ClassNumber;
+            Class_Sub_LicenseType_TextBox.Text = classToBeRetrieved.ClassLicenseType.ToString();
         }
 
         private void Class_Sub_Save_Button_Click(object sender, RoutedEventArgs e)
         {
-
+            UpdateClass(currentItem);
         }
 
         #region Database
@@ -166,7 +169,7 @@ namespace VindegadeKS_WPF
         }
 
         //Edits the data of a previously existing Lesson
-        public void EditClass(Class classToBeUpdated)
+        public void UpdateClass(Class classToBeUpdated)
         {
             //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))

@@ -35,9 +35,9 @@ namespace VindegadeKS_WPF
         }
 
         //Create CurrentLesson to contain current object - Needed in: Save_Button_Click & Edit_Button_Click
-        VindegadeKS_WPF.Lesson CurrentLesson = new VindegadeKS_WPF.Lesson();
+        Lesson CurrentLesson = new Lesson();
         //Moved out here instead of staying in 'Retrieve', so ListBoxFunction can access - Needed in: ListBoxFunction & RetrieveData
-        VindegadeKS_WPF.Lesson lesToBeRetrieved;
+        Lesson lesToBeRetrieved;
         //Keeps track of if CurrentLesson is a new object or an old one being edited - Needed in: Add_Button_Click, Save_Button_Click, Edit_Button_Click & ListBox_SelectionChanged
         bool edit = false;
         //Keeps track of the id of ListBoxItem while it's selected - Edit_Button_Click & ListBox_SelectionChanged
@@ -218,14 +218,13 @@ namespace VindegadeKS_WPF
         {
             //New list and datapoints for Combobox
             List<Lesson> types = new List<Lesson>();
-            types.Add(new Lesson { LesType = "Teori", DisplayValue = "Teorisk modul" });
-            types.Add(new Lesson { LesType = "Praktisk_Hold", DisplayValue = "Praktisk m/ hold" });
-            types.Add(new Lesson { LesType = "Praktisk_Solo", DisplayValue = "Praktisk m/ individuel studerende" });
+            types.Add(new Lesson { LesType = "Teori"});
+            types.Add(new Lesson { LesType = "Praktisk_Hold"});
+            types.Add(new Lesson { LesType = "Praktisk_Solo"});
 
             //Set the ItemsSource
             Les_Type_ComboBox.ItemsSource = types;
-            //Sets which attribute is displayed
-            Les_Type_ComboBox.DisplayMemberPath = "DisplayValue";
+           
             //Sets default choice
             Les_Type_ComboBox.SelectedIndex = 0;
         }
@@ -259,7 +258,7 @@ namespace VindegadeKS_WPF
 
         #region Database
         //Create new row in the database from lesToBeCreated
-        public void SaveNewLesson(VindegadeKS_WPF.Lesson lesToBeCreated)
+        public void SaveNewLesson(Lesson lesToBeCreated)
         {
             //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
@@ -306,7 +305,7 @@ namespace VindegadeKS_WPF
                     while (dr.Read())
                     {
                         //Sets lesToBeRetrieve a new empty Lesson, which is then filled
-                        lesToBeRetrieved = new VindegadeKS_WPF.Lesson(0, "", "", "")
+                        lesToBeRetrieved = new Lesson(0, "", "", "")
                         {
                             //Sets the attributes of lesToBeRetrieved equal to the data from the current row of the database
                             LesId = int.Parse(dr["PK_LesID"].ToString()),
@@ -320,7 +319,7 @@ namespace VindegadeKS_WPF
         }
 
         //Edits the data of a previously existing Lesson
-        public void EditLesson(VindegadeKS_WPF.Lesson lesToBeUpdated)
+        public void EditLesson(Lesson lesToBeUpdated)
         {
             //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
