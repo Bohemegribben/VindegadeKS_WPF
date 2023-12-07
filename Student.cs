@@ -14,6 +14,7 @@ namespace VindegadeKS_WPF
         public string StuPhone { get; set; }
         public string StuEmail { get; set; }
 
+        // Constructor
         public Student(string _stuCPR, string _stuFirstName, string _stuLastName, string _stuPhone, string _stuEmail)
         {
             StuCPR = _stuCPR;
