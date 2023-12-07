@@ -110,9 +110,7 @@ namespace VindegadeKS_WPF
             CurrentLesson.LesId = currentItem;
 
             //Sets the input fields to equal the info from the ListBoxItems
-            Les_Name_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Name;
-            Les_Type_ComboBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Type;
-            Les_Description_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Description;
+            UpdateDisplaypanel();
 
             //Controls which button the user can interact with - User needs able to save, but nothing else
             Les_Add_Button.IsEnabled = false;
@@ -152,14 +150,10 @@ namespace VindegadeKS_WPF
                 //Everything inside of the if-statement will likely have to be personalised 
 
                 //Changes the text from the display window 
-                //After the equal sign; (#ListBoxName.SelectedItem as #itemClass).#attribute;
-                //The parts after a #, are the parts that needs to change based on your page
-                Les_DisName_TextBlock.Text = "Modul Navn: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Name;
-                Les_DisType_TextBlock.Text = "Modul Type: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Type;
-                Les_DisDescription_TextBlock.Text = "Modul Beskrivelse: " + (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Description;
-                
+                UpdateDisplaypanel();
+
                 //Sets currentItem to equal the ID of selected item
-                currentItem = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Id;
+                currentItem = (Les_DisLes_ListBox.SelectedItem as Lesson).Id;
 
                 //Sets edit to false, as it is impossible for it to be true currently
                 edit = false;
@@ -274,6 +268,16 @@ namespace VindegadeKS_WPF
             Les_Name_TextBox.Clear();
             Les_Type_ComboBox.SelectedItem = null;
             Les_Description_TextBox.Clear();
+        }
+
+        //Sets the input fields to equal the info from the ListBoxItems
+        //After the equal sign; (#ListBoxName.SelectedItem as #itemClass).#attribute;
+        //The parts after a #, are the parts that needs to change based on your page
+        private void UpdateDisplaypanel()
+        {
+            Les_Name_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).LesName;
+            Les_Type_ComboBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).LesType;
+            Les_Description_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).LesDescription;
         }
         #endregion
 

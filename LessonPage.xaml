@@ -21,7 +21,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <!-- Change what it's binding to based on what you want written in the ListBoxItem -->
-                    <TextBlock Text="{Binding Name}" />
+                    <TextBlock x:Name="ListBoxItemTextBlock" Text="{Binding Name}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
         <!-- Remember to close the ListBox -->
