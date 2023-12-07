@@ -153,7 +153,7 @@ namespace VindegadeKS_WPF
                 UpdateDisplaypanel();
 
                 //Sets currentItem to equal the ID of selected item
-                currentItem = (Les_DisLes_ListBox.SelectedItem as Lesson).Id;
+                currentItem = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Id;
 
                 //Sets edit to false, as it is impossible for it to be true currently
                 edit = false;
@@ -275,9 +275,9 @@ namespace VindegadeKS_WPF
         //The parts after a #, are the parts that needs to change based on your page
         private void UpdateDisplaypanel()
         {
-            Les_Name_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).LesName;
-            Les_Type_ComboBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).LesType;
-            Les_Description_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).LesDescription;
+            Les_Name_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Name;
+            Les_Type_ComboBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Type;
+            Les_Description_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Description;
         }
         #endregion
 
