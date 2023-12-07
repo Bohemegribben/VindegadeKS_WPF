@@ -29,6 +29,8 @@ namespace VindegadeKS_WPF
 
         public Class() : this(default, "", "", LicenseType.B)
         { }
+
+        public string DisplayValue { get; set; }
     }
 
     public enum Quarter { Spring, Summer, Fall, Winter }

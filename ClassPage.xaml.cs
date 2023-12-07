@@ -38,60 +38,52 @@ namespace VindegadeKS_WPF
 
         private void ComboBoxFunctionYear()
         {
-            List<ClassComboBox> years = new List<ClassComboBox>();
+            List<Class> years = new List<Class>();
 
             for (int i = 24; i <= 40; i++)
             {
-                years.Add(new ClassComboBox { Year = $"{i}" });
+                years.Add(new Class { ClassYear = $"{i}" });
             }
             Class_Year_ComboBox.ItemsSource = years;
-            Class_Year_ComboBox.DisplayMemberPath = "Year";
+            Class_Year_ComboBox.DisplayMemberPath = "ClassYear";
             Class_Year_ComboBox.SelectedIndex = 0;
 
         }
         private void ComboBoxFunctionQuarters()
         {
 
-            List<ClassComboBox> quarters = new List<ClassComboBox>();
+            List<Class> quarters = new List<Class>();
 
-            quarters.Add(new ClassComboBox { CQuarter = Quarter.Spring });
-            quarters.Add(new ClassComboBox { CQuarter = Quarter.Summer });
-            quarters.Add(new ClassComboBox { CQuarter = Quarter.Fall });
-            quarters.Add(new ClassComboBox { CQuarter = Quarter.Winter });
+            quarters.Add(new Class { ClassQuarter = Quarter.Spring });
+            quarters.Add(new Class { ClassQuarter = Quarter.Summer });
+            quarters.Add(new Class { ClassQuarter = Quarter.Fall });
+            quarters.Add(new Class { ClassQuarter = Quarter.Winter });
 
             Class_Quarter_ComboBox.ItemsSource = quarters;
-            Class_Quarter_ComboBox.DisplayMemberPath = "CQuarter";
+            Class_Quarter_ComboBox.DisplayMemberPath = "ClassQuarter";
             Class_Quarter_ComboBox.SelectedIndex = 0;
 
         }
         private void ComboBoxFunctionLicenseTypes()
         {
 
-            List<ClassComboBox> licenseTypes = new List<ClassComboBox>();
+            List<Class> licenseTypes = new List<Class>();
 
-            licenseTypes.Add(new ClassComboBox { CLicenseType = LicenseType.B, DisplayValue = "B (Bil – max. 3500 kg)" });
-            licenseTypes.Add(new ClassComboBox { CLicenseType = LicenseType.A1, DisplayValue = "A1 (Lille motorcykel)" });
-            licenseTypes.Add(new ClassComboBox { CLicenseType = LicenseType.A2, DisplayValue = "A2 (Mellemstor motorcykel)" });
-            licenseTypes.Add(new ClassComboBox { CLicenseType = LicenseType.A, DisplayValue = "A (Stor motorcykel)" });
+            licenseTypes.Add(new Class { ClassLicenseType = LicenseType.B, DisplayValue = "B (Bil – max. 3500 kg)" });
+            licenseTypes.Add(new Class { ClassLicenseType = LicenseType.A1, DisplayValue = "A1 (Lille motorcykel)" });
+            licenseTypes.Add(new Class { ClassLicenseType = LicenseType.A2, DisplayValue = "A2 (Mellemstor motorcykel)" });
+            licenseTypes.Add(new Class { ClassLicenseType = LicenseType.A, DisplayValue = "A (Stor motorcykel)" });
 
             Class_LicenseType_ComboBox.ItemsSource = licenseTypes;
             Class_LicenseType_ComboBox.DisplayMemberPath = "DisplayValue";
             Class_LicenseType_ComboBox.SelectedIndex = 0;
         }
 
-        public class ClassComboBox
-        {
-            public string Year { get; set; }
-            public Quarter CQuarter { get; set; }
-            public LicenseType CLicenseType { get; set; }
-            public string DisplayValue { get; set; }
-        }
-
         private void Les_DisLes_ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (Class_DisClass_ListBox.SelectedItem != null)
             {
-                currentItem = (Class_DisClass_ListBox.SelectedItem as ClassListBoxItems).Name;
+                currentItem = (Class_DisClass_ListBox.SelectedItem as Class).ClassName;
             }
         }
 
@@ -103,25 +95,16 @@ namespace VindegadeKS_WPF
                 SqlCommand count = new SqlCommand("SELECT COUNT(PK_ClassName) from VK_Classes", con);
                 int intCount = (int)count.ExecuteScalar();
 
-                List<ClassListBoxItems> items = new List<ClassListBoxItems>();
+                List<Class> items = new List<Class>();
 
                 for (int i = 0; i < intCount; i++)
                 {
                     RetrieveClassData(i);
 
-                    items.Add(new ClassListBoxItems() { Name = classToBeRetrieved.ClassName, Year = classToBeRetrieved.ClassYear, CQuarter = classToBeRetrieved.ClassQuarter, CLicenseType = classToBeRetrieved.ClassLicenseType });
+                    items.Add(new Class() { ClassName = classToBeRetrieved.ClassName, ClassYear = classToBeRetrieved.ClassYear, ClassQuarter = classToBeRetrieved.ClassQuarter, ClassLicenseType = classToBeRetrieved.ClassLicenseType });
                 }
                 Class_DisClass_ListBox.ItemsSource = items;
             }
-        }
-
-        public class ClassListBoxItems
-        {
-            public string Name { get; set; }
-            public string Year { get; set; }
-            public Quarter CQuarter { get; set; }
-            public string Number { get; set; }
-            public LicenseType CLicenseType { get; set; }
         }
 
         public void RetrieveClassData(int dbRowNum)
