@@ -36,9 +36,9 @@ namespace VindegadeKS_WPF
         }
 
         //Create CurrentLesson to contain current object - Needed in: Save_Button_Click & Edit_Button_Click
-        Lesson CurrentLesson = new Lesson();
+        VindegadeKS_WPF.Lesson CurrentLesson = new VindegadeKS_WPF.Lesson();
         //Moved out here instead of staying in 'Retrieve', so ListBoxFunction can access - Needed in: ListBoxFunction & RetrieveData
-        Lesson lesToBeRetrieved;
+        VindegadeKS_WPF.Lesson lesToBeRetrieved;
         //Keeps track of if CurrentLesson is a new object or an old one being edited - Needed in: Add_Button_Click, Save_Button_Click, Edit_Button_Click & ListBox_SelectionChanged
         bool edit = false;
         //Keeps track of the id of ListBoxItem while it's selected - Edit_Button_Click & ListBox_SelectionChanged
@@ -110,7 +110,9 @@ namespace VindegadeKS_WPF
             CurrentLesson.LesId = currentItem;
 
             //Sets the input fields to equal the info from the ListBoxItems
-            UpdateDisplaypanel();
+            Les_Name_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as Lesson).LesName;
+            Les_Type_ComboBox.Text = (Les_DisLes_ListBox.SelectedItem as Lesson).LesType;
+            Les_Description_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as Lesson).LesDescription;
 
             //Controls which button the user can interact with - User needs able to save, but nothing else
             Les_Add_Button.IsEnabled = false;
@@ -150,10 +152,13 @@ namespace VindegadeKS_WPF
                 //Everything inside of the if-statement will likely have to be personalised 
 
                 //Changes the text from the display window 
-                UpdateDisplaypanel();
+                Les_DisName_TextBlock.Text = "Modul Navn: " + (Les_DisLes_ListBox.SelectedItem as Lesson).LesName;
+                Les_DisType_TextBlock.Text = "Modul Type: " + (Les_DisLes_ListBox.SelectedItem as Lesson).LesType;
+                Les_DisDescription_TextBlock.Text = "Modul Beskrivelse: " + (Les_DisLes_ListBox.SelectedItem as Lesson).LesDescription;
+
 
                 //Sets currentItem to equal the ID of selected item
-                currentItem = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Id;
+                currentItem = (Les_DisLes_ListBox.SelectedItem as Lesson).LesId;
 
                 //Sets edit to false, as it is impossible for it to be true currently
                 edit = false;
@@ -181,7 +186,7 @@ namespace VindegadeKS_WPF
 
                 //Make a list with the Item Class from below called items (Name doesn't matter)
                 //LesListBoxItems in my case
-                List<LesListBoxItems> items = new List<LesListBoxItems>();
+                List<Lesson> items = new List<Lesson>();
 
                 //Forloop which adds intCount number of new items to items-list
                 for (int i = 0; i < intCount; i++)
@@ -191,7 +196,7 @@ namespace VindegadeKS_WPF
 
                     //Adds a new item from the item class with specific attributes to the list
                     //The data added comes from RetrieveLessonData
-                    items.Add(new LesListBoxItems() { Id = lesToBeRetrieved.LesId, Name = lesToBeRetrieved.LesName, Type = lesToBeRetrieved.LesType, Description = lesToBeRetrieved.LesDescription });
+                    items.Add(new Lesson() { LesId = lesToBeRetrieved.LesId, LesName = lesToBeRetrieved.LesName, LesType = lesToBeRetrieved.LesType, LesDescription = lesToBeRetrieved.LesDescription });
                     
                     //Only necessary for multi-attribute ListBoxItem
                     //Set up the attribute 'SetUp' which is used to determine the appearance of the ListBoxItem 
@@ -205,7 +210,7 @@ namespace VindegadeKS_WPF
         }
 
         //Class to define the content of the ListBoxItems for the ListBox
-        public class LesListBoxItems
+        /*public class Lesson
         {
             //The attributes of the items for the ListBox
             public int Id { get; set; }
@@ -215,7 +220,7 @@ namespace VindegadeKS_WPF
 
             //Extra attribute, used for visuals (Only needed for multi-attribute views)
             //public string SetUp { get; set; }
-        }
+        }*/
         #endregion
 
         #region ComboBox
@@ -275,15 +280,15 @@ namespace VindegadeKS_WPF
         //The parts after a #, are the parts that needs to change based on your page
         private void UpdateDisplaypanel()
         {
-            Les_Name_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Name;
-            Les_Type_ComboBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Type;
-            Les_Description_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as LesListBoxItems).Description;
+            Les_Name_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as Lesson).LesName;
+            Les_Type_ComboBox.Text = (Les_DisLes_ListBox.SelectedItem as Lesson).LesType;
+            Les_Description_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as Lesson).LesDescription;
         }
         #endregion
 
         #region Database
         //Create new row in the database from lesToBeCreated
-        public void SaveNewLesson(Lesson lesToBeCreated)
+        public void SaveNewLesson(VindegadeKS_WPF.Lesson lesToBeCreated)
         {
             //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
@@ -330,7 +335,7 @@ namespace VindegadeKS_WPF
                     while (dr.Read())
                     {
                         //Sets lesToBeRetrieve a new empty Lesson, which is then filled
-                        lesToBeRetrieved = new Lesson(0, "", "", "")
+                        lesToBeRetrieved = new VindegadeKS_WPF.Lesson(0, "", "", "")
                         {
                             //Sets the attributes of lesToBeRetrieved equal to the data from the current row of the database
                             LesId = int.Parse(dr["PK_LesID"].ToString()),
@@ -344,7 +349,7 @@ namespace VindegadeKS_WPF
         }
 
         //Edits the data of a previously existing Lesson
-        public void EditLesson(Lesson lesToBeUpdated)
+        public void EditLesson(VindegadeKS_WPF.Lesson lesToBeUpdated)
         {
             //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
