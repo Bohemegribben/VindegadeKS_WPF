@@ -12,17 +12,8 @@
     <Grid>
 
         <!-- ListBox items -->
-        <ListBox Width="400" Height="900" Margin="20, 80, 20, 0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="20">
-            <ListBoxItem>ListBox Item #1</ListBoxItem>
-            <ListBoxItem>ListBox Item #2</ListBoxItem>
-            <ListBoxItem>ListBox Item #3</ListBoxItem>
-            <ListBoxItem>ListBox Item #4</ListBoxItem>
-            <ListBoxItem>ListBox Item #5</ListBoxItem>
-            <ListBoxItem>ListBox Item #6</ListBoxItem>
-            <ListBoxItem>ListBox Item #7</ListBoxItem>
-            <ListBoxItem>ListBox Item #8</ListBoxItem>
-            <ListBoxItem>ListBox Item #9</ListBoxItem>
-        </ListBox>
+        <ListBox x:Name="Class_Sub_ShowClass_DisStu_ListBox" Width="400" Height="900" Margin="20, 80, 20, 0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="20"/>
+
 
         <!-- Labels -->
         <Label  Name="Class_ListOfStudents_Label" Content="Liste med elever tilknyttet holdet" HorizontalAlignment="Left" Margin="20,50,0,0" VerticalAlignment="Top" Width="260" Height="30" FontWeight="Bold" FontSize="15"></Label>
@@ -35,7 +26,7 @@
 
         <!-- TextBlocks -->
         <Border BorderBrush="Black" Margin="20,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" BorderThickness="5" Height="40" Width="200">
-            <TextBlock Name="TextBlockClassName" FontWeight="Bold" HorizontalAlignment="Center" Text="Holdnavn" FontSize="20" ></TextBlock>
+            <TextBlock x:Name="Class_Sub_Title_TextBlock" FontWeight="Bold" HorizontalAlignment="Center" Text="Holdnavn" FontSize="20" ></TextBlock>
             <Border.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="10"/>
@@ -44,7 +35,7 @@
         </Border>
 
         <!-- Buttons -->
-        <Button x:Name="Button_Edit_MasterData_Class" Content="REDIGER STAMDATA" FontWeight="Bold" Margin="20,85,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30" Click="Button_Edit_MasterData_Class_Click" >
+        <Button x:Name="Class_Sub_Edit_Button" Content="REDIGER STAMDATA" FontWeight="Bold" Margin="20,85,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="10"/>
@@ -52,7 +43,7 @@
             </Button.Resources>
         </Button>
 
-        <Button x:Name="Button_Save_MasterData_Class" Content="GEM ÆNDRINGER" FontWeight="Bold" Margin="20,330,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30">
+        <Button x:Name="Class_Sub_Save_Button" Content="GEM ÆNDRINGER" FontWeight="Bold" Margin="20,330,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="10"/>
@@ -60,7 +51,8 @@
             </Button.Resources>
         </Button>
 
-        <Button x:Name="Button_Add_Student_Class" Content="TILKNYT NY ELEV TIL HOLD" FontWeight="Bold" Margin="20,400,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30">
+        <!-- Should be CheckComboBox -->
+        <Button x:Name="Class_Sub_AddStu_Button" Content="TILKNYT NY ELEV TIL HOLD" FontWeight="Bold" Margin="20,400,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="10"/>
@@ -68,7 +60,7 @@
             </Button.Resources>
         </Button>
 
-        <Button x:Name="Button_Remove_Student_Class" Content="FJERN ELEV FRA HOLD" FontWeight="Bold" Margin="20,440,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30">
+        <Button x:Name="Class_Sub_DelStu_Button" Content="FJERN ELEV FRA HOLD" FontWeight="Bold" Margin="20,440,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="10"/>
@@ -76,7 +68,7 @@
             </Button.Resources>
         </Button>
 
-        <Button x:Name="Button_Delete_Entire_Class" Content="SLET HOLD" Foreground="Red" FontWeight="Bold" Margin="20,930,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30">
+        <Button x:Name="Class_Sub_DelClass_Button" Content="SLET HOLD" Foreground="Red" FontWeight="Bold" Margin="20,930,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="10"/>
@@ -88,13 +80,13 @@
 
 
         <!-- TextBoxe -->
-        <TextBox x:Name="Class_TextBox_Year" Margin="20,130,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" ></TextBox>
-        <TextBox x:Name="Class_TextBox_Quarter" Margin="20,170,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" ></TextBox>
-        <TextBox x:Name="Class_TextBox_ClassNumber" Margin="20,210,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" ></TextBox>
-        <TextBox x:Name="Class_TextBox_LicenseType" Margin="20,250,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" ></TextBox>
-        <TextBox x:Name="Class_TextBox_NumberOfStudents" Margin="20,290,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" ></TextBox>
-        
-        
+        <TextBox x:Name="Class_Sub_Year_TextBox" Margin="20,130,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" />
+        <TextBox x:Name="Class_Sub_Quarter_TextBox" Margin="20,170,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" />
+        <TextBox x:Name="Class_Sub_ClassNumber_TextBox" Margin="20,210,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" />
+        <TextBox x:Name="Class_Sub_LicenseType_TextBox" Margin="20,250,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" />
+        <TextBox x:Name="Class_Sub_NumberOfStudents_TextBox" Margin="20,290,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" />
+
+
 
     </Grid>
 </Page>
