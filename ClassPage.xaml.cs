@@ -34,8 +34,7 @@ namespace VindegadeKS_WPF
 
         Class CurrentClass = new Class();
         Class classToBeRetrieved;
-        bool edit = false;
-        int currentItem;
+        string currentItem;
 
         private void ComboBoxFunctionYear()
         {
@@ -92,7 +91,7 @@ namespace VindegadeKS_WPF
         {
             if (Class_DisClass_ListBox.SelectedItem != null)
             {
-                currentItem = (Class_DisClass_ListBox.SelectedItem as LesListBoxItems).Id;
+                currentItem = (Class_DisClass_ListBox.SelectedItem as ClassListBoxItems).Name;
             }
         }
 
