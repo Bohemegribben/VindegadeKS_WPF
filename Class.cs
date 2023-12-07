@@ -19,15 +19,16 @@ namespace VindegadeKS_WPF
             set { }
         }
 
-        public Class(Quarter _classQuarter, string _classYear, string _classNumber, LicenseType _classLicenseType)
+        public Class(Quarter _classQuarter, string _classYear, string _classNumber, LicenseType _classLicenseType, string _className)
         {
             ClassQuarter = _classQuarter;
             ClassYear = _classYear;
             ClassNumber = _classNumber;
             ClassLicenseType = _classLicenseType;
+            ClassName = _className;
         }
 
-        public Class() : this(default, "", "", LicenseType.B)
+        public Class() : this(default, "", "", LicenseType.B, "")
         { }
 
         public string DisplayValue { get; set; }

@@ -36,7 +36,7 @@
         </Border>
 
         <!-- Buttons -->
-        <Button x:Name="Class_Sub_Edit_Button" Content="REDIGER STAMDATA" FontWeight="Bold" Margin="20,85,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30">
+        <Button x:Name="Class_Sub_Edit_Button" Content="REDIGER STAMDATA" FontWeight="Bold" Margin="20,85,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30" Click="Class_Sub_Edit_Button_Click">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="10"/>
@@ -44,7 +44,7 @@
             </Button.Resources>
         </Button>
 
-        <Button x:Name="Class_Sub_Save_Button" Content="GEM ÆNDRINGER" FontWeight="Bold" Margin="20,330,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30">
+        <Button x:Name="Class_Sub_Save_Button" Content="GEM ÆNDRINGER" FontWeight="Bold" Margin="20,330,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30" Click="Class_Sub_Save_Button_Click">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="10"/>
