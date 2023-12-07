@@ -21,7 +21,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <!-- Change what it's binding to based on what you want written in the ListBoxItem -->
-                    <TextBlock x:Name="ListBoxItemTextBlock" Text="{Binding LesName}" />
+                    <TextBlock Text="{Binding LesName}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
         <!-- Remember to close the ListBox -->
@@ -30,9 +30,9 @@
 
         <!-- Display with name, type + des from pre-existing lesson -->
         <StackPanel Background="AliceBlue" HorizontalAlignment="Left" Height="425" Margin="20,20,0,0" VerticalAlignment="Top" Width="435">
-            <TextBlock x:Name="Les_DisName_TextBlock" TextWrapping="Wrap" Text="Navn: Helle Nielsen" FontSize="20" Height="50" Margin="10, 10, 10, 0" />
-            <TextBlock x:Name="Les_DisType_TextBlock" TextWrapping="Wrap" Text="Type: Kørekort Q" FontSize="20" Height="50" Margin="10, 10, 10, 0"/>
-            <TextBlock x:Name="Les_DisDescription_TextBlock" TextWrapping="Wrap" Text="Beskrivelse: SAMPLE TEXT" FontSize="20" Height="285" Margin="10, 10, 10, 0"/>
+            <TextBlock x:Name="Les_DisName_TextBlock" TextWrapping="Wrap" Text="Modul Navn: " FontSize="20" Height="50" Margin="10, 10, 10, 0" />
+            <TextBlock x:Name="Les_DisType_TextBlock" TextWrapping="Wrap" Text="Modul Type: " FontSize="20" Height="50" Margin="10, 10, 10, 0"/>
+            <TextBlock x:Name="Les_DisDescription_TextBlock" TextWrapping="Wrap" Text="Modul Beskrivelse: " FontSize="20" Height="285" Margin="10, 10, 10, 0"/>
         </StackPanel>
         
         <!-- Control buttons -->

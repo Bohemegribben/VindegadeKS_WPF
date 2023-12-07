@@ -7,7 +7,6 @@ using System.Data;
 using System.Windows;
 using System.Windows.Controls;
 
-
 namespace VindegadeKS_WPF
 {
     /// <summary>
@@ -132,7 +131,10 @@ namespace VindegadeKS_WPF
             DeleteLesson(CurrentLesson.LesId);
             ListBoxFunction();
             ClearInputFields();
-            
+            Les_DisName_TextBlock.Text = "Modul Navn: ";
+            Les_DisType_TextBlock.Text = "Modul Type: ";
+            Les_DisDescription_TextBlock.Text = "Modul Beskrivelse: ";
+
             //Controls which button the user can interact with - User needs able to add new Lesson, but nothing else
             Les_Add_Button.IsEnabled = true;
             Les_Save_Button.IsEnabled = false;
@@ -208,19 +210,6 @@ namespace VindegadeKS_WPF
                 Les_DisLes_ListBox.ItemsSource = items;
             }
         }
-
-        //Class to define the content of the ListBoxItems for the ListBox
-        /*public class Lesson
-        {
-            //The attributes of the items for the ListBox
-            public int Id { get; set; }
-            public string Name { get; set; }
-            public string Type { get; set; }
-            public string Description { get; set; }
-
-            //Extra attribute, used for visuals (Only needed for multi-attribute views)
-            //public string SetUp { get; set; }
-        }*/
         #endregion
 
         #region ComboBox
@@ -228,10 +217,10 @@ namespace VindegadeKS_WPF
         private void ComboBoxFunction()
         {
             //New list and datapoints for Combobox
-            List<LesComboBoxType> types = new List<LesComboBoxType>();
-            types.Add(new LesComboBoxType { TypeInDatabase = "Teori", DisplayValue = "Teorisk modul" });
-            types.Add(new LesComboBoxType { TypeInDatabase = "Praktisk_Hold", DisplayValue = "Praktisk m/ hold" });
-            types.Add(new LesComboBoxType { TypeInDatabase = "Praktisk_Solo", DisplayValue = "Praktisk m/ individuel studerende" });
+            List<Lesson> types = new List<Lesson>();
+            types.Add(new Lesson { LesType = "Teori", DisplayValue = "Teorisk modul" });
+            types.Add(new Lesson { LesType = "Praktisk_Hold", DisplayValue = "Praktisk m/ hold" });
+            types.Add(new Lesson { LesType = "Praktisk_Solo", DisplayValue = "Praktisk m/ individuel studerende" });
 
             //Set the ItemsSource
             Les_Type_ComboBox.ItemsSource = types;
@@ -239,14 +228,6 @@ namespace VindegadeKS_WPF
             Les_Type_ComboBox.DisplayMemberPath = "DisplayValue";
             //Sets default choice
             Les_Type_ComboBox.SelectedIndex = 0;
-        }
-
-        //Class which defines the ComboBox Data
-        public class LesComboBoxType
-        {
-            //The attributes of the ComboBoxItems for the ComboBox
-            public string TypeInDatabase { get; set; }
-            public string DisplayValue { get; set; }
         }
         #endregion
 
@@ -273,16 +254,6 @@ namespace VindegadeKS_WPF
             Les_Name_TextBox.Clear();
             Les_Type_ComboBox.SelectedItem = null;
             Les_Description_TextBox.Clear();
-        }
-
-        //Sets the input fields to equal the info from the ListBoxItems
-        //After the equal sign; (#ListBoxName.SelectedItem as #itemClass).#attribute;
-        //The parts after a #, are the parts that needs to change based on your page
-        private void UpdateDisplaypanel()
-        {
-            Les_Name_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as Lesson).LesName;
-            Les_Type_ComboBox.Text = (Les_DisLes_ListBox.SelectedItem as Lesson).LesType;
-            Les_Description_TextBox.Text = (Les_DisLes_ListBox.SelectedItem as Lesson).LesDescription;
         }
         #endregion
 
