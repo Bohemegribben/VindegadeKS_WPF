@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,6 +27,7 @@ namespace VindegadeKS_WPF
         public ClassPage()
         {
             InitializeComponent();
+            LockInputFields();
             ListBoxFunction();
             ComboBoxFunctionYear();
             ComboBoxFunctionQuarters();
@@ -34,7 +36,7 @@ namespace VindegadeKS_WPF
 
         Class CurrentClass = new Class();
         Class classToBeRetrieved;
-        string currentItem;
+        public string currentItem;
 
         private void ComboBoxFunctionYear()
         {
@@ -69,13 +71,13 @@ namespace VindegadeKS_WPF
 
             List<Class> licenseTypes = new List<Class>();
 
-            licenseTypes.Add(new Class { ClassLicenseType = LicenseType.B, DisplayValue = "B (Bil – max. 3500 kg)" });
-            licenseTypes.Add(new Class { ClassLicenseType = LicenseType.A1, DisplayValue = "A1 (Lille motorcykel)" });
-            licenseTypes.Add(new Class { ClassLicenseType = LicenseType.A2, DisplayValue = "A2 (Mellemstor motorcykel)" });
-            licenseTypes.Add(new Class { ClassLicenseType = LicenseType.A, DisplayValue = "A (Stor motorcykel)" });
+            licenseTypes.Add(new Class { ClassLicenseType = LicenseType.B /*, DisplayValue = "B (Bil – max. 3500 kg)"*/ });
+            licenseTypes.Add(new Class { ClassLicenseType = LicenseType.A1 /*, DisplayValue = "A1 (Lille motorcykel)"*/ });
+            licenseTypes.Add(new Class { ClassLicenseType = LicenseType.A2 /*, DisplayValue = "A2 (Mellemstor motorcykel)"*/ });
+            licenseTypes.Add(new Class { ClassLicenseType = LicenseType.A /*, DisplayValue = "A (Stor motorcykel)"*/ });
 
             Class_LicenseType_ComboBox.ItemsSource = licenseTypes;
-            Class_LicenseType_ComboBox.DisplayMemberPath = "DisplayValue";
+            Class_LicenseType_ComboBox.DisplayMemberPath = "ClassLicenseType";
             Class_LicenseType_ComboBox.SelectedIndex = 0;
         }
 
@@ -112,7 +114,7 @@ namespace VindegadeKS_WPF
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
                 con.Open();
-                SqlCommand cmd = new SqlCommand("SELECT PK_ClassName, ClassYear, ClassQuarter, ClassLicenseType FROM VK_Classes ORDER BY PK_ClassName ASC OFFSET @dbRowNum ROWS FETCH NEXT 1 ROW ONLY", con);
+                SqlCommand cmd = new SqlCommand("SELECT PK_ClassName, ClassYear, ClassNumber, ClassQuarter, ClassLicenseType FROM VK_Classes ORDER BY PK_ClassName ASC OFFSET @dbRowNum ROWS FETCH NEXT 1 ROW ONLY", con);
 
                 if (dbRowNum < 0)
                 {
@@ -128,12 +130,58 @@ namespace VindegadeKS_WPF
                         {
                             ClassName = dr["PK_ClassName"].ToString(),
                             ClassYear = dr["ClassYear"].ToString(),
+                            ClassNumber = dr["ClassNumber"].ToString(), //hvordan laver vi ClassNumber
                             ClassQuarter = (Quarter)Enum.Parse(typeof(Quarter), dr["ClassQuarter"].ToString()),
                             ClassLicenseType = (LicenseType)Enum.Parse(typeof(LicenseType), dr["ClassLicenseType"].ToString()),
                         };
                     }
                 }
             }
+        }
+
+        private void Class_Create_button_Click(object sender, RoutedEventArgs e)
+        {
+            UnlockInputFields();
+        }
+
+        private void Class_Save_button_Click(object sender, RoutedEventArgs e)
+        {
+            CurrentClass.ClassYear = Class_Year_ComboBox.Text;
+            CurrentClass.ClassNumber = "0";
+            CurrentClass.ClassQuarter = (Quarter)Enum.Parse(typeof(Quarter), Class_Quarter_ComboBox.Text);
+            CurrentClass.ClassLicenseType = (LicenseType)Enum.Parse(typeof(LicenseType), Class_LicenseType_ComboBox.Text);
+            SaveClass(CurrentClass);
+        }
+
+        public void SaveClass(Class classToBeCreated)
+        {
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                con.Open();
+                SqlCommand cmd = new SqlCommand("INSERT INTO VK_Classes (ClassName, ClassYear, ClassNumber, ClassQuarter, ClassLicenseType)" +
+                                                 "VALUES(@ClassName, @ClassYear, @ClassNumber, @ClassQuarter, @ClassLicenseType)" +
+                                                 "SELECT @@IDENTITY", con);
+                cmd.Parameters.Add("@ClassName", SqlDbType.NVarChar).Value = classToBeCreated.ClassName;
+                cmd.Parameters.Add("@ClassYear", SqlDbType.NVarChar).Value = classToBeCreated.ClassYear;
+                cmd.Parameters.Add("@ClassNumber", SqlDbType.NVarChar).Value = classToBeCreated.ClassNumber;
+                cmd.Parameters.Add("@ClassQuarter", SqlDbType.NVarChar).Value = classToBeCreated.ClassQuarter;
+                cmd.Parameters.Add("@ClassLicenseType", SqlDbType.NVarChar).Value = classToBeCreated.ClassLicenseType;
+                cmd.ExecuteScalar(); // problem!!
+            }
+        }
+
+        private void LockInputFields()
+        {
+            Class_Year_ComboBox.IsEnabled = false;
+            Class_Quarter_ComboBox.IsEnabled = false;
+            Class_LicenseType_ComboBox.IsEnabled = false;
+        }
+
+        private void UnlockInputFields()
+        {
+            Class_Year_ComboBox.IsEnabled = true;
+            Class_Quarter_ComboBox.IsEnabled = true;
+            Class_LicenseType_ComboBox.IsEnabled = true;
         }
     }
 }
