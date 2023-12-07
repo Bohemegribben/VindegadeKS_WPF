@@ -8,25 +8,29 @@ namespace VindegadeKS_WPF
 {
     public class Class
     {
-        public string ClassQuarter { get; set; }
+        public Quarter ClassQuarter { get; set; }
         public string ClassYear { get; set; }
         public string ClassNumber { get; set; }
-        public string ClassLicenceType { get; set; }
+        public LicenseType ClassLicenseType { get; set; }
 
         public string ClassName
         {
             get { return $"{ClassQuarter}{ClassYear}-{ClassNumber}"; }
+            set { }
         }
 
-        public Class(string _classQuarter, string _classYear, string _classNumber, string _classLicenceType)
+        public Class(Quarter _classQuarter, string _classYear, string _classNumber, LicenseType _classLicenseType)
         {
             ClassQuarter = _classQuarter;
             ClassYear = _classYear;
             ClassNumber = _classNumber;
-            ClassLicenceType = _classLicenceType;
+            ClassLicenseType = _classLicenseType;
         }
 
-        public Class() : this("", "", "", "")
+        public Class() : this(default, "", "", LicenseType.B)
         { }
     }
+
+    public enum Quarter { Spring, Summer, Fall, Winter }
+    public enum LicenseType { A1, A2, A, B }
 }
