@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
       xmlns:local="clr-namespace:VindegadeKS_WPF"
       mc:Ignorable="d" 
      Background="PaleTurquoise"
@@ -16,13 +17,13 @@
 
 
         <!-- Labels -->
-        <Label  Name="Class_ListOfStudents_Label" Content="Liste med elever tilknyttet holdet" HorizontalAlignment="Left" Margin="20,50,0,0" VerticalAlignment="Top" Width="260" Height="30" FontWeight="Bold" FontSize="15"></Label>
-        <Label  Content="År" Margin="0,130,135,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Height="30" FontSize="15" FontWeight="Bold"></Label>
-        <Label  Content="Kvartal" Margin="0,170,135,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Height="30" FontSize="15" FontWeight="Bold"></Label>
-        <Label  Content="Holdnummer" Margin="0,210,135,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Height="30" FontSize="15" FontWeight="Bold"></Label>
-        <Label  Content="Kørekortstype" Margin="0,250,135,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Height="30" FontSize="15" FontWeight="Bold"></Label>
-        <Label  Content="Antal elever" Margin="0,290,135,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Height="30" FontSize="15" FontWeight="Bold"></Label>
-        
+        <Label Name="Class_ListOfStudents_Label" Content="Liste med elever tilknyttet holdet" HorizontalAlignment="Left" Margin="20,50,0,0" VerticalAlignment="Top" Width="260" Height="30" FontWeight="Bold" FontSize="15"/>
+        <Label Content="År" Margin="0,130,135,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Height="30" FontSize="15" FontWeight="Bold"/>
+        <Label Content="Kvartal" Margin="0,170,135,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Height="30" FontSize="15" FontWeight="Bold"/>
+        <Label Content="Holdnummer" Margin="0,210,135,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Height="30" FontSize="15" FontWeight="Bold"/>
+        <Label Content="Kørekortstype" Margin="0,250,135,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Height="30" FontSize="15" FontWeight="Bold"/>
+        <Label Content="Antal elever" Margin="0,290,135,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="120" Height="30" FontSize="15" FontWeight="Bold"/>
+
 
         <!-- TextBlocks -->
         <Border BorderBrush="Black" Margin="20,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" BorderThickness="5" Height="40" Width="200">
@@ -76,17 +77,12 @@
             </Button.Resources>
         </Button>
 
-
-
-
-        <!-- TextBoxe -->
+        <!-- TextBoxes -->
         <TextBox x:Name="Class_Sub_Year_TextBox" Margin="20,130,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" />
         <TextBox x:Name="Class_Sub_Quarter_TextBox" Margin="20,170,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" />
         <TextBox x:Name="Class_Sub_ClassNumber_TextBox" Margin="20,210,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" />
         <TextBox x:Name="Class_Sub_LicenseType_TextBox" Margin="20,250,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" />
         <TextBox x:Name="Class_Sub_NumberOfStudents_TextBox" Margin="20,290,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" />
-
-
 
     </Grid>
 </Page>
