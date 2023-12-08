@@ -29,7 +29,7 @@ namespace VindegadeKS_WPF
             InitializeComponent();
             Class_Sub_Title_TextBlock.Text = currentClassName;
             ListBoxFunction();
-            CheckComboBoxFunction();
+            ComboBoxFunction();
         }
 
         TempClass conToBeRetrieved;
@@ -158,10 +158,11 @@ namespace VindegadeKS_WPF
             RetrieveStudent(Class_Sub_AddStu_ComboBox.SelectedIndex);
             currentStu.CK_StuCPR = stuToBeRetrieved.CK_StuCPR.ToString();
             currentStu.CK_ClassName = currentClassName;
-            CreateConnection(currentStu);
+            if(DoesConExist(currentStu) == false)
+                CreateConnection(currentStu);
             ListBoxFunction();
         }
-        private void CheckComboBoxFunction()
+        private void ComboBoxFunction()
         {
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
@@ -199,20 +200,36 @@ namespace VindegadeKS_WPF
             {
                 //Opens said connection
                 con.Open();
-                SqlCommand exist = new SqlCommand("SELECT ", con);
-
+                
                 //Creates a cmd SqlCommand, which enableds the ability to INSERT INTO the table with the corresponding attributes 
                 SqlCommand cmd = new SqlCommand("INSERT INTO VK_Class_Student (CK_ClassName, CK_StuCPR)" +
-                                                "VALUES(@CK_ClassName,@CK_StuCPR)" +
-                                                "SELECT @@IDENTITY", con);
+                                                    "VALUES(@CK_ClassName,@CK_StuCPR)" +
+                                                    "SELECT @@IDENTITY", con);
 
-                //Add corresponding attribute to the database through the use of cmd
-                cmd.Parameters.Add("@CK_ClassName", SqlDbType.NVarChar).Value = conToBeCreated.CK_ClassName;
-                cmd.Parameters.Add("@CK_StuCPR", SqlDbType.NVarChar).Value = conToBeCreated.CK_StuCPR;
-
-                //Tells the database to execute the sql commands
-                cmd.ExecuteScalar();
+               
+                    //Add corresponding attribute to the database through the use of cmd
+                    cmd.Parameters.Add("@CK_ClassName", SqlDbType.NVarChar).Value = conToBeCreated.CK_ClassName;
+                    cmd.Parameters.Add("@CK_StuCPR", SqlDbType.NVarChar).Value = conToBeCreated.CK_StuCPR;
+                    //Tells the database to execute the sql commands
+                    cmd.ExecuteScalar();
+                                
             }
+        }
+
+        public bool DoesConExist(TempClass conToBeCreated)
+        {
+            bool exist = true;
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                //Opens said connection
+                con.Open();
+                SqlCommand count = new SqlCommand("SELECT COUNT(CK_ClassName) FROM VK_Class_Student WHERE CK_ClassName = @CK_ClassName AND CK_StuCPR = @CK_StuCPR", con);
+                count.Parameters.AddWithValue("@CK_StuCPR", currentStu.CK_StuCPR); 
+                count.Parameters.AddWithValue("@CK_ClassName", currentStu.CK_ClassName);
+                int intCount = (int)count.ExecuteScalar();
+                if (intCount == 0) { exist = false; }
+            }
+            return exist;
         }
 
         //Retrieves the data of a specific row in the database where the row number is equal to dbRowNum + 1
