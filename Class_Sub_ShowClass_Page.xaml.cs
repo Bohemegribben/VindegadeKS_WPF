@@ -27,27 +27,16 @@ namespace VindegadeKS_WPF
         {
             InitializeComponent();
             Class_Sub_Title_TextBlock.Text = currentClassName;
+            ListBoxFunction();
         }
 
-        ClassStuConnection conToBeRetrieved;
+        TempClass conToBeRetrieved;
         Class classToBeRetrieved;
         Class currentClass = new Class();
-        string currentClassName = "Spring29-2"; //Send something when opening page
+        string currentClassName = "E27-0"; //Send something when opening page
         string currentConStuID;
         string currentConClassID;
         string newName;
-
-        public class ClassStuConnection
-        {
-            public string CK_ClassName { get; set; }
-            public string CK_StuCPR { get; set; }
-
-            public ClassStuConnection(string _CK_ClassName, string _CK_StuCPR)
-            {
-                CK_ClassName = _CK_ClassName;
-                CK_StuCPR = _CK_StuCPR;
-            }
-        }
 
         #region Hold Buttons
         private void Class_Sub_Edit_Button_Click(object sender, RoutedEventArgs e)
@@ -89,8 +78,8 @@ namespace VindegadeKS_WPF
             if (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem != null)
             {
                 //Sets currentConStuID to equal the ID of selected item
-                currentConStuID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as TempClass).StuID;
-                currentConClassID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as TempClass).ClassID;
+                currentConStuID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as TempClass).CK_StuCPR;
+                currentConClassID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as TempClass).CK_ClassName;
             }
         }
 
@@ -104,7 +93,7 @@ namespace VindegadeKS_WPF
                 con.Open();
 
                 //Creates a count SqlCommand, which gets the number of rows in the table 
-                SqlCommand count = new SqlCommand("SELECT COUNT(CK_StuCPR) from VK_Lessons WHERE CK_ClassName = @CK_ClassName", con);
+                SqlCommand count = new SqlCommand("SELECT COUNT(CK_StuCPR) from VK_Class_Student WHERE CK_ClassName = @CK_ClassName", con);
                 count.Parameters.AddWithValue("@CK_ClassName", currentClassName);
                 //Saves count command result to int
                 int intCount = (int)count.ExecuteScalar();
@@ -119,15 +108,14 @@ namespace VindegadeKS_WPF
                     //Calls RetrieveLessonData method, sending i as index
                     RetrieveConnection(i);
 
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     //Adds a new item from the item class with specific attributes to the list
                     //The data added comes from RetrieveLessonData
-                    stu.Add(new TempClass() { StuID = conToBeRetrieved.CK_StuCPR, ClassID = conToBeRetrieved.CK_ClassName });
+                    stu.Add(new TempClass() { CK_StuCPR = conToBeRetrieved.CK_StuCPR, CK_ClassName = conToBeRetrieved.CK_ClassName, StuFirstName = conToBeRetrieved.StuFirstName, StuLastName = conToBeRetrieved.StuLastName, StuPhone = conToBeRetrieved.StuPhone, StuEmail = conToBeRetrieved.StuEmail });
 
                     //Only necessary for multi-attribute ListBoxItem
                     //Set up the attribute 'SetUp' which is used to determine the appearance of the ListBoxItem 
                     //Mine isn't, so it's out commented
-                    //stu[i].SetUp = $"{stu[i].Name}\n{stu[i].Type}\n{stu[i].Description}";
+                    stu[i].SetUp = $"{stu[i].StuFirstName} {stu[i].StuLastName}\n{stu[i].StuPhone}\n{stu[i].StuEmail}";
                 }
 
                 //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
@@ -136,16 +124,32 @@ namespace VindegadeKS_WPF
         }
         public class TempClass
         {
-            public string StuID { get; set; }
-            public string ClassID { get; set; }
+            public string CK_ClassName { get; set; }
+            public string CK_StuCPR { get; set; }
+            public string StuFirstName { get; set; }
+            public string StuLastName { get; set; }
+            public string StuPhone { get; set; }
+            public string StuEmail { get; set; }
             public string SetUp { get; set; }
+            public TempClass(string _cK_ClassName, string _cK_StuCPR, string _stuFirstName, string _stuLastName, string _stuPhone, string _stuEmail, string _setUp)
+            {
+                CK_ClassName = _cK_ClassName;
+                CK_StuCPR = _cK_StuCPR;
+                StuFirstName = _stuFirstName;
+                StuLastName = _stuLastName;
+                StuPhone = _stuPhone;
+                StuEmail = _stuEmail;
+                SetUp = _setUp;
+            }
+            public TempClass() : this("", "", "", "", "", "", "")
+            { }
         }
         #endregion
 
         #region Database
         #region Connection
         //Creates a connect between students and class
-        public void CreateConnection(ClassStuConnection conToBeCreated)
+        public void CreateConnection(TempClass conToBeCreated)
         {
             //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
@@ -175,7 +179,10 @@ namespace VindegadeKS_WPF
                 //Opens said connection
                 con.Open();
                 //Creates a cmd SqlCommand, which SELECTs a specific row 
-                SqlCommand cmd = new SqlCommand("SELECT CK_ClassName, CK_StuCPR FROM VK_Class_Student ORDER BY CK_ClassName ASC OFFSET @dbRowNum ROWS FETCH NEXT 1 ROW ONLY", con);
+                SqlCommand cmd = new SqlCommand("SELECT CK_ClassName, CK_StuCPR, VK_Students.StuFirstName, VK_Students.StuLastName, VK_Students.StuPhone, VK_Students.StuEmail" +
+                                                "FROM VK_Class_Student " +
+                                                "INNER JOIN VK_Students ON VK_Class_Student.CK_StuCPR = VK_Students.PK_StuCPR" +
+                                                "ORDER BY CK_ClassName ASC OFFSET @dbRowNum ROWS FETCH NEXT 1 ROW ONLY", con); //Inner Join Students
 
                 //Set dbRowNum to 0 if under 0
                 if (dbRowNum < 0)
@@ -192,11 +199,15 @@ namespace VindegadeKS_WPF
                     while (dr.Read())
                     {
                         //Sets conToBeRetrieve a new empty ClassStuConnection, which is then filled
-                        conToBeRetrieved = new ClassStuConnection("", "")
+                        conToBeRetrieved = new TempClass("", "", "", "", "", "", "")
                         {
                             //Sets the attributes of conToBeRetrieved equal to the data from the current row of the database
                             CK_ClassName = dr["CK_ClassName"].ToString(),
                             CK_StuCPR = dr["CK_StuCPR"].ToString(),
+                            StuFirstName = dr["VK_Students.StuFirstName"].ToString(),
+                            StuLastName = dr["VK_Students.StuLastName"].ToString(),
+                            StuPhone = dr["VK_Students.StuPhone"].ToString(),
+                            StuEmail = dr["VK_Students.StuEmail"].ToString(),
                         };
                     }
                 }
