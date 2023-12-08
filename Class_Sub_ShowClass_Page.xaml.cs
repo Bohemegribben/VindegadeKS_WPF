@@ -26,18 +26,21 @@ namespace VindegadeKS_WPF
         public Class_Sub_ShowClass_Page()
         {
             InitializeComponent();
+            Class_Sub_Title_TextBlock.Text = currentClassName;
         }
 
         ClassStuConnection conToBeRetrieved;
         Class classToBeRetrieved;
         Class currentClass = new Class();
-        string currentItem = "Spring20-3"; //Send something when opening page
+        string currentClassName = "Spring29-2"; //Send something when opening page
+        string currentConStuID;
+        string currentConClassID;
         string newName;
 
         public class ClassStuConnection
         {
             public string CK_ClassName { get; set; }
-            public string CK_StuCPR { get; set;}
+            public string CK_StuCPR { get; set; }
 
             public ClassStuConnection(string _CK_ClassName, string _CK_StuCPR)
             {
@@ -46,9 +49,10 @@ namespace VindegadeKS_WPF
             }
         }
 
+        #region Hold Buttons
         private void Class_Sub_Edit_Button_Click(object sender, RoutedEventArgs e)
         {
-            RetrieveClassData(0); //String int weirdness (currentItem)
+            RetrieveClassData(currentClassName);
             Class_Sub_Year_TextBox.Text = classToBeRetrieved.ClassYear;
             Class_Sub_Quarter_TextBox.Text = classToBeRetrieved.ClassQuarter.ToString();
             Class_Sub_ClassNumber_TextBox.Text = classToBeRetrieved.ClassNumber;
@@ -59,16 +63,84 @@ namespace VindegadeKS_WPF
 
         private void Class_Sub_Save_Button_Click(object sender, RoutedEventArgs e)
         {
-            Class_Sub_ClassNumber_TextBox.IsEnabled = false;
-            Class_Sub_Year_TextBox.IsEnabled = false;
-            currentClass.ClassName = currentItem;
+            RetrieveClassData(currentClassName);
+
             currentClass.ClassYear = Class_Sub_Year_TextBox.Text;
             currentClass.ClassQuarter = (Quarter)Enum.Parse(typeof(Quarter), Class_Sub_Quarter_TextBox.Text);
             currentClass.ClassLicenseType = (LicenseType)Enum.Parse(typeof(LicenseType), Class_Sub_LicenseType_TextBox.Text);
             currentClass.ClassNumber = Class_Sub_ClassNumber_TextBox.Text;
             newName = $"{currentClass.ClassQuarter}{currentClass.ClassYear}-{currentClass.ClassNumber}";
+
             UpdateClass(currentClass);
+
+            currentClassName = newName;
+            Class_Sub_Title_TextBlock.Text = currentClassName;
+
+            Class_Sub_ClassNumber_TextBox.IsEnabled = false;
+            Class_Sub_Year_TextBox.IsEnabled = false;
         }
+        #endregion
+
+        #region ListBox
+        //Controls what happens when you select an item in the ListBox
+        private void Class_Sub_ShowClass_DisStu_ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //Safety check, to make sure that the selected item exists
+            if (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem != null)
+            {
+                //Sets currentConStuID to equal the ID of selected item
+                currentConStuID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as TempClass).StuID;
+                currentConClassID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as TempClass).ClassID;
+            }
+        }
+
+        //Method to create, control and add stu to the ListBox
+        private void ListBoxFunction()
+        {
+            //Setting up a connection to the database
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                //Opens said connection
+                con.Open();
+
+                //Creates a count SqlCommand, which gets the number of rows in the table 
+                SqlCommand count = new SqlCommand("SELECT COUNT(CK_StuCPR) from VK_Lessons WHERE CK_ClassName = @CK_ClassName", con);
+                count.Parameters.AddWithValue("@CK_ClassName", currentClassName);
+                //Saves count command result to int
+                int intCount = (int)count.ExecuteScalar();
+
+                //Make a list with the Item Class from below called stu (Name doesn't matter)
+                //LesListBoxItems in my case
+                List<TempClass> stu = new List<TempClass>();
+
+                //Forloop which adds intCount number of new stu to stu-list
+                for (int i = 0; i < intCount; i++)
+                {
+                    //Calls RetrieveLessonData method, sending i as index
+                    RetrieveConnection(i);
+
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    //Adds a new item from the item class with specific attributes to the list
+                    //The data added comes from RetrieveLessonData
+                    stu.Add(new TempClass() { StuID = conToBeRetrieved.CK_StuCPR, ClassID = conToBeRetrieved.CK_ClassName });
+
+                    //Only necessary for multi-attribute ListBoxItem
+                    //Set up the attribute 'SetUp' which is used to determine the appearance of the ListBoxItem 
+                    //Mine isn't, so it's out commented
+                    //stu[i].SetUp = $"{stu[i].Name}\n{stu[i].Type}\n{stu[i].Description}";
+                }
+
+                //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
+                Class_Sub_ShowClass_DisStu_ListBox.ItemsSource = stu;
+            }
+        }
+        public class TempClass
+        {
+            public string StuID { get; set; }
+            public string ClassID { get; set; }
+            public string SetUp { get; set; }
+        }
+        #endregion
 
         #region Database
         #region Connection
@@ -151,21 +223,17 @@ namespace VindegadeKS_WPF
             }
         }
         #endregion
-
         #region Class
         //Retrieves the data of a specific row in the database where the row number is equal to dbRowNum + 1
-        public void RetrieveClassData(int dbRowNum)
+        public void RetrieveClassData(string dbRow)
         {
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
                 con.Open();
-                SqlCommand cmd = new SqlCommand("SELECT PK_ClassName, ClassYear, ClassNumber, ClassQuarter, ClassLicenseType FROM VK_Classes ORDER BY PK_ClassName ASC OFFSET @dbRowNum ROWS FETCH NEXT 1 ROW ONLY", con);
+                SqlCommand cmd = new SqlCommand("SELECT PK_ClassName, ClassYear, ClassNumber, ClassQuarter, ClassLicenseType FROM VK_Classes WHERE PK_ClassName = @dbRow", con);
 
-                if(dbRowNum < 0) 
-                {
-                    dbRowNum = 0;
-                }
-                cmd.Parameters.AddWithValue("@dbRowNum", dbRowNum);
+                
+                cmd.Parameters.AddWithValue("@dbRow", dbRow);
 
                 using (SqlDataReader dr = cmd.ExecuteReader())
                 {
@@ -197,7 +265,7 @@ namespace VindegadeKS_WPF
                 SqlCommand cmd = new SqlCommand("UPDATE VK_Classes SET ClassYear = @ClassYear, ClassNumber = @ClassNumber, ClassQuarter = @ClassQuarter, ClassLicenseType = @ClassLicenseType, PK_ClassName = @NewClassName WHERE PK_ClassName = @PK_ClassName", con);
 
                 //Gives @attribute the value of attribute
-                cmd.Parameters.AddWithValue("@PK_ClassName", currentItem);
+                cmd.Parameters.AddWithValue("@PK_ClassName", currentClassName);
                 cmd.Parameters.AddWithValue("@NewClassName", newName);
                 cmd.Parameters.AddWithValue("@ClassYear", classToBeUpdated.ClassYear);
                 cmd.Parameters.AddWithValue("@ClassNumber", classToBeUpdated.ClassNumber);
@@ -206,14 +274,9 @@ namespace VindegadeKS_WPF
 
                 //Tells the database to execute the cmd sql command
                 cmd.ExecuteNonQuery();
-
-                /*SqlCommand updateName = new SqlCommand("UPDATE VK_Classes SET PK_ClassName = @PK_ClassName WHERE ClassYear = @ClassYear AND ClassNumber = @ClassNumber AND ClassQuarter = @ClassQuarter AND ClassLicenseType = @ClassLicenseType", con);
-
-                updateName.Parameters.AddWithValue("@PK_ClassName", $"{classToBeUpdated.ClassQuarter}{classToBeUpdated.ClassYear}-{classToBeUpdated.ClassNumber}");
-
-                cmd.ExecuteNonQuery();*/
             }
         }
+
         //Deletes the selected connection from the database
         public void DeleteClass(int classToBeDeleted)
         {
@@ -236,7 +299,5 @@ namespace VindegadeKS_WPF
         #endregion
 
         #endregion
-
-       
     }
 }

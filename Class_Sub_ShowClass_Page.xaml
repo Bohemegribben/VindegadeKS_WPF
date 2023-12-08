@@ -13,8 +13,13 @@
     <Grid>
 
         <!-- ListBox items -->
-        <ListBox x:Name="Class_Sub_ShowClass_DisStu_ListBox" Width="400" Height="900" Margin="20, 80, 20, 0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="20"/>
-
+        <ListBox x:Name="Class_Sub_ShowClass_DisStu_ListBox" Width="400" Height="900" Margin="20, 80, 20, 0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="20" SelectionChanged="Class_Sub_ShowClass_DisStu_ListBox_SelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding SetUp}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
         <!-- Labels -->
         <Label Name="Class_ListOfStudents_Label" Content="Liste med elever tilknyttet holdet" HorizontalAlignment="Left" Margin="20,50,0,0" VerticalAlignment="Top" Width="260" Height="30" FontWeight="Bold" FontSize="15"/>
@@ -27,7 +32,7 @@
 
         <!-- TextBlocks -->
         <Border BorderBrush="Black" Margin="20,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" BorderThickness="5" Height="40" Width="200">
-            <TextBlock x:Name="Class_Sub_Title_TextBlock" FontWeight="Bold" HorizontalAlignment="Center" Text="Holdnavn" FontSize="20" ></TextBlock>
+            <TextBlock x:Name="Class_Sub_Title_TextBlock" FontWeight="Bold" HorizontalAlignment="Center" Text="Holdnavn" FontSize="20" />
             <Border.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="10"/>
