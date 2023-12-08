@@ -105,10 +105,11 @@ namespace VindegadeKS_WPF
                 //Make a list with the Item Class from below called stu (Name doesn't matter)
                 //LesListBoxItems in my case
                 List<TempClass> stu = new List<TempClass>();
-
+                
                 //Forloop which adds intCount number of new stu to stu-list
                 for (int i = 0; i < intCount; i++)
                 {
+                    
                     //Calls RetrieveLessonData method, sending i as index
                     RetrieveConnection(i);
 
@@ -150,6 +151,14 @@ namespace VindegadeKS_WPF
             public TempClass() : this("", "", "", "", "", "", "")
             { }
         }
+        private void Class_Sub_DelStu_Button_Click(object sender, RoutedEventArgs e)
+        {
+            if(Class_Sub_ShowClass_DisStu_ListBox.SelectedItem != null)
+            {
+                DeleteConnection(currentConStuID);
+            }
+            ListBoxFunction();
+        }
         #endregion
 
         #region CheckComboBox
@@ -188,12 +197,6 @@ namespace VindegadeKS_WPF
 
                 Class_Sub_AddStu_ComboBox.ItemsSource = types;
             }
-        }
-
-        private void Class_Sub_DelStu_Button_Click(object sender, RoutedEventArgs e)
-        {
-            DeleteConnection(currentConStuID);
-            ListBoxFunction();
         }
         #endregion
 
@@ -384,7 +387,6 @@ namespace VindegadeKS_WPF
             }
         }
         #endregion
-
         #region Students
         public void RetrieveStudent(int dbRowNum)
         {
@@ -428,7 +430,6 @@ namespace VindegadeKS_WPF
         }
 
         #endregion
-
         #endregion
 
         
