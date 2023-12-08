@@ -110,7 +110,9 @@ namespace VindegadeKS_WPF
 
                     //Adds a new item from the item class with specific attributes to the list
                     //The data added comes from RetrieveLessonData
-                    stu.Add(new TempClass() { CK_StuCPR = conToBeRetrieved.CK_StuCPR, CK_ClassName = conToBeRetrieved.CK_ClassName, StuFirstName = conToBeRetrieved.StuFirstName, StuLastName = conToBeRetrieved.StuLastName, StuPhone = conToBeRetrieved.StuPhone, StuEmail = conToBeRetrieved.StuEmail });
+                    stu.Add(new TempClass() { CK_StuCPR = conToBeRetrieved.CK_StuCPR, CK_ClassName = conToBeRetrieved.CK_ClassName, 
+                                              StuFirstName = conToBeRetrieved.StuFirstName, StuLastName = conToBeRetrieved.StuLastName, 
+                                              StuPhone = conToBeRetrieved.StuPhone, StuEmail = conToBeRetrieved.StuEmail });
 
                     //Only necessary for multi-attribute ListBoxItem
                     //Set up the attribute 'SetUp' which is used to determine the appearance of the ListBoxItem 
@@ -122,7 +124,7 @@ namespace VindegadeKS_WPF
                 Class_Sub_ShowClass_DisStu_ListBox.ItemsSource = stu;
             }
         }
-        public class TempClass
+        public class TempClass //Rename
         {
             public string CK_ClassName { get; set; }
             public string CK_StuCPR { get; set; }
@@ -143,6 +145,34 @@ namespace VindegadeKS_WPF
             }
             public TempClass() : this("", "", "", "", "", "", "")
             { }
+        }
+        #endregion
+
+        #region CheckComboBox
+        private void CheckComboBoxFunction()
+        {
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                con.Open();
+
+                //Make students instead
+                SqlCommand count = new SqlCommand("SELECT COUNT(CK_StuCPR) from VK_Class_Student WHERE CK_ClassName = @CK_ClassName", con);
+                count.Parameters.AddWithValue("@CK_ClassName", currentClassName);
+                int intCount = (int)count.ExecuteScalar();
+
+                List<TempClass> types = new List<TempClass>();
+
+                for (int i = 0; i < intCount; i++)
+                {
+                    RetrieveConnection(i);
+                    types.Add(new TempClass { CK_ClassName = conToBeRetrieved.CK_ClassName, CK_StuCPR = conToBeRetrieved.CK_StuCPR, StuFirstName = conToBeRetrieved.StuFirstName, StuLastName = conToBeRetrieved.StuLastName, });
+
+                    types[i].SetUp = $"{types[i].StuFirstName} {types[i].StuLastName}";
+                }
+
+                Class_Sub_AddStu_CheckComboBox.ItemsSource = types;
+            }
+
         }
         #endregion
 

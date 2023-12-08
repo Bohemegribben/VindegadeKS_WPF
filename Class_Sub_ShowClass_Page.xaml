@@ -66,6 +66,8 @@
             </Button.Resources>
         </Button>
 
+        <xctk:CheckComboBox x:Name="Class_Sub_AddStu_CheckComboBox" FontWeight="Bold" Margin="20,500,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30"/>
+
         <Button x:Name="Class_Sub_DelStu_Button" Content="FJERN ELEV FRA HOLD" FontWeight="Bold" Margin="20,440,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30">
             <Button.Resources>
                 <Style TargetType="Border">
