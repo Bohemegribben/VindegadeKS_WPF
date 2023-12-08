@@ -35,7 +35,7 @@ namespace VindegadeKS_WPF
             ComboBoxFunctionLicenseTypes();
         }
 
-        Class CurrentClass = new Class();
+        Class currentClass = new Class();
         Class classToBeRetrieved;
         public string currentItem;
 
@@ -147,11 +147,11 @@ namespace VindegadeKS_WPF
 
         private void Class_Save_button_Click(object sender, RoutedEventArgs e)
         {
-            CurrentClass.ClassYear = Class_Year_ComboBox.Text;
-            CurrentClass.ClassNumber = "0";
-            CurrentClass.ClassQuarter = (Quarter)Enum.Parse(typeof(Quarter), Class_Quarter_ComboBox.Text);
-            CurrentClass.ClassLicenseType = (LicenseType)Enum.Parse(typeof(LicenseType), Class_LicenseType_ComboBox.Text);
-            SaveClass(CurrentClass);
+            currentClass.ClassYear = Class_Year_ComboBox.Text;
+            currentClass.ClassNumber = "0";
+            currentClass.ClassQuarter = (Quarter)Enum.Parse(typeof(Quarter), Class_Quarter_ComboBox.Text);
+            currentClass.ClassLicenseType = (LicenseType)Enum.Parse(typeof(LicenseType), Class_LicenseType_ComboBox.Text);
+            SaveClass(currentClass);
         }
 
         public void SaveClass(Class classToBeCreated)
@@ -159,6 +159,13 @@ namespace VindegadeKS_WPF
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
                 con.Open();
+
+                SqlCommand count = new SqlCommand("SELECT COUNT(ClassQuarter) FROM VK_Classes WHERE ClassQuarter = @ClassQuarter AND ClassYear = @ClassYear", con);
+                count.Parameters.Add("@ClassQuarter", SqlDbType.NVarChar).Value = classToBeCreated.ClassQuarter;
+                count.Parameters.Add("@ClassYear", SqlDbType.NVarChar).Value = classToBeCreated.ClassYear; 
+                int intCount = (int)count.ExecuteScalar();
+                classToBeCreated.ClassNumber = (intCount + 1).ToString();
+
                 SqlCommand cmd = new SqlCommand("INSERT INTO VK_Classes (PK_ClassName, ClassYear, ClassNumber, ClassQuarter, ClassLicenseType)" +
                                                  "VALUES(@ClassName, @ClassYear, @ClassNumber, @ClassQuarter, @ClassLicenseType)" +
                                                  "SELECT @@IDENTITY", con);
