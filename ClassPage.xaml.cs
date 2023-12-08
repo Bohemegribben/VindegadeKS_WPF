@@ -27,17 +27,29 @@ namespace VindegadeKS_WPF
         public ClassPage()
         {
             InitializeComponent();
+
             ClearInputFields();
+
+            //Locks the input fields, so the user can't interact before pressing a button
             LockInputFields();
+
+            //Calls the ListBoxFunction method which create the ListBoxItems for your ListBox
             ListBoxFunction();
+
+            //Calls the three ComboBoxFunction methods which sets up the ComboBoxes on your page 
             ComboBoxFunctionYear();
             ComboBoxFunctionQuarters();
             ComboBoxFunctionLicenseTypes();
         }
 
+        //Create CurrentClass to contain current object - Needed in: Save_Button_Click
         Class currentClass = new Class();
+
+        //Moved out here instead of staying in 'Retrieve', so ListBoxFunction can access - Needed in: ListBoxFunction & RetrieveData
         Class classToBeRetrieved;
-        public string currentItem;
+
+        //Keeps track of the ClassName of ListBoxItem while it's selected - Edit_Button_Click & ListBox_SelectionChanged
+        string currentItem;
 
         private void ComboBoxFunctionYear()
         {
@@ -160,11 +172,16 @@ namespace VindegadeKS_WPF
             {
                 con.Open();
 
+                // Counts how many Class-instanses in the database that has the specific combination of ClassQuarter and ClassYear
+                // equal to what is being created in the database when the method runs. If 0 ClassNumber will be set to 1.
+                // If 1 ClassNumber will be set to 2. This count is done, before the colected data of the Class is created in the DB.
+                // This all defines ClassName, but at the moment ListBox is not displaying ClassName correctly.
                 SqlCommand count = new SqlCommand("SELECT COUNT(ClassQuarter) FROM VK_Classes WHERE ClassQuarter = @ClassQuarter AND ClassYear = @ClassYear", con);
                 count.Parameters.Add("@ClassQuarter", SqlDbType.NVarChar).Value = classToBeCreated.ClassQuarter;
                 count.Parameters.Add("@ClassYear", SqlDbType.NVarChar).Value = classToBeCreated.ClassYear; 
                 int intCount = (int)count.ExecuteScalar();
                 classToBeCreated.ClassNumber = (intCount + 1).ToString();
+
 
                 SqlCommand cmd = new SqlCommand("INSERT INTO VK_Classes (PK_ClassName, ClassYear, ClassNumber, ClassQuarter, ClassLicenseType)" +
                                                  "VALUES(@ClassName, @ClassYear, @ClassNumber, @ClassQuarter, @ClassLicenseType)" +
