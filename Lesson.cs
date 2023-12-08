@@ -22,8 +22,5 @@ namespace VindegadeKS_WPF
         }
         public Lesson() : this(0, "", "", "")
         { }
-
-        //Attribute used in ComboBoxFunction for visual aid
-        public string DisplayValue { get; set; }
     }
 }
