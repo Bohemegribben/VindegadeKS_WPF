@@ -29,12 +29,15 @@ namespace VindegadeKS_WPF
             InitializeComponent();
             Class_Sub_Title_TextBlock.Text = currentClassName;
             ListBoxFunction();
+            CheckComboBoxFunction();
         }
 
         TempClass conToBeRetrieved;
+        TempClass stuToBeRetrieved;
         Class classToBeRetrieved;
         Class currentClass = new Class();
-        string currentClassName = "E27-0"; //Send something when opening page
+        TempClass currentStu = new TempClass();
+        string currentClassName = "S24-1"; //Send something when opening page
         string currentConStuID;
         string currentConClassID;
         string newName;
@@ -150,6 +153,14 @@ namespace VindegadeKS_WPF
         #endregion
 
         #region CheckComboBox
+        private void Class_Sub_AddStu_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            RetrieveStudent(Class_Sub_AddStu_ComboBox.SelectedIndex);
+            currentStu.CK_StuCPR = stuToBeRetrieved.CK_StuCPR.ToString();
+            currentStu.CK_ClassName = currentClassName;
+            CreateConnection(currentStu);
+            ListBoxFunction();
+        }
         private void CheckComboBoxFunction()
         {
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
@@ -157,23 +168,24 @@ namespace VindegadeKS_WPF
                 con.Open();
 
                 //Make students instead
-                SqlCommand count = new SqlCommand("SELECT COUNT(CK_StuCPR) from VK_Class_Student WHERE CK_ClassName = @CK_ClassName", con);
-                count.Parameters.AddWithValue("@CK_ClassName", currentClassName);
+                SqlCommand count = new SqlCommand("SELECT COUNT(PK_StuCPR) from VK_Students", con);
                 int intCount = (int)count.ExecuteScalar();
 
                 List<TempClass> types = new List<TempClass>();
 
                 for (int i = 0; i < intCount; i++)
                 {
-                    RetrieveConnection(i);
-                    types.Add(new TempClass { CK_ClassName = conToBeRetrieved.CK_ClassName, CK_StuCPR = conToBeRetrieved.CK_StuCPR, StuFirstName = conToBeRetrieved.StuFirstName, StuLastName = conToBeRetrieved.StuLastName, });
+                    RetrieveStudent(i);
+
+                    types.Add(new TempClass { CK_ClassName = stuToBeRetrieved.CK_ClassName, CK_StuCPR = stuToBeRetrieved.CK_StuCPR, StuFirstName = stuToBeRetrieved.StuFirstName, StuLastName = stuToBeRetrieved.StuLastName, });
 
                     types[i].SetUp = $"{types[i].StuFirstName} {types[i].StuLastName}";
                 }
 
-                Class_Sub_AddStu_CheckComboBox.ItemsSource = types;
-            }
+                Class_Sub_AddStu_ComboBox.DisplayMemberPath = "SetUp";
 
+                Class_Sub_AddStu_ComboBox.ItemsSource = types;
+            }
         }
         #endregion
 
@@ -187,10 +199,12 @@ namespace VindegadeKS_WPF
             {
                 //Opens said connection
                 con.Open();
+                SqlCommand exist = new SqlCommand("SELECT ", con);
+
                 //Creates a cmd SqlCommand, which enableds the ability to INSERT INTO the table with the corresponding attributes 
                 SqlCommand cmd = new SqlCommand("INSERT INTO VK_Class_Student (CK_ClassName, CK_StuCPR)" +
-                                                 "VALUES(@CK_ClassName,@CK_StuCPR)" +
-                                                 "SELECT @@IDENTITY", con);
+                                                "VALUES(@CK_ClassName,@CK_StuCPR)" +
+                                                "SELECT @@IDENTITY", con);
 
                 //Add corresponding attribute to the database through the use of cmd
                 cmd.Parameters.Add("@CK_ClassName", SqlDbType.NVarChar).Value = conToBeCreated.CK_ClassName;
@@ -210,10 +224,9 @@ namespace VindegadeKS_WPF
                 //Opens said connection
                 con.Open();
                 //Creates a cmd SqlCommand, which SELECTs a specific row 
-                SqlCommand cmd = new SqlCommand("SELECT CK_ClassName, CK_StuCPR, VK_Students.StuFirstName, VK_Students.StuLastName, VK_Students.StuPhone, VK_Students.StuEmail" +
-                                                "FROM VK_Class_Student " +
-                                                "INNER JOIN VK_Students ON VK_Class_Student.CK_StuCPR = VK_Students.PK_StuCPR" +
-                                                "ORDER BY CK_ClassName ASC OFFSET @dbRowNum ROWS FETCH NEXT 1 ROW ONLY", con); //Inner Join Students
+                SqlCommand cmd = new SqlCommand("SELECT CK_ClassName, CK_StuCPR FROM VK_Class_Student ORDER BY CK_ClassName ASC OFFSET @dbRowNum ROWS FETCH NEXT 1 ROW ONLY", con);
+
+                SqlCommand stu = new SqlCommand("SELECT StuFirstName, StuLastName, StuPhone, StuEmail FROM VK_Students WHERE PK_StuCPR = @CK_StuCPR", con); 
 
                 //Set dbRowNum to 0 if under 0
                 if (dbRowNum < 0)
@@ -229,19 +242,27 @@ namespace VindegadeKS_WPF
                     //While-loop running while dr is reading 
                     while (dr.Read())
                     {
-                        //Sets conToBeRetrieve a new empty ClassStuConnection, which is then filled
+                        string temp = dr["CK_StuCPR"].ToString();
+                        stu.Parameters.AddWithValue("@CK_StuCPR", temp);
                         conToBeRetrieved = new TempClass("", "", "", "", "", "", "")
                         {
                             //Sets the attributes of conToBeRetrieved equal to the data from the current row of the database
                             CK_ClassName = dr["CK_ClassName"].ToString(),
                             CK_StuCPR = dr["CK_StuCPR"].ToString(),
-                            StuFirstName = dr["VK_Students.StuFirstName"].ToString(),
-                            StuLastName = dr["VK_Students.StuLastName"].ToString(),
-                            StuPhone = dr["VK_Students.StuPhone"].ToString(),
-                            StuEmail = dr["VK_Students.StuEmail"].ToString(),
                         };
                     }
                 }
+                using (SqlDataReader dr2 = stu.ExecuteReader())
+                {
+                    while (dr2.Read())
+                    {
+                        //Sets conToBeRetrieve a new empty ClassStuConnection, which is then filled
+                        conToBeRetrieved.StuFirstName = dr2["StuFirstName"].ToString();
+                        conToBeRetrieved.StuLastName = dr2["StuLastName"].ToString();
+                        conToBeRetrieved.StuPhone = dr2["StuPhone"].ToString();
+                        conToBeRetrieved.StuEmail = dr2["StuEmail"].ToString();
+                    }
+                } 
             }
         }
 
@@ -340,6 +361,51 @@ namespace VindegadeKS_WPF
         }
         #endregion
 
+        #region Students
+        public void RetrieveStudent(int dbRowNum)
+        {
+            //Setting up a connection to the database
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                //Opens said connection
+                con.Open();
+                //Creates a cmd SqlCommand, which SELECTs a specific row 
+                SqlCommand stu = new SqlCommand("SELECT PK_StuCPR, StuFirstName, StuLastName, StuPhone, StuEmail FROM VK_Students ORDER BY StuFirstName ASC OFFSET @dbRowNum ROWS FETCH NEXT 1 ROW ONLY", con);
+
+
+                //Set dbRowNum to 0 if under 0
+                if (dbRowNum < 0)
+                {
+                    dbRowNum = 0;
+                }
+                //Gives @dbRowNum the value of dbRowNum
+                stu.Parameters.AddWithValue("@dbRowNum", dbRowNum);
+
+                //Set up a data reader called dr, which reads the data from cmd (the previous sql command)
+               
+                using (SqlDataReader dr = stu.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        //Sets conToBeRetrieve a new empty ClassStuConnection, which is then filled
+                        stuToBeRetrieved = new TempClass("", "", "", "", "", "", "")
+                        {
+                            //Sets the attributes of conToBeRetrieved equal to the data from the current row of the database
+                            
+                            CK_StuCPR = dr["PK_StuCPR"].ToString(),
+                            StuFirstName = dr["StuFirstName"].ToString(),
+                            StuLastName = dr["StuLastName"].ToString(),
+                            StuPhone = dr["StuPhone"].ToString(),
+                            StuEmail = dr["StuEmail"].ToString(),
+                        };
+                    }
+                }
+            }
+        }
         #endregion
+
+        #endregion
+
+       
     }
 }

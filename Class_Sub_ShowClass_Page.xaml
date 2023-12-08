@@ -66,7 +66,7 @@
             </Button.Resources>
         </Button>
 
-        <xctk:CheckComboBox x:Name="Class_Sub_AddStu_CheckComboBox" FontWeight="Bold" Margin="20,500,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30"/>
+        <ComboBox x:Name="Class_Sub_AddStu_ComboBox" SelectedValue="{Binding CK_StuCPR}" FontWeight="Bold" Margin="20,500,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30" SelectionChanged="Class_Sub_AddStu_ComboBox_SelectionChanged"/>
 
         <Button x:Name="Class_Sub_DelStu_Button" Content="FJERN ELEV FRA HOLD" FontWeight="Bold" Margin="20,440,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30">
             <Button.Resources>
