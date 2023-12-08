@@ -32,11 +32,11 @@ namespace VindegadeKS_WPF
             ComboBoxFunction();
         }
 
-        TempClass conToBeRetrieved;
-        TempClass stuToBeRetrieved;
+        ConStuClass conToBeRetrieved;
+        ConStuClass stuToBeRetrieved;
         Class classToBeRetrieved;
         Class currentClass = new Class();
-        TempClass currentStu = new TempClass();
+        ConStuClass currentStu = new ConStuClass();
         string currentClassName = "S24-1"; //Send something when opening page
         string currentConStuID;
         string currentConClassID;
@@ -82,8 +82,8 @@ namespace VindegadeKS_WPF
             if (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem != null)
             {
                 //Sets currentConStuID to equal the ID of selected item
-                currentConStuID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as TempClass).CK_StuCPR;
-                currentConClassID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as TempClass).CK_ClassName;
+                currentConStuID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as ConStuClass).CK_StuCPR;
+                currentConClassID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as ConStuClass).CK_ClassName;
             }
         }
 
@@ -104,7 +104,7 @@ namespace VindegadeKS_WPF
 
                 //Make a list with the Item Class from below called stu (Name doesn't matter)
                 //LesListBoxItems in my case
-                List<TempClass> stu = new List<TempClass>();
+                List<ConStuClass> stu = new List<ConStuClass>();
                 
                 //Forloop which adds intCount number of new stu to stu-list
                 for (int i = 0; i < intCount; i++)
@@ -115,7 +115,7 @@ namespace VindegadeKS_WPF
 
                     //Adds a new item from the item class with specific attributes to the list
                     //The data added comes from RetrieveLessonData
-                    stu.Add(new TempClass() { CK_StuCPR = conToBeRetrieved.CK_StuCPR, CK_ClassName = conToBeRetrieved.CK_ClassName, 
+                    stu.Add(new ConStuClass() { CK_StuCPR = conToBeRetrieved.CK_StuCPR, CK_ClassName = conToBeRetrieved.CK_ClassName, 
                                               StuFirstName = conToBeRetrieved.StuFirstName, StuLastName = conToBeRetrieved.StuLastName, 
                                               StuPhone = conToBeRetrieved.StuPhone, StuEmail = conToBeRetrieved.StuEmail });
 
@@ -129,7 +129,7 @@ namespace VindegadeKS_WPF
                 Class_Sub_ShowClass_DisStu_ListBox.ItemsSource = stu;
             }
         }
-        public class TempClass //Rename
+        public class ConStuClass //Rename
         {
             public string CK_ClassName { get; set; }
             public string CK_StuCPR { get; set; }
@@ -138,7 +138,7 @@ namespace VindegadeKS_WPF
             public string StuPhone { get; set; }
             public string StuEmail { get; set; }
             public string SetUp { get; set; }
-            public TempClass(string _cK_ClassName, string _cK_StuCPR, string _stuFirstName, string _stuLastName, string _stuPhone, string _stuEmail, string _setUp)
+            public ConStuClass(string _cK_ClassName, string _cK_StuCPR, string _stuFirstName, string _stuLastName, string _stuPhone, string _stuEmail, string _setUp)
             {
                 CK_ClassName = _cK_ClassName;
                 CK_StuCPR = _cK_StuCPR;
@@ -148,7 +148,7 @@ namespace VindegadeKS_WPF
                 StuEmail = _stuEmail;
                 SetUp = _setUp;
             }
-            public TempClass() : this("", "", "", "", "", "", "")
+            public ConStuClass() : this("", "", "", "", "", "", "")
             { }
         }
         private void Class_Sub_DelStu_Button_Click(object sender, RoutedEventArgs e)
@@ -182,13 +182,13 @@ namespace VindegadeKS_WPF
                 SqlCommand count = new SqlCommand("SELECT COUNT(PK_StuCPR) from VK_Students", con);
                 int intCount = (int)count.ExecuteScalar();
 
-                List<TempClass> types = new List<TempClass>();
+                List<ConStuClass> types = new List<ConStuClass>();
 
                 for (int i = 0; i < intCount; i++)
                 {
                     RetrieveStudent(i);
 
-                    types.Add(new TempClass { CK_ClassName = stuToBeRetrieved.CK_ClassName, CK_StuCPR = stuToBeRetrieved.CK_StuCPR, StuFirstName = stuToBeRetrieved.StuFirstName, StuLastName = stuToBeRetrieved.StuLastName, });
+                    types.Add(new ConStuClass { CK_ClassName = stuToBeRetrieved.CK_ClassName, CK_StuCPR = stuToBeRetrieved.CK_StuCPR, StuFirstName = stuToBeRetrieved.StuFirstName, StuLastName = stuToBeRetrieved.StuLastName, });
 
                     types[i].SetUp = $"{types[i].StuFirstName} {types[i].StuLastName}";
                 }
@@ -203,7 +203,7 @@ namespace VindegadeKS_WPF
         #region Database
         #region Connection
         //Creates a connect between students and class
-        public void CreateConnection(TempClass conToBeCreated)
+        public void CreateConnection(ConStuClass conToBeCreated)
         {
             //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
@@ -226,7 +226,7 @@ namespace VindegadeKS_WPF
             }
         }
 
-        public bool DoesConExist(TempClass conToBeCreated)
+        public bool DoesConExist(ConStuClass conToBeCreated)
         {
             bool exist = true;
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
@@ -271,7 +271,7 @@ namespace VindegadeKS_WPF
                     {
                         string temp = dr["CK_StuCPR"].ToString();
                         stu.Parameters.AddWithValue("@CK_StuCPR", temp);
-                        conToBeRetrieved = new TempClass("", "", "", "", "", "", "")
+                        conToBeRetrieved = new ConStuClass("", "", "", "", "", "", "")
                         {
                             //Sets the attributes of conToBeRetrieved equal to the data from the current row of the database
                             CK_ClassName = dr["CK_ClassName"].ToString(),
@@ -414,7 +414,7 @@ namespace VindegadeKS_WPF
                     while (dr.Read())
                     {
                         //Sets conToBeRetrieve a new empty ClassStuConnection, which is then filled
-                        stuToBeRetrieved = new TempClass("", "", "", "", "", "", "")
+                        stuToBeRetrieved = new ConStuClass("", "", "", "", "", "", "")
                         {
                             //Sets the attributes of conToBeRetrieved equal to the data from the current row of the database
                             
