@@ -127,9 +127,10 @@ namespace VindegadeKS_WPF
 
                 //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
                 Class_Sub_ShowClass_DisStu_ListBox.ItemsSource = stu;
+                Class_Sub_NumberOfStudents_TextBox.Text = countStu().ToString();
             }
         }
-        public class ConStuClass //Rename
+        public class ConStuClass 
         {
             public string CK_ClassName { get; set; }
             public string CK_StuCPR { get; set; }
@@ -236,8 +237,8 @@ namespace VindegadeKS_WPF
                 SqlCommand count = new SqlCommand("SELECT COUNT(CK_ClassName) FROM VK_Class_Student WHERE CK_ClassName = @CK_ClassName AND CK_StuCPR = @CK_StuCPR", con);
                 count.Parameters.AddWithValue("@CK_StuCPR", currentStu.CK_StuCPR); 
                 count.Parameters.AddWithValue("@CK_ClassName", currentStu.CK_ClassName);
-                int intCount = (int)count.ExecuteScalar();
-                if (intCount == 0) { exist = false; }
+                int stuCount = (int)count.ExecuteScalar();
+                if (stuCount == 0) { exist = false; }
             }
             return exist;
         }
@@ -427,6 +428,20 @@ namespace VindegadeKS_WPF
                     }
                 }
             }
+        }
+
+        public int countStu()
+        {
+            int count = 0;
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                //Opens said connection
+                con.Open();
+                SqlCommand stucount = new SqlCommand("SELECT COUNT(CK_ClassName) FROM VK_Class_Student WHERE CK_ClassName = @CK_ClassName", con);
+                stucount.Parameters.AddWithValue("@CK_ClassName", currentClassName);
+                count = (int)stucount.ExecuteScalar();
+            }
+            return count;
         }
 
         #endregion
