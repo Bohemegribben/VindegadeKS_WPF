@@ -158,9 +158,10 @@ namespace VindegadeKS_WPF
             RetrieveStudent(Class_Sub_AddStu_ComboBox.SelectedIndex);
             currentStu.CK_StuCPR = stuToBeRetrieved.CK_StuCPR.ToString();
             currentStu.CK_ClassName = currentClassName;
-            if(DoesConExist(currentStu) == false)
+            while(DoesConExist(currentStu) == false)
                 CreateConnection(currentStu);
             ListBoxFunction();
+            Class_Sub_AddStu_ComboBox.SelectedItem = null;
         }
         private void ComboBoxFunction()
         {
@@ -188,6 +189,12 @@ namespace VindegadeKS_WPF
                 Class_Sub_AddStu_ComboBox.ItemsSource = types;
             }
         }
+
+        private void Class_Sub_DelStu_Button_Click(object sender, RoutedEventArgs e)
+        {
+            DeleteConnection(currentConStuID);
+            ListBoxFunction();
+        }
         #endregion
 
         #region Database
@@ -203,8 +210,8 @@ namespace VindegadeKS_WPF
                 
                 //Creates a cmd SqlCommand, which enableds the ability to INSERT INTO the table with the corresponding attributes 
                 SqlCommand cmd = new SqlCommand("INSERT INTO VK_Class_Student (CK_ClassName, CK_StuCPR)" +
-                                                    "VALUES(@CK_ClassName,@CK_StuCPR)" +
-                                                    "SELECT @@IDENTITY", con);
+                                                "VALUES(@CK_ClassName,@CK_StuCPR)" +
+                                                "SELECT @@IDENTITY", con);
 
                
                     //Add corresponding attribute to the database through the use of cmd
@@ -284,7 +291,7 @@ namespace VindegadeKS_WPF
         }
 
         //Deletes the selected connection from the database
-        public void DeleteConnection(int conToBeDeleted)
+        public void DeleteConnection(string conToBeDeleted)
         {
             //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
@@ -293,10 +300,10 @@ namespace VindegadeKS_WPF
                 con.Open();
 
                 //Creates a cmd SqlCommand, which DELETEs a specific row in the table, based on the CK_ClassName
-                SqlCommand cmd = new SqlCommand("DELETE FROM VK_Class_Student WHERE CK_ClassName = @CK_ClassName", con);
+                SqlCommand cmd = new SqlCommand("DELETE FROM VK_Class_Student WHERE CK_StuCPR = @CK_StuCPR", con);
 
                 //Gives @PK_LesId the value of conToBeDeleted
-                cmd.Parameters.AddWithValue("@CK_ClassName", conToBeDeleted);
+                cmd.Parameters.AddWithValue("@CK_StuCPR", conToBeDeleted);
 
                 //Tells the database to execute the cmd sql command
                 cmd.ExecuteScalar();
@@ -419,10 +426,11 @@ namespace VindegadeKS_WPF
                 }
             }
         }
-        #endregion
 
         #endregion
 
-       
+        #endregion
+
+        
     }
 }
