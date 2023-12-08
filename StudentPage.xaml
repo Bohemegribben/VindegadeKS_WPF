@@ -23,19 +23,25 @@
         <TextBox x:Name="stu_txtBox_search" LostFocus="searchTxtBox_LostFocus" HorizontalAlignment="Left" Height="30" Margin="25,36,0,0" VerticalAlignment="Top" Width="150"/>
         <TextBox x:Name="stu_txtBox_watermark" GotFocus="watermarkTxtBox_GotFocus" HorizontalAlignment="Left" Height="30" Margin="25,36,0,0" Text="Search" VerticalAlignment="Top" Width="150" FontSize="16"/>
 
-        <!--Scrolling box-->
-        <ListBox x:Name="stu_listBoxt_students" Width="185" Height="300" Margin="22,88, 0, 0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="20" SelectionChanged="studentsListBox_SelectionChanged_1">
+        <!-- ListBox-->
+        <ListBox x:Name="Stu_DisStu_ListBox" Width="185" Height="300" Margin="22,88, 0, 0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="20" SelectionChanged="studentsListBox_SelectionChanged_1">
 
 
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBox Text="{Binding Name}"/>
+                    <TextBox Text="{Binding FirstName}"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
 
         <!-- TextBlock-->
-        <TextBlock x:Name="stu_txtBlock_studentInfo" HorizontalAlignment="Left" VerticalAlignment="Top" Height="300" Width="400" Margin="250,88,0,0" Text="Student information" Background="#FFFFCEFE"/>
+        <StackPanel Background="AliceBlue" HorizontalAlignment="Left" Height="350" Margin="250,37,0,0" VerticalAlignment="Top" Width="435">
+            <TextBlock x:Name="Stu_DisCPR_TextBlock" TextWrapping="Wrap" Text="CPR:" FontSize="20" Height="50" Margin="10, 10, 10, 0" />
+            <TextBlock x:Name="Stu_DisFirstName_TextBlock" TextWrapping="Wrap" Text="Fornavn:" FontSize="20" Height="50" Margin="10, 10, 10, 0"/>
+            <TextBlock x:Name="Stu_DisLastName_TextBlock" TextWrapping="Wrap" Text="Efternavn: " FontSize="20" Height="50" Margin="10, 10, 10, 0"/>
+            <TextBlock x:Name="Stu_DisPhone_TextBlock" TextWrapping="Wrap" Text="Telefon: " FontSize="20" Height="50" Margin="10, 10, 10, 0"/>
+            <TextBlock x:Name="Stu_DisEmail_TextBlock" TextWrapping="Wrap" Text="Email: " FontSize="20" Height="50" Margin="10, 10, 10, 0"/>
+        </StackPanel>
 
 
         <!--Labels-->
@@ -48,11 +54,11 @@
 
 
         <!-- Textboxes -->
-        <TextBox x:Name="stu_txtBox_cpr" HorizontalAlignment="Left" Height="35" Width="300" Margin="100,434,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="stu_txtBox_fornavn" HorizontalAlignment="Left" Height="35" Width="300" Margin="100,514,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="stu_txtBox_efternavn" HorizontalAlignment="Left" Height="35" Width="300" Margin="100,594,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="stu_txtBox_telefon" HorizontalAlignment="Left" Height="35" Width="300" Margin="100,674,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="stu_txtBox_email" HorizontalAlignment="Left" Height="35" Width="300" Margin="100,754,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="Stu_CPR_TextBox" HorizontalAlignment="Left" Height="35" Width="300" Margin="100,434,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="Stu_FirstName_TextBox" HorizontalAlignment="Left" Height="35" Width="300" Margin="100,514,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="Stu_LastName_TextBox" HorizontalAlignment="Left" Height="35" Width="300" Margin="100,594,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="Stu_Phone_TextBox" HorizontalAlignment="Left" Height="35" Width="300" Margin="100,674,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="Stu_Email_TextBox" HorizontalAlignment="Left" Height="35" Width="300" Margin="100,754,0,0" VerticalAlignment="Top"/>
 
         <!--Buttons-->
         <Button x:Name="Stu_Add_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="495,484,0,0" Content="TILFØJ" Height="35" Width="100" FontSize="16" Click="Stu_Add_Button_Click">

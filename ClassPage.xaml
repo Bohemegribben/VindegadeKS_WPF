@@ -12,7 +12,16 @@
     <Grid>
         
         <!-- ListBox -->
-        <ListBox x:Name="Class_DisClass_ListBox" Width="640" Height="350" Margin="0, 20, 20, 0" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="20"/>
+        <ListBox x:Name="Class_DisClass_ListBox" Width="640" Height="350" Margin="0, 20, 20, 0" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="20">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <!-- Change what it's binding to based on what you want written in the ListBoxItem -->
+                    <TextBlock Text="{Binding ClassName}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        <!-- Remember to close the ListBox -->
+        </ListBox>
+
 
         <!-- Knap til sub page for valgte hold-->
         <Button x:Name="Class_Subpage_button" Content="Fremvis valgt hold" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Margin="20,435,0,0" FontSize="20" Height="50" Width="185">

@@ -27,6 +27,7 @@ namespace VindegadeKS_WPF
         public ClassPage()
         {
             InitializeComponent();
+            ClearInputFields();
             LockInputFields();
             ListBoxFunction();
             ComboBoxFunctionYear();
@@ -56,10 +57,10 @@ namespace VindegadeKS_WPF
 
             List<Class> quarters = new List<Class>();
 
-            quarters.Add(new Class { ClassQuarter = Quarter.Spring });
-            quarters.Add(new Class { ClassQuarter = Quarter.Summer });
-            quarters.Add(new Class { ClassQuarter = Quarter.Fall });
-            quarters.Add(new Class { ClassQuarter = Quarter.Winter });
+            quarters.Add(new Class { ClassQuarter = Quarter.F });
+            quarters.Add(new Class { ClassQuarter = Quarter.S });
+            quarters.Add(new Class { ClassQuarter = Quarter.E });
+            quarters.Add(new Class { ClassQuarter = Quarter.V });
 
             Class_Quarter_ComboBox.ItemsSource = quarters;
             Class_Quarter_ComboBox.DisplayMemberPath = "ClassQuarter";
@@ -126,11 +127,11 @@ namespace VindegadeKS_WPF
                 {
                     while (dr.Read())
                     {
-                        classToBeRetrieved = new Class(default, "", "", default)
+                        classToBeRetrieved = new Class(default, "", "", default, "")
                         {
                             ClassName = dr["PK_ClassName"].ToString(),
                             ClassYear = dr["ClassYear"].ToString(),
-                            ClassNumber = dr["ClassNumber"].ToString(), //hvordan laver vi ClassNumber
+                            ClassNumber = dr["ClassNumber"].ToString(),
                             ClassQuarter = (Quarter)Enum.Parse(typeof(Quarter), dr["ClassQuarter"].ToString()),
                             ClassLicenseType = (LicenseType)Enum.Parse(typeof(LicenseType), dr["ClassLicenseType"].ToString()),
                         };
@@ -158,7 +159,7 @@ namespace VindegadeKS_WPF
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
                 con.Open();
-                SqlCommand cmd = new SqlCommand("INSERT INTO VK_Classes (ClassName, ClassYear, ClassNumber, ClassQuarter, ClassLicenseType)" +
+                SqlCommand cmd = new SqlCommand("INSERT INTO VK_Classes (PK_ClassName, ClassYear, ClassNumber, ClassQuarter, ClassLicenseType)" +
                                                  "VALUES(@ClassName, @ClassYear, @ClassNumber, @ClassQuarter, @ClassLicenseType)" +
                                                  "SELECT @@IDENTITY", con);
                 cmd.Parameters.Add("@ClassName", SqlDbType.NVarChar).Value = classToBeCreated.ClassName;
@@ -166,8 +167,18 @@ namespace VindegadeKS_WPF
                 cmd.Parameters.Add("@ClassNumber", SqlDbType.NVarChar).Value = classToBeCreated.ClassNumber;
                 cmd.Parameters.Add("@ClassQuarter", SqlDbType.NVarChar).Value = classToBeCreated.ClassQuarter;
                 cmd.Parameters.Add("@ClassLicenseType", SqlDbType.NVarChar).Value = classToBeCreated.ClassLicenseType;
-                cmd.ExecuteScalar(); // problem!!
+                cmd.ExecuteScalar();
             }
+
+            ClearInputFields();
+            ListBoxFunction();
+        }
+
+        private void ClearInputFields()
+        {
+            Class_Year_ComboBox.SelectedItem = null;
+            Class_Quarter_ComboBox.SelectedItem = null;
+            Class_LicenseType_ComboBox.SelectedItem = null;
         }
 
         private void LockInputFields()
