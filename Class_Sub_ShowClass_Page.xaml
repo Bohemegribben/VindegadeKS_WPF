@@ -67,7 +67,7 @@
             </Button.Resources>
         </Button>
 
-        <Button x:Name="Class_Sub_DelClass_Button" Content="SLET HOLD" Foreground="Red" FontWeight="Bold" Margin="20,930,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30">
+        <Button x:Name="Class_Sub_DelClass_Button" Content="SLET HOLD" Foreground="Red" FontWeight="Bold" Margin="20,930,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30" Click="Class_Sub_DelClass_Button_Click">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="10"/>
