@@ -7,7 +7,10 @@
       mc:Ignorable="d"
       Background="PaleTurquoise"
       d:DesignHeight="1000" d:DesignWidth="680"
+      Loaded="OnLoad"
       Title="ClassPage">
+    
+
 
     <Grid>
         
