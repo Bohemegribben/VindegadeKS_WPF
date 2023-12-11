@@ -23,7 +23,7 @@ namespace VindegadeKS_WPF
         //samtlige pages initialiseres inden MainWindow-metoden køres for at undgå reset af pages under navigation 
         DashboardPage dP = new DashboardPage();
         AppointmentPage aP = new AppointmentPage();
-        ClassPage cP = new ClassPage();
+        public ClassPage cP = new ClassPage();
         InstructorPage iP = new InstructorPage();
         LessonPage lP = new LessonPage();
         StudentPage sP = new StudentPage();

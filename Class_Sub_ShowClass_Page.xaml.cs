@@ -38,6 +38,7 @@ namespace VindegadeKS_WPF
             ComboBoxFunctionLicenseTypes();
             ClassComboBoxSetUp();
         }
+        public ClassPage cP;
 
         ConStuClass conToBeRetrieved; /// Can conToBeRetrieved and stuToBeRetrieved be merged
         ConStuClass stuToBeRetrieved;
@@ -438,7 +439,7 @@ namespace VindegadeKS_WPF
         }
 
         //Deletes the selected connection from the database
-        public void DeleteClass(int classToBeDeleted)
+        public void DeleteClass(string classToBeDeleted)
         {
             //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
@@ -499,8 +500,23 @@ namespace VindegadeKS_WPF
             }
         }
         #endregion
+
         #endregion
 
-        
+        private void Class_Sub_DelClass_Button_Click(object sender, RoutedEventArgs e)
+        {
+            string messageBoxText = $"Du er ved at slette {currentClassName}.\nEr du sikker på at du gerne vil slette {currentClassName}?";
+            string caption = "ADVARSEL";
+            MessageBoxButton button = MessageBoxButton.OKCancel;
+            MessageBoxImage icon = MessageBoxImage.Warning;
+            MessageBoxResult result;
+
+            result = MessageBox.Show(messageBoxText, caption, button, icon);
+            if (result == MessageBoxResult.OK) 
+            {
+                DeleteClass(currentClassName);
+                this.NavigationService.GoBack();
+            }
+        }
     }
 }
