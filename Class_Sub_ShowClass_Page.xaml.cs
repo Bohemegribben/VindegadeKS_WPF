@@ -26,8 +26,9 @@ namespace VindegadeKS_WPF
     /// Redo the comments (/add new), they are a mismatch of (unedited) copied and newly written comments
     public partial class Class_Sub_ShowClass_Page : Page
     {
-        public Class_Sub_ShowClass_Page()
+        public Class_Sub_ShowClass_Page(string cn)
         {
+            currentClassName = cn;
             InitializeComponent();
             Class_Sub_Title_TextBlock.Text = currentClassName;
             ListBoxFunction();
@@ -45,7 +46,7 @@ namespace VindegadeKS_WPF
         Class currentClass = new Class(); /// Is Class needed or is ConStu fine? (Combine?)
         ConStuClass currentStu = new ConStuClass();
 
-        string currentClassName = "S25-4"; ///Send something when opening page
+        string currentClassName; ///Send something when opening page
 
         string currentConStuID;/// Are two ID strings needed?
         string currentConClassID;

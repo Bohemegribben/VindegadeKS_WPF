@@ -43,6 +43,7 @@ namespace VindegadeKS_WPF
         }
 
         public Frame pageView { get; set; }
+        
 
         //Create CurrentClass to contain current object - Needed in: Save_Button_Click
         Class currentClass = new Class();
@@ -96,11 +97,12 @@ namespace VindegadeKS_WPF
             Class_LicenseType_ComboBox.SelectedIndex = 0;
         }
 
-        private void Les_DisLes_ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Class_DisClass_ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (Class_DisClass_ListBox.SelectedItem != null)
             {
                 currentItem = (Class_DisClass_ListBox.SelectedItem as Class).ClassName;
+                Class_Subpage_button.IsEnabled = true;
             }
         }
 
@@ -223,7 +225,9 @@ namespace VindegadeKS_WPF
 
         private void Class_Subpage_button_Click(object sender, RoutedEventArgs e)
         {
-            pageView.Content = new Class_Sub_ShowClass_Page();
+            pageView.Content = new Class_Sub_ShowClass_Page(currentItem);
+            Class_Subpage_button.IsEnabled = false;
+            ListBoxFunction();
         }
     }
 }
