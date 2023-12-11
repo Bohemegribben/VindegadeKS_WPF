@@ -219,11 +219,14 @@ namespace VindegadeKS_WPF
             //New list and datapoints for Combobox
             List<Lesson> types = new List<Lesson>();
             types.Add(new Lesson { LesType = "Teori"});
-            types.Add(new Lesson { LesType = "Praktisk_Hold"});
-            types.Add(new Lesson { LesType = "Praktisk_Solo"});
+            types.Add(new Lesson { LesType = "Praktisk m/ Hold"});
+            types.Add(new Lesson { LesType = "Praktisk m/ Individ"});
 
             //Set the ItemsSource
             Les_Type_ComboBox.ItemsSource = types;
+
+            //Sets what is displayed in the ComboBox
+            Les_Type_ComboBox.DisplayMemberPath = "LesType";
            
             //Sets default choice
             Les_Type_ComboBox.SelectedIndex = 0;
