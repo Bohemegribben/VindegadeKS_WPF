@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static VindegadeKS_WPF.Class_Sub_ShowClass_Page;
 
 namespace VindegadeKS_WPF
 {
@@ -123,6 +125,34 @@ namespace VindegadeKS_WPF
             Apmt_PickInstructor_ComboBox.ItemsSource = instructors;
             Apmt_PickInstructor_ComboBox.DisplayMemberPath = "DisplayValue";
         }
+        /*
+        private void AddStuComboBoxFunction()
+        {
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                con.Open();
+
+                //Make students instead
+                SqlCommand count = new SqlCommand("SELECT COUNT(PK_StuCPR) from VK_Students", con);
+                int intCount = (int)count.ExecuteScalar();
+
+                List<ConStuClass> types = new List<ConStuClass>();
+
+                for (int i = 0; i < intCount; i++)
+                {
+                    RetrieveStudent(i);
+
+                    types.Add(new ConStuClass { CK_ClassName = stuToBeRetrieved.CK_ClassName, CK_StuCPR = stuToBeRetrieved.CK_StuCPR, StuFirstName = stuToBeRetrieved.StuFirstName, StuLastName = stuToBeRetrieved.StuLastName, });
+
+                    types[i].SetUp = $"{types[i].StuFirstName} {types[i].StuLastName}";
+                }
+
+                Class_Sub_AddStu_ComboBox.DisplayMemberPath = "SetUp";
+
+                Class_Sub_AddStu_ComboBox.ItemsSource = types;
+            }
+        }
+        */
 
         //Class which defines the ComboBox Data
         public class ApmtComboBoxLesson
