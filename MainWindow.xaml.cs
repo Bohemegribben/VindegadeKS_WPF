@@ -23,7 +23,7 @@ namespace VindegadeKS_WPF
         //samtlige pages initialiseres inden MainWindow-metoden køres for at undgå reset af pages under navigation 
         DashboardPage dP = new DashboardPage();
         AppointmentPage aP = new AppointmentPage();
-        ClassPage cP = new ClassPage();
+        public ClassPage cP = new ClassPage();
         InstructorPage iP = new InstructorPage();
         LessonPage lP = new LessonPage();
         StudentPage sP = new StudentPage();
@@ -33,6 +33,7 @@ namespace VindegadeKS_WPF
             InitializeComponent();
             Menu_Dash_Button.Background = Brushes.Gray; //Dashboardknappen gøres grå for at indikere, hvor brugeren 'befinder' sig
             PageView.Content = dP; //startsiden kaldes
+            cP.pageView = PageView; //Giver ClassPage adgang til rammen PageView
         }
 
         //De nedenstående Button_Click-knapper bruges til at navigere mellem de primærsiderne (svarende til klasserne).
@@ -89,11 +90,6 @@ namespace VindegadeKS_WPF
             Menu_Inst_Button.Background = Brushes.LightGray;
             Menu_Les_Button.Background = Brushes.LightGray;
             Menu_Apmt_Button.Background = Brushes.LightGray;
-        }
-
-        private void Menu_ClassSub_Button_Click(object sender, RoutedEventArgs e)
-        {
-            PageView.Content = new Class_Sub_ShowClass_Page();
         }
     }
 }

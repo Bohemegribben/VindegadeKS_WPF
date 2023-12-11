@@ -34,13 +34,23 @@ namespace VindegadeKS_WPF
             LockInputFields();
 
             //Calls the ListBoxFunction method which create the ListBoxItems for your ListBox
-            ListBoxFunction();
+            //ListBoxFunction();
 
             //Calls the three ComboBoxFunction methods which sets up the ComboBoxes on your page 
             ComboBoxFunctionYear();
             ComboBoxFunctionQuarters();
             ComboBoxFunctionLicenseTypes();
         }
+
+        //When loading the page, do the following
+        private void OnLoad(object sender, RoutedEventArgs e)
+        {
+            ListBoxFunction();
+            Class_Subpage_button.IsEnabled = false;
+        }
+
+        public Frame pageView { get; set; }
+
 
         //Create CurrentClass to contain current object - Needed in: Save_Button_Click
         Class currentClass = new Class();
@@ -94,11 +104,12 @@ namespace VindegadeKS_WPF
             Class_LicenseType_ComboBox.SelectedIndex = 0;
         }
 
-        private void Les_DisLes_ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Class_DisClass_ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (Class_DisClass_ListBox.SelectedItem != null)
             {
                 currentItem = (Class_DisClass_ListBox.SelectedItem as Class).ClassName;
+                Class_Subpage_button.IsEnabled = true;
             }
         }
 
@@ -178,7 +189,7 @@ namespace VindegadeKS_WPF
                 // This all defines ClassName, but at the moment ListBox is not displaying ClassName correctly.
                 SqlCommand count = new SqlCommand("SELECT COUNT(ClassQuarter) FROM VK_Classes WHERE ClassQuarter = @ClassQuarter AND ClassYear = @ClassYear", con);
                 count.Parameters.Add("@ClassQuarter", SqlDbType.NVarChar).Value = classToBeCreated.ClassQuarter;
-                count.Parameters.Add("@ClassYear", SqlDbType.NVarChar).Value = classToBeCreated.ClassYear; 
+                count.Parameters.Add("@ClassYear", SqlDbType.NVarChar).Value = classToBeCreated.ClassYear;
                 int intCount = (int)count.ExecuteScalar();
                 classToBeCreated.ClassNumber = (intCount + 1).ToString();
 
@@ -218,5 +229,11 @@ namespace VindegadeKS_WPF
             Class_Quarter_ComboBox.IsEnabled = true;
             Class_LicenseType_ComboBox.IsEnabled = true;
         }
+
+        private void Class_Subpage_button_Click(object sender, RoutedEventArgs e)
+        {
+            pageView.Content = new Class_Sub_ShowClass_Page(currentItem);           
+        }
+        
     }
 }
