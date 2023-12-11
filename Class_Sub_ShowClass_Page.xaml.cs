@@ -187,7 +187,7 @@ namespace VindegadeKS_WPF
             RetrieveStudent(Class_Sub_AddStu_ComboBox.SelectedIndex);
             currentStu.CK_StuCPR = stuToBeRetrieved.CK_StuCPR.ToString();
             currentStu.CK_ClassName = currentClassName;
-            while(DoesConExist(currentStu) == false)
+            if(DoesConExist(currentStu) == false)
                 CreateConnection(currentStu);
             ListBoxFunction();
             Class_Sub_AddStu_ComboBox.SelectedItem = null;
@@ -277,13 +277,13 @@ namespace VindegadeKS_WPF
                                                 "VALUES(@CK_ClassName,@CK_StuCPR)" +
                                                 "SELECT @@IDENTITY", con);
 
-               
-                    //Add corresponding attribute to the database through the use of cmd
-                    cmd.Parameters.Add("@CK_ClassName", SqlDbType.NVarChar).Value = conToBeCreated.CK_ClassName;
-                    cmd.Parameters.Add("@CK_StuCPR", SqlDbType.NVarChar).Value = conToBeCreated.CK_StuCPR;
-                    //Tells the database to execute the sql commands
-                    cmd.ExecuteScalar();
-                                
+
+                //Add corresponding attribute to the database through the use of cmd
+                cmd.Parameters.AddWithValue("@CK_ClassName", conToBeCreated.CK_ClassName);
+                cmd.Parameters.AddWithValue("@CK_StuCPR", conToBeCreated.CK_StuCPR);
+                
+                //Tells the database to execute the sql commands
+                cmd.ExecuteScalar();
             }
         }
 
@@ -294,10 +294,10 @@ namespace VindegadeKS_WPF
             {
                 //Opens said connection
                 con.Open();
-                SqlCommand count = new SqlCommand("SELECT COUNT(CK_ClassName) FROM VK_Class_Student WHERE CK_ClassName = @CK_ClassName AND CK_StuCPR = @CK_StuCPR", con);
-                count.Parameters.AddWithValue("@CK_StuCPR", currentStu.CK_StuCPR); 
-                count.Parameters.AddWithValue("@CK_ClassName", currentStu.CK_ClassName);
-                int stuCount = (int)count.ExecuteScalar();
+                SqlCommand exists = new SqlCommand("SELECT COUNT(CK_ClassName) FROM VK_Class_Student WHERE CK_ClassName = @CK_ClassName AND CK_StuCPR = @CK_StuCPR", con);
+                exists.Parameters.AddWithValue("@CK_StuCPR", currentStu.CK_StuCPR);
+                exists.Parameters.AddWithValue("@CK_ClassName", currentStu.CK_ClassName);
+                int stuCount = (int)exists.ExecuteScalar();
                 if (stuCount == 0) { exist = false; }
             }
             return exist;
@@ -421,12 +421,15 @@ namespace VindegadeKS_WPF
                 int intCount = (int)count.ExecuteScalar();
                 classToBeUpdated.ClassNumber = (intCount + 1).ToString();
 
-                SqlCommand c = new SqlCommand("SELECT MAX(CAST(ClassNumber AS Int)) FROM VK_Classes WHERE ClassQuarter = @ClassQuarter AND ClassYear = @ClassYear AND IsNumeric(ClassNumber) = 1", con);
-                c.Parameters.Add("@ClassQuarter", SqlDbType.NVarChar).Value = classToBeUpdated.ClassQuarter;
-                c.Parameters.Add("@ClassYear", SqlDbType.NVarChar).Value = classToBeUpdated.ClassYear;
-                int cCount = (int)c.ExecuteScalar();
-                if((intCount + 1) <= cCount) { classToBeUpdated.ClassNumber = (cCount + 1).ToString(); }
-
+                if(intCount != 0)
+                {
+                    SqlCommand c = new SqlCommand("SELECT MAX(CAST(ClassNumber AS Int)) FROM VK_Classes WHERE ClassQuarter = @ClassQuarter AND ClassYear = @ClassYear AND IsNumeric(ClassNumber) = 1", con);
+                    c.Parameters.Add("@ClassQuarter", SqlDbType.NVarChar).Value = classToBeUpdated.ClassQuarter;
+                    c.Parameters.Add("@ClassYear", SqlDbType.NVarChar).Value = classToBeUpdated.ClassYear;
+                    int cCount = (int)c.ExecuteScalar();
+                    if ((intCount + 1) <= cCount) { classToBeUpdated.ClassNumber = (cCount + 1).ToString(); }
+                }
+                
                 newName = $"{currentClass.ClassQuarter}{currentClass.ClassYear}-{classToBeUpdated.ClassNumber}";
                 
                 //Gives @attribute the value of attribute
