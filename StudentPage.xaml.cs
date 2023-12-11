@@ -302,27 +302,46 @@ namespace VindegadeKS_WPF
 
         #region DeleteStudent
 
-        public void DeleteStudent(string StudentCPRToBeDeleted) // DeleteStudent - metoden defineres med parameteren string StudentCPRToBeDeleted,
+       public void DeleteStudent(string StudentCPRToBeDeleted) // DeleteStudent - metoden defineres med parameteren string StudentCPRToBeDeleted,
                                                                   // Metoden tager CurrentStudent.StuCPR (som har referencesemantisk lighed med currentItem)
                                                                   // som argument, når den kaldes
         {
             // Sql-Connection definerer forbindelsen 'con' til databasen
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
-                con.Open(); // 'Open' åbner forbindelsen 'con' til databasen
-                SqlCommand cmd = new SqlCommand("DELETE FROM VK_Students WHERE PK_StuCPR = @PK_StuCPR", con); // SqlCommand definerer Sql-query-indholdet
-                                                                                                                 // (en DELETE-kommando rettet mod en specifik
-                                                                                                                 // tabel i databasen) af 'cmd', som skal
-                                                                                                                 // sendes via forbindelsen 'con'
+               
+                /*con.Open(); // 'Open' åbner forbindelsen 'con' til databasen
+                 SqlCommand cmd = new SqlCommand("DELETE VK_Class_Student, VK_Students FROM VK_Class_Student JOIN VK_Students ON VK_Class_Student.CK_StuCPR = VK_Students.PK_StuCPR WHERE VK_Class_Student.CK_StuCPR = @CK_StuCPR", con); // SqlCommand definerer Sql-query-indholdet
+                                                                                                                                                                                                                                     // (en DELETE-kommando rettet mod en specifik
+                                                                                                                                                                                                                                     // tabel i databasen) af 'cmd', som skal
+                                                                                                                                                                                                                                     // sendes via forbindelsen 'con'
 
-                cmd.Parameters.AddWithValue("@PK_StuCPR", StudentCPRToBeDeleted); // cmd.Parameters.AddWithValue sætter en SQL-variabel (@PK_StuCPR) lig
-                                                                                    // med parameteren 'StudentCPRToBeDeleted', der får sit argument, når
-                                                                                    // metoden bliver kaldt
-                cmd.ExecuteScalar(); // ExecuteScalar-metoden kører kommandoen cmd
+                 cmd.Parameters.AddWithValue("@PK_StuCPR", StudentCPRToBeDeleted); // cmd.Parameters.AddWithValue sætter en SQL-variabel (@PK_StuCPR) lig
+                                                                                     // med parameteren 'StudentCPRToBeDeleted', der får sit argument, når
+                                                                                     // metoden bliver kaldt
+                 cmd.ExecuteScalar(); // ExecuteScalar-metoden kører kommandoen cmd
+                */
+
+
+                con.Open();
+
+                // Delete from VK_Class_Student where there´s dependencies first to avoid the reference constraint
+                SqlCommand cmd2 = new SqlCommand("DELETE FROM VK_Class_Student WHERE CK_StuCPR = @CK_StuCPR", con);
+                cmd2.Parameters.AddWithValue("@CK_StuCPR", StudentCPRToBeDeleted);
+                cmd2.ExecuteScalar();
+
+                // Delete from VK_Students
+                SqlCommand cmd1 = new SqlCommand("DELETE FROM VK_Students WHERE PK_StuCPR = @PK_StuCPR", con);
+                cmd1.Parameters.AddWithValue("@PK_StuCPR", StudentCPRToBeDeleted);
+                cmd1.ExecuteScalar(); // Use ExecuteNonQuery for DELETE, INSERT, UPDATE statements
+                
+
+               
             }
 
             ClearInputFields(); // Input-felterne cleares for at indikere, at sletningen er gennemført
-        }
+           
+        } 
 
         #endregion
 
