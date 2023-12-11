@@ -22,6 +22,8 @@ namespace VindegadeKS_WPF
     /// <summary>
     /// Interaction logic for Class_Sub_ShowClass_Page.xaml
     /// </summary>
+
+    /// Redo the comments (/add new), they are a mismatch of (unedited) copied and newly written comments
     public partial class Class_Sub_ShowClass_Page : Page
     {
         public Class_Sub_ShowClass_Page()
