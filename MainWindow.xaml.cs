@@ -33,6 +33,7 @@ namespace VindegadeKS_WPF
             InitializeComponent();
             Menu_Dash_Button.Background = Brushes.Gray; //Dashboardknappen gøres grå for at indikere, hvor brugeren 'befinder' sig
             PageView.Content = dP; //startsiden kaldes
+            cP.pageView = PageView; //Giver ClassPage adgang til rammen PageView
         }
 
         //De nedenstående Button_Click-knapper bruges til at navigere mellem de primærsiderne (svarende til klasserne).

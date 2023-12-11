@@ -24,7 +24,7 @@
 
 
         <!-- Knap til sub page for valgte hold-->
-        <Button x:Name="Class_Subpage_button" Content="Fremvis valgt hold" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Margin="20,435,0,0" FontSize="20" Height="50" Width="185">
+        <Button x:Name="Class_Subpage_button" Content="Fremvis valgt hold" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Margin="20,435,0,0" FontSize="20" Height="50" Width="185" Click="Class_Subpage_button_Click">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="10"/>

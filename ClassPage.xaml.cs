@@ -42,6 +42,8 @@ namespace VindegadeKS_WPF
             ComboBoxFunctionLicenseTypes();
         }
 
+        public Frame pageView { get; set; }
+
         //Create CurrentClass to contain current object - Needed in: Save_Button_Click
         Class currentClass = new Class();
 
@@ -217,6 +219,11 @@ namespace VindegadeKS_WPF
             Class_Year_ComboBox.IsEnabled = true;
             Class_Quarter_ComboBox.IsEnabled = true;
             Class_LicenseType_ComboBox.IsEnabled = true;
+        }
+
+        private void Class_Subpage_button_Click(object sender, RoutedEventArgs e)
+        {
+            pageView.Content = new Class_Sub_ShowClass_Page();
         }
     }
 }
