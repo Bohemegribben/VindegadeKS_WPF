@@ -116,7 +116,7 @@ namespace VindegadeKS_WPF
                 {
                     RetrieveClassData(i);
 
-                    items.Add(new Class() { ClassName = classToBeRetrieved.ClassName, ClassYear = classToBeRetrieved.ClassYear, ClassQuarter = classToBeRetrieved.ClassQuarter, ClassLicenseType = classToBeRetrieved.ClassLicenseType });
+                    items.Add(new Class() { ClassName = classToBeRetrieved.ClassName, ClassYear = classToBeRetrieved.ClassYear, ClassQuarter = classToBeRetrieved.ClassQuarter, ClassNumber = classToBeRetrieved.ClassNumber });
                 }
                 Class_DisClass_ListBox.ItemsSource = items;
             }
