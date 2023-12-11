@@ -18,6 +18,7 @@ using static VindegadeKS_WPF.Class_Sub_ShowClass_Page;
 using VindegadeKS_WPF;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using Microsoft.Identity.Client;
+using System.Data;
 
 namespace VindegadeKS_WPF
 {
@@ -103,7 +104,7 @@ namespace VindegadeKS_WPF
                     //Calls RetrieveLessonData method, sending i as index
                     RetrieveLessonData(i);
                     RetrieveInstructorData(i);
-                    //RetrieveStudentData(i);
+                    RetrieveStudentData(i);
                     RetrieveClassData(i);
 
                     //Add new items from the item class with specific attributes to the list
@@ -357,6 +358,68 @@ namespace VindegadeKS_WPF
                 }
             }
         }
+        public void SaveAppointment(Appointment appointmentToBeCreated, Instructor instructorToBeCreated, Lesson lessonToBeCreated, Class classToBeCreated)
+        {
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                con.Open();
+                SqlCommand cmd = new SqlCommand("INSERT INTO VK_Appointments (ApmtDate, FK_InstID, FK_LesID, FK_ClassName)" +
+                                                 "VALUES(@ApmtDate, @FK_InstID, @FK_LesID, @FK_ClassName)" +
+                                                 "SELECT @@IDENTITY", con);
+                cmd.Parameters.Add("@ApmtDate", SqlDbType.DateTime).Value = appointmentToBeCreated.ApmtDate;
+                cmd.Parameters.Add("@FK_InstID", SqlDbType.Int).Value = instructorToBeCreated.InstId;
+                cmd.Parameters.Add("@FK_LesID", SqlDbType.Int).Value = lessonToBeCreated.LesId;
+                cmd.Parameters.Add("@FK_ClassName", SqlDbType.NVarChar).Value = classToBeCreated.ClassName;
+                appointmentToBeCreated.ApmtId = Convert.ToInt32(cmd.ExecuteScalar());
+            }
+        }
+        
+
+        private void Apmt_Add_Button_Click(object sender, RoutedEventArgs e)
+        {
+            UnlockInputFields();
+        }
+
+        private void Apmt_Save_Button_Click(object sender, RoutedEventArgs e)
+        {
+            SaveAppointment(CurrentAppointment, CurrentInstructor, CurrentLesson, CurrentClass);
+            ClearInputFields();
+            LockInputFields();
+        }
+
+        private void Apmt_Edit_Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Apmt_Delete_Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ClearInputFields()
+        {
+            Apmt_PickLesson_ComboBox.SelectedItem = null;
+            Apmt_PickClass_ComboBox.SelectedItem = null;
+            Apmt_PickStudent_ComboBox.SelectedItem = null;
+            Apmt_PickInstructor_ComboBox.SelectedItem = null;
+        }
+
+        private void LockInputFields()
+        {
+            Apmt_PickLesson_ComboBox.IsEnabled = false;
+            Apmt_PickClass_ComboBox.IsEnabled = false;
+            Apmt_PickStudent_ComboBox.IsEnabled = false;
+            Apmt_PickInstructor_ComboBox.IsEnabled = false;
+        }
+
+        private void UnlockInputFields()
+        {
+            Apmt_PickLesson_ComboBox.IsEnabled = true;
+            Apmt_PickClass_ComboBox.IsEnabled = true;
+            Apmt_PickStudent_ComboBox.IsEnabled = true;
+            Apmt_PickInstructor_ComboBox.IsEnabled = true;
+        }
 
         private void Apmt_ShowLessonType_TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -379,26 +442,6 @@ namespace VindegadeKS_WPF
         }
 
         private void Apmt_PickInstructor_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void Apmt_Add_Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Apmt_Save_Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Apmt_Edit_Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Apmt_Delete_Button_Click(object sender, RoutedEventArgs e)
         {
 
         }
