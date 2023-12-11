@@ -29,18 +29,22 @@ namespace VindegadeKS_WPF
             InitializeComponent();
             Class_Sub_Title_TextBlock.Text = currentClassName;
             ListBoxFunction();
-            ComboBoxFunction();
+            AddStuComboBoxFunction();
         }
 
-        ConStuClass conToBeRetrieved;
+        ConStuClass conToBeRetrieved; /// Can conToBeRetrieved and stuToBeRetrieved be merged
         ConStuClass stuToBeRetrieved;
-        Class classToBeRetrieved;
-        Class currentClass = new Class();
+        Class classToBeRetrieved; /// This as well
+
+        Class currentClass = new Class(); /// Is Class needed or is ConStu fine? (Combine?)
         ConStuClass currentStu = new ConStuClass();
-        string currentClassName = "S24-1"; //Send something when opening page
-        string currentConStuID;
+
+        string currentClassName = "S24-1"; ///Send something when opening page
+
+        string currentConStuID;/// Are two ID strings needed?
         string currentConClassID;
-        string newName;
+
+        string newName; /// Does this need to be accessable outside of it's method?
 
         #region Hold Buttons
         private void Class_Sub_Edit_Button_Click(object sender, RoutedEventArgs e)
@@ -82,7 +86,7 @@ namespace VindegadeKS_WPF
             if (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem != null)
             {
                 //Sets currentConStuID to equal the ID of selected item
-                currentConStuID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as ConStuClass).CK_StuCPR;
+                currentConStuID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as ConStuClass).CK_StuCPR; ///What are the IDs used for? And are both used?
                 currentConClassID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as ConStuClass).CK_ClassName;
             }
         }
@@ -127,7 +131,7 @@ namespace VindegadeKS_WPF
 
                 //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
                 Class_Sub_ShowClass_DisStu_ListBox.ItemsSource = stu;
-                Class_Sub_NumberOfStudents_TextBox.Text = countStu().ToString();
+                Class_Sub_NumberOfStudents_TextBox.Text = intCount.ToString();
             }
         }
         public class ConStuClass 
@@ -162,7 +166,7 @@ namespace VindegadeKS_WPF
         }
         #endregion
 
-        #region CheckComboBox
+        #region ComboBox
         private void Class_Sub_AddStu_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             RetrieveStudent(Class_Sub_AddStu_ComboBox.SelectedIndex);
@@ -173,7 +177,7 @@ namespace VindegadeKS_WPF
             ListBoxFunction();
             Class_Sub_AddStu_ComboBox.SelectedItem = null;
         }
-        private void ComboBoxFunction()
+        private void AddStuComboBoxFunction()
         {
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
@@ -227,7 +231,7 @@ namespace VindegadeKS_WPF
             }
         }
 
-        public bool DoesConExist(ConStuClass conToBeCreated)
+        public bool DoesConExist(ConStuClass conToBeCreated) /// Was it possible to add this back into the original method? 
         {
             bool exist = true;
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
@@ -429,21 +433,6 @@ namespace VindegadeKS_WPF
                 }
             }
         }
-
-        public int countStu()
-        {
-            int count = 0;
-            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
-            {
-                //Opens said connection
-                con.Open();
-                SqlCommand stucount = new SqlCommand("SELECT COUNT(CK_ClassName) FROM VK_Class_Student WHERE CK_ClassName = @CK_ClassName", con);
-                stucount.Parameters.AddWithValue("@CK_ClassName", currentClassName);
-                count = (int)stucount.ExecuteScalar();
-            }
-            return count;
-        }
-
         #endregion
         #endregion
 
