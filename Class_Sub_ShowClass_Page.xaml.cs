@@ -38,7 +38,6 @@ namespace VindegadeKS_WPF
             ComboBoxFunctionLicenseTypes();
             ClassComboBoxSetUp();
         }
-        public ClassPage cP;
 
         ConStuClass conToBeRetrieved; /// Can conToBeRetrieved and stuToBeRetrieved be merged
         ConStuClass stuToBeRetrieved;
@@ -422,7 +421,13 @@ namespace VindegadeKS_WPF
                 int intCount = (int)count.ExecuteScalar();
                 classToBeUpdated.ClassNumber = (intCount + 1).ToString();
 
-                newName = $"{currentClass.ClassQuarter}{currentClass.ClassYear}-{classToBeUpdated.ClassNumber}"; ///Can this be moved?
+                SqlCommand c = new SqlCommand("SELECT MAX(CAST(ClassNumber AS Int)) FROM VK_Classes WHERE ClassQuarter = @ClassQuarter AND ClassYear = @ClassYear AND IsNumeric(ClassNumber) = 1", con);
+                c.Parameters.Add("@ClassQuarter", SqlDbType.NVarChar).Value = classToBeUpdated.ClassQuarter;
+                c.Parameters.Add("@ClassYear", SqlDbType.NVarChar).Value = classToBeUpdated.ClassYear;
+                int cCount = (int)c.ExecuteScalar();
+                if((intCount + 1) <= cCount) { classToBeUpdated.ClassNumber = (cCount + 1).ToString(); }
+
+                newName = $"{currentClass.ClassQuarter}{currentClass.ClassYear}-{classToBeUpdated.ClassNumber}";
                 
                 //Gives @attribute the value of attribute
                 cmd.Parameters.AddWithValue("@PK_ClassName", currentClassName);
