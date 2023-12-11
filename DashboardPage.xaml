@@ -27,14 +27,39 @@
         <Label x:Name="dash_label_sygemeldinger" Content="Sygemeldinger" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="506,565,0,0" FontSize="18" FontWeight="Bold"/>
 
         <!-- Textboxes-->
-        <TextBlock x:Name="dash_txtBlock_aftalerIdag" Height="200" Width="450" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="25,47,0,0" Text="Lorem ipsum dolor sit amet, consectetur adipisicing elit."  Background="#FFEFC5F4"/>
+
         <TextBlock x:Name="dash_txtBlock_manglerXfraElever" Height="200" Width="630" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="25,331,0,0" Text="Lorem ipsum dolor sit amet, consectetur adipisicing elit."  Background="#FFF7E89A"/>
         <TextBlock x:Name="dash_txtBlock_noter" Height="200" Width="450" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="25,605,0,0" Text="Lorem ipsum dolor sit amet, consectetur adipisicing elit."  Background="#FFF4B7F7" />
         <TextBlock x:Name="dash_txtBlock_sygemeldinger" Height="200" Width= "150" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="505,605,0,0" Text="Lorem ipsum dolor sit amet."  Background="#FFB1FC9B" />
 
 
-        <!--Listbox -->
-        <ListBox  Height="200" Width="150" HorizontalAlignment="Left" VerticalAlignment="Top"  Margin="505,47,0,0" d:ItemsSource="{d:SampleData ItemCount=5}" />
+        <!--Listboxes -->
+        <ListBox x:Name="Dash_DisDash_ListBox" Width="150" Height="250" Margin="500,50, 0, 0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="20" >
+
+
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding ClassName}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <ListBox x:Name="Dash_DisApmt_ListBox" Width="400" Height="250" Margin="25,50, 0, 0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="20" Foreground="#FFC84747" Background="#FFE4B7F4" >
+            <ListBox.BorderBrush>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="Black"/>
+                    <GradientStop Color="White" Offset="1"/>
+                </LinearGradientBrush>
+            </ListBox.BorderBrush>
+
+
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <!-- Change what it's binding to based on what you want written in the ListBoxItem -->
+                    <TextBlock Text="{Binding SetUp}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
     </Grid>
 </Page>
