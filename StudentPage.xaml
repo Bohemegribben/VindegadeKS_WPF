@@ -29,7 +29,7 @@
 
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBox Text="{Binding FirstName}"/>
+                    <TextBlock Text="{Binding FirstName}"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
