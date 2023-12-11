@@ -75,11 +75,17 @@
             </Button.Resources>
         </Button>
 
-        <!-- TextBoxes -->
-        <TextBox x:Name="Class_Sub_Year_TextBox" Margin="20,130,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" />
-        <TextBox x:Name="Class_Sub_Quarter_TextBox" Margin="20,170,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" />
+        <!-- Change ComboBox -->
+        <ComboBox x:Name="Class_Sub_Year_ComboBox" FontWeight="Bold" Margin="20,130,10,0" HorizontalAlignment="Right" VerticalAlignment="Top" Width="125" Height="30" IsEnabled="False"/>
+        <ComboBox x:Name="Class_Sub_Quarter_ComboBox" FontWeight="Bold" Margin="20,170,10,0" HorizontalAlignment="Right" VerticalAlignment="Top" Width="125" Height="30" IsEnabled="False"/>
+        <ComboBox x:Name="Class_Sub_Type_ComboBox" FontWeight="Bold" Margin="20,250,10,0" HorizontalAlignment="Right" VerticalAlignment="Top" Width="125" Height="30" IsEnabled="False"/>
+        
+        <!--TextBox x:Name="Class_Sub_Year_TextBox" Margin="20,130,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" /´-->
+        <!--TextBox x:Name="Class_Sub_Quarter_TextBox" Margin="20,170,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" /-->
         <TextBox x:Name="Class_Sub_ClassNumber_TextBox" Margin="20,210,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" />
-        <TextBox x:Name="Class_Sub_LicenseType_TextBox" Margin="20,250,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" />
+        <!--TextBox x:Name="Class_Sub_LicenseType_TextBox" Margin="20,250,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" /-->
+        
+        <!-- TextBoxes -->
         <TextBox x:Name="Class_Sub_NumberOfStudents_TextBox" Margin="20,290,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" />
 
     </Grid>

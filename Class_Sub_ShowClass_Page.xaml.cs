@@ -32,6 +32,10 @@ namespace VindegadeKS_WPF
             Class_Sub_Title_TextBlock.Text = currentClassName;
             ListBoxFunction();
             AddStuComboBoxFunction();
+            ComboBoxFunctionYear();
+            ComboBoxFunctionQuarters();
+            ComboBoxFunctionLicenseTypes();
+            ClassComboBoxSetUp();
         }
 
         ConStuClass conToBeRetrieved; /// Can conToBeRetrieved and stuToBeRetrieved be merged
@@ -41,7 +45,7 @@ namespace VindegadeKS_WPF
         Class currentClass = new Class(); /// Is Class needed or is ConStu fine? (Combine?)
         ConStuClass currentStu = new ConStuClass();
 
-        string currentClassName = "S24-1"; ///Send something when opening page
+        string currentClassName = "S25-4"; ///Send something when opening page
 
         string currentConStuID;/// Are two ID strings needed?
         string currentConClassID;
@@ -51,32 +55,31 @@ namespace VindegadeKS_WPF
         #region Hold Buttons
         private void Class_Sub_Edit_Button_Click(object sender, RoutedEventArgs e)
         {
-            RetrieveClassData(currentClassName);
-            Class_Sub_Year_TextBox.Text = classToBeRetrieved.ClassYear;
-            Class_Sub_Quarter_TextBox.Text = classToBeRetrieved.ClassQuarter.ToString();
-            Class_Sub_ClassNumber_TextBox.Text = classToBeRetrieved.ClassNumber;
-            Class_Sub_LicenseType_TextBox.Text = classToBeRetrieved.ClassLicenseType.ToString();
-            Class_Sub_ClassNumber_TextBox.IsEnabled = true;
-            Class_Sub_Year_TextBox.IsEnabled = true;
+            Class_Sub_Year_ComboBox.IsEnabled = true;
+            Class_Sub_Quarter_ComboBox.IsEnabled = true;
+            Class_Sub_ClassNumber_TextBox.IsEnabled = true; ///Change to auto (Done in ClassPage) - Disable if true
+            Class_Sub_Type_ComboBox.IsEnabled = true;
         }
 
         private void Class_Sub_Save_Button_Click(object sender, RoutedEventArgs e)
         {
-            RetrieveClassData(currentClassName);
+            RetrieveClassData(currentClassName); ///Can the Retrieve(/other database) methods (if only used once) be moved into here?
 
-            currentClass.ClassYear = Class_Sub_Year_TextBox.Text;
-            currentClass.ClassQuarter = (Quarter)Enum.Parse(typeof(Quarter), Class_Sub_Quarter_TextBox.Text);
-            currentClass.ClassLicenseType = (LicenseType)Enum.Parse(typeof(LicenseType), Class_Sub_LicenseType_TextBox.Text);
+            currentClass.ClassYear = Class_Sub_Year_ComboBox.Text;
+            currentClass.ClassQuarter = (Quarter)Enum.Parse(typeof(Quarter), Class_Sub_Quarter_ComboBox.Text);
+            currentClass.ClassLicenseType = (LicenseType)Enum.Parse(typeof(LicenseType), Class_Sub_Type_ComboBox.Text);
             currentClass.ClassNumber = Class_Sub_ClassNumber_TextBox.Text;
-            newName = $"{currentClass.ClassQuarter}{currentClass.ClassYear}-{currentClass.ClassNumber}";
-
+      
             UpdateClass(currentClass);
 
-            currentClassName = newName;
+            
             Class_Sub_Title_TextBlock.Text = currentClassName;
+            Class_Sub_ClassNumber_TextBox.Text = currentClass.ClassNumber;
 
+            Class_Sub_Year_ComboBox.IsEnabled = false;
+            Class_Sub_Quarter_ComboBox.IsEnabled = false;
             Class_Sub_ClassNumber_TextBox.IsEnabled = false;
-            Class_Sub_Year_TextBox.IsEnabled = false;
+            Class_Sub_Type_ComboBox.IsEnabled = false;
         }
         #endregion
 
@@ -169,6 +172,15 @@ namespace VindegadeKS_WPF
         #endregion
 
         #region ComboBox
+        private void ClassComboBoxSetUp()
+        {
+            RetrieveClassData(currentClassName);
+            Class_Sub_Year_ComboBox.Text = classToBeRetrieved.ClassYear;
+            Class_Sub_Quarter_ComboBox.Text = classToBeRetrieved.ClassQuarter.ToString();
+            Class_Sub_ClassNumber_TextBox.Text = classToBeRetrieved.ClassNumber;
+            Class_Sub_Type_ComboBox.Text = classToBeRetrieved.ClassLicenseType.ToString();
+        }
+
         private void Class_Sub_AddStu_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             RetrieveStudent(Class_Sub_AddStu_ComboBox.SelectedIndex);
@@ -204,6 +216,47 @@ namespace VindegadeKS_WPF
 
                 Class_Sub_AddStu_ComboBox.ItemsSource = types;
             }
+        }
+        private void ComboBoxFunctionYear()
+        {
+            List<Class> years = new List<Class>();
+
+            for (int i = 24; i <= 40; i++)
+            {
+                years.Add(new Class { ClassYear = $"{i}" });
+            }
+            Class_Sub_Year_ComboBox.ItemsSource = years;
+            Class_Sub_Year_ComboBox.DisplayMemberPath = "ClassYear";
+            Class_Sub_Year_ComboBox.SelectedIndex = 0; ///Change default to currrent
+        }
+        private void ComboBoxFunctionQuarters()
+        {
+
+            List<Class> quarters = new List<Class>();
+
+            quarters.Add(new Class { ClassQuarter = Quarter.F });
+            quarters.Add(new Class { ClassQuarter = Quarter.S });
+            quarters.Add(new Class { ClassQuarter = Quarter.E });
+            quarters.Add(new Class { ClassQuarter = Quarter.V });
+
+            Class_Sub_Quarter_ComboBox.ItemsSource = quarters;
+            Class_Sub_Quarter_ComboBox.DisplayMemberPath = "ClassQuarter";
+            Class_Sub_Quarter_ComboBox.SelectedIndex = 0; ///Change default to currrent
+
+        }
+        private void ComboBoxFunctionLicenseTypes()
+        {
+
+            List<Class> types = new List<Class>();
+
+            types.Add(new Class { ClassLicenseType = LicenseType.B });
+            types.Add(new Class { ClassLicenseType = LicenseType.A1 });
+            types.Add(new Class { ClassLicenseType = LicenseType.A2 });
+            types.Add(new Class { ClassLicenseType = LicenseType.A });
+
+            Class_Sub_Type_ComboBox.ItemsSource = types;
+            Class_Sub_Type_ComboBox.DisplayMemberPath = "ClassLicenseType";
+            Class_Sub_Type_ComboBox.SelectedIndex = 0; ///Change default to currrent
         }
         #endregion
 
@@ -361,6 +414,14 @@ namespace VindegadeKS_WPF
                 //Creates a cmd SqlCommand, which UPDATEs the attributes of a specific row in the table, based on the LesId
                 SqlCommand cmd = new SqlCommand("UPDATE VK_Classes SET ClassYear = @ClassYear, ClassNumber = @ClassNumber, ClassQuarter = @ClassQuarter, ClassLicenseType = @ClassLicenseType, PK_ClassName = @NewClassName WHERE PK_ClassName = @PK_ClassName", con);
 
+                SqlCommand count = new SqlCommand("SELECT COUNT(ClassQuarter) FROM VK_Classes WHERE ClassQuarter = @ClassQuarter AND ClassYear = @ClassYear", con);
+                count.Parameters.Add("@ClassQuarter", SqlDbType.NVarChar).Value = classToBeUpdated.ClassQuarter;
+                count.Parameters.Add("@ClassYear", SqlDbType.NVarChar).Value = classToBeUpdated.ClassYear;
+                int intCount = (int)count.ExecuteScalar();
+                classToBeUpdated.ClassNumber = (intCount + 1).ToString();
+
+                newName = $"{currentClass.ClassQuarter}{currentClass.ClassYear}-{classToBeUpdated.ClassNumber}"; ///Can this be moved?
+                
                 //Gives @attribute the value of attribute
                 cmd.Parameters.AddWithValue("@PK_ClassName", currentClassName);
                 cmd.Parameters.AddWithValue("@NewClassName", newName);
@@ -371,6 +432,7 @@ namespace VindegadeKS_WPF
 
                 //Tells the database to execute the cmd sql command
                 cmd.ExecuteNonQuery();
+                currentClassName = newName;
             }
         }
 
