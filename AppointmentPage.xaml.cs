@@ -34,6 +34,7 @@ namespace VindegadeKS_WPF
             AddInstructorComboBoxFunction();
             AddStudentComboBoxFunction();
             AddClassComboBoxFunction();
+            LockInputFields();
             ListBoxFunction();
         }
         public Appointment CurrentAppointment = new Appointment();
@@ -366,7 +367,7 @@ namespace VindegadeKS_WPF
                 SqlCommand cmd = new SqlCommand("INSERT INTO VK_Appointments (ApmtDate, FK_InstID, FK_LesID, FK_ClassName)" +
                                                  "VALUES(@ApmtDate, @FK_InstID, @FK_LesID, @FK_ClassName)" +
                                                  "SELECT @@IDENTITY", con);
-                cmd.Parameters.Add("@ApmtDate", SqlDbType.DateTime).Value = appointmentToBeCreated.ApmtDate;
+                cmd.Parameters.Add("@ApmtDate", SqlDbType.DateTime2).Value = appointmentToBeCreated.ApmtDate;
                 cmd.Parameters.Add("@FK_InstID", SqlDbType.Int).Value = instructorToBeCreated.InstId;
                 cmd.Parameters.Add("@FK_LesID", SqlDbType.Int).Value = lessonToBeCreated.LesId;
                 cmd.Parameters.Add("@FK_ClassName", SqlDbType.NVarChar).Value = classToBeCreated.ClassName;
@@ -374,7 +375,6 @@ namespace VindegadeKS_WPF
             }
         }
         
-
         private void Apmt_Add_Button_Click(object sender, RoutedEventArgs e)
         {
             UnlockInputFields();
