@@ -442,5 +442,10 @@ namespace VindegadeKS_WPF
             CurrentInstructor.InstId = instructorToBeRetrieved.InstId;
             //??? ListBoxFunction();
         }
+        
+        private void Apmt_PickDateTime_DateTimePicker_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            CurrentAppointment.ApmtDate = (DateTime)Apmt_PickDateTime_DateTimePicker.Value;
+        }
     }
 }
