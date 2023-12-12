@@ -352,7 +352,6 @@ namespace VindegadeKS_WPF
         {
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
-                MessageBox.Show(classToBeCreated.ClassName);
                 con.Open();
                 SqlCommand cmd = new SqlCommand("INSERT INTO VK_Appointments (ApmtDate, FK_InstID, FK_LesID, FK_ClassName)" +
                                                  "VALUES(@ApmtDate, @FK_InstID, @FK_LesID, @FK_ClassName)" +
