@@ -184,7 +184,7 @@ namespace VindegadeKS_WPF
 
                     instructors.Add(instructorToBeRetrieved);
 
-                    instructorToBeRetrieved.Setup = $"{instructorToBeRetrieved.InstFirstName}, {instructorToBeRetrieved.InstFirstName}";
+                    instructorToBeRetrieved.Setup = $"{instructorToBeRetrieved.InstFirstName} {instructorToBeRetrieved.InstLastName}";
 
                     Apmt_PickInstructor_ComboBox.Items.Add(instructorToBeRetrieved.Setup);
                 }
@@ -209,7 +209,7 @@ namespace VindegadeKS_WPF
 
                     students.Add(studentToBeRetrieved);
 
-                    studentToBeRetrieved.Setup = $"{studentToBeRetrieved.StuFirstName}, {studentToBeRetrieved.StuLastName}";
+                    studentToBeRetrieved.Setup = $"{studentToBeRetrieved.StuFirstName} {studentToBeRetrieved.StuLastName}";
 
                     Apmt_PickStudent_ComboBox.Items.Add(studentToBeRetrieved.Setup);
                 }
