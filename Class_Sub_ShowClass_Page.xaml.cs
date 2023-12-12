@@ -32,10 +32,11 @@ namespace VindegadeKS_WPF
             currentClassName = cn;
             Class_Sub_Title_TextBlock.Text = currentClassName;
             ListBoxFunction();
-            ClassComboBoxSetUp();
+            ComboBoxStartUp();
             Class_Sub_Save_Button.IsEnabled = false;
         }
 
+        #region Variables
         ConStuClass conToBeRetrieved;
         Class classToBeRetrieved; /// Let it be its own thing
 
@@ -44,6 +45,7 @@ namespace VindegadeKS_WPF
 
         string currentClassName; //Gets cn from ClassPage on entry
         string currentConStuID; //Keeps track of which student has been chosen - Used by DeleteConnection
+        #endregion
 
         #region Hold Buttons
         private void Class_Sub_Edit_Button_Click(object sender, RoutedEventArgs e)
@@ -73,6 +75,21 @@ namespace VindegadeKS_WPF
             Class_Sub_ClassNumber_TextBox.IsEnabled = false;
             Class_Sub_Type_ComboBox.IsEnabled = false;
             Class_Sub_Save_Button.IsEnabled = false;
+        }
+        private void Class_Sub_DelClass_Button_Click(object sender, RoutedEventArgs e)
+        {
+            string messageBoxText = $"Du er ved at slette {currentClassName}.\nEr du sikker på at du gerne vil slette {currentClassName}?";
+            string caption = "ADVARSEL";
+            MessageBoxButton button = MessageBoxButton.OKCancel;
+            MessageBoxImage icon = MessageBoxImage.Warning;
+            MessageBoxResult result;
+
+            result = MessageBox.Show(messageBoxText, caption, button, icon);
+            if (result == MessageBoxResult.OK)
+            {
+                DeleteClass(currentClassName);
+                this.NavigationService.GoBack();
+            }
         }
         #endregion
 
@@ -164,12 +181,12 @@ namespace VindegadeKS_WPF
         #endregion
 
         #region ComboBox
-        private void ClassComboBoxSetUp()
+        private void ComboBoxStartUp()
         {
-            AddStuComboBoxFunction();
-            ComboBoxFunctionYear();
-            ComboBoxFunctionQuarters();
-            ComboBoxFunctionLicenseTypes();
+            AddStuComboBoxSetUp();
+            ComboBoxYearSetUp();
+            ComboBoxQuarterSetUp();
+            ComboBoxTypeSetUp();
 
             RetrieveClassData(currentClassName);
             Class_Sub_Year_ComboBox.Text = classToBeRetrieved.ClassYear;
@@ -188,7 +205,14 @@ namespace VindegadeKS_WPF
             ListBoxFunction();
             Class_Sub_AddStu_ComboBox.SelectedItem = null;
         }
-        private void AddStuComboBoxFunction()
+
+        private void Class_Sub_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Class_Sub_Save_Button.IsEnabled = true;
+        }
+
+        #region ComboBox SetUp
+        private void AddStuComboBoxSetUp()
         {
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
@@ -214,7 +238,8 @@ namespace VindegadeKS_WPF
                 Class_Sub_AddStu_ComboBox.ItemsSource = types;
             }
         }
-        private void ComboBoxFunctionYear()
+
+        private void ComboBoxYearSetUp()
         {
             List<Class> years = new List<Class>();
 
@@ -225,9 +250,9 @@ namespace VindegadeKS_WPF
             Class_Sub_Year_ComboBox.ItemsSource = years;
             Class_Sub_Year_ComboBox.DisplayMemberPath = "ClassYear";
         }
-        private void ComboBoxFunctionQuarters()
-        {
 
+        private void ComboBoxQuarterSetUp()
+        {
             List<Class> quarters = new List<Class>();
 
             quarters.Add(new Class { ClassQuarter = Quarter.F });
@@ -237,11 +262,10 @@ namespace VindegadeKS_WPF
 
             Class_Sub_Quarter_ComboBox.ItemsSource = quarters;
             Class_Sub_Quarter_ComboBox.DisplayMemberPath = "ClassQuarter";
-
         }
-        private void ComboBoxFunctionLicenseTypes()
-        {
 
+        private void ComboBoxTypeSetUp()
+        {
             List<Class> types = new List<Class>();
 
             types.Add(new Class { ClassLicenseType = LicenseType.B });
@@ -252,6 +276,7 @@ namespace VindegadeKS_WPF
             Class_Sub_Type_ComboBox.ItemsSource = types;
             Class_Sub_Type_ComboBox.DisplayMemberPath = "ClassLicenseType";
         }
+        #endregion
         #endregion
 
         #region Database
@@ -501,28 +526,10 @@ namespace VindegadeKS_WPF
             }
         }
         #endregion
-
         #endregion
 
-        private void Class_Sub_DelClass_Button_Click(object sender, RoutedEventArgs e)
-        {
-            string messageBoxText = $"Du er ved at slette {currentClassName}.\nEr du sikker på at du gerne vil slette {currentClassName}?";
-            string caption = "ADVARSEL";
-            MessageBoxButton button = MessageBoxButton.OKCancel;
-            MessageBoxImage icon = MessageBoxImage.Warning;
-            MessageBoxResult result;
 
-            result = MessageBox.Show(messageBoxText, caption, button, icon);
-            if (result == MessageBoxResult.OK) 
-            {
-                DeleteClass(currentClassName);
-                this.NavigationService.GoBack();
-            }
-        }
 
-        private void Class_Sub_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Class_Sub_Save_Button.IsEnabled = true;
-        }
+        
     }
 }
