@@ -111,6 +111,7 @@ namespace VindegadeKS_WPF
                     //Add new items from the item class with specific attributes to the list
                     //Will later be remade to automatically add items based on the database
 
+                    /*
                     items.Add((new Lesson() { LesName = lessonToBeRetrieved.LesName, LesType = lessonToBeRetrieved.LesType },
                             new Class() { ClassName = classToBeRetrieved.ClassName },
                             new Student() { StuFirstName = studentToBeRetrieved.StuFirstName, StuLastName = studentToBeRetrieved.StuLastName }, //kan det konkatineres?
@@ -122,6 +123,7 @@ namespace VindegadeKS_WPF
                     //Forloop to go through all items in the items-list, to add and fill the 'SetUp' attribute
 
                     items[i].Item5.Setup = $"{items[i].Item1.LesName} - {items[i].Item1.LesType}\n{items[i].Item5.ApmtDate}";
+                    */
                 }
 
                 //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
@@ -350,6 +352,7 @@ namespace VindegadeKS_WPF
         {
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
+                MessageBox.Show(classToBeCreated.ClassName);
                 con.Open();
                 SqlCommand cmd = new SqlCommand("INSERT INTO VK_Appointments (ApmtDate, FK_InstID, FK_LesID, FK_ClassName)" +
                                                  "VALUES(@ApmtDate, @FK_InstID, @FK_LesID, @FK_ClassName)" +
@@ -423,6 +426,9 @@ namespace VindegadeKS_WPF
         private void Apmt_PickClass_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             RetrieveClassData(Apmt_PickClass_ComboBox.SelectedIndex);
+            CurrentClass.ClassQuarter = classToBeRetrieved.ClassQuarter;
+            CurrentClass.ClassYear = classToBeRetrieved.ClassYear;
+            CurrentClass.ClassNumber = classToBeRetrieved.ClassNumber;
             CurrentClass.ClassName = classToBeRetrieved.ClassName;
             //Apmt_PickClass_ComboBox.SelectedItem = null;
         }
