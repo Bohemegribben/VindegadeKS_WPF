@@ -48,8 +48,8 @@ namespace VindegadeKS_WPF
 
         string currentClassName; ///Send something when opening page
 
-        string currentConStuID;/// Are two ID strings needed?
-        string currentConClassID;
+        string currentConStuID;
+       
 
         string newName; /// Does this need to be accessable outside of it's method?
 
@@ -92,8 +92,7 @@ namespace VindegadeKS_WPF
             if (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem != null)
             {
                 //Sets currentConStuID to equal the ID of selected item
-                currentConStuID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as ConStuClass).CK_StuCPR; ///What are the IDs used for? And are both used?
-                //currentConClassID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as ConStuClass).CK_ClassName;
+                currentConStuID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as ConStuClass).CK_StuCPR;
             }
         }
 
