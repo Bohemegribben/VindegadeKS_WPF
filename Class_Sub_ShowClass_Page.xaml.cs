@@ -40,7 +40,7 @@ namespace VindegadeKS_WPF
         }
 
         ConStuClass conToBeRetrieved; /// Can conToBeRetrieved and stuToBeRetrieved be merged
-        ConStuClass stuToBeRetrieved;
+        //ConStuClass conToBeRetrieved;
         Class classToBeRetrieved; /// This as well
 
         Class currentClass = new Class(); /// Is Class needed or is ConStu fine? (Combine?)
@@ -184,7 +184,7 @@ namespace VindegadeKS_WPF
         private void Class_Sub_AddStu_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             RetrieveStudent(Class_Sub_AddStu_ComboBox.SelectedIndex);
-            currentStu.CK_StuCPR = stuToBeRetrieved.CK_StuCPR.ToString();
+            currentStu.CK_StuCPR = conToBeRetrieved.CK_StuCPR.ToString();
             currentStu.CK_ClassName = currentClassName;
             if(DoesConExist(currentStu) == false)
                 CreateConnection(currentStu);
@@ -207,7 +207,7 @@ namespace VindegadeKS_WPF
                 {
                     RetrieveStudent(i);
 
-                    types.Add(new ConStuClass { CK_ClassName = stuToBeRetrieved.CK_ClassName, CK_StuCPR = stuToBeRetrieved.CK_StuCPR, StuFirstName = stuToBeRetrieved.StuFirstName, StuLastName = stuToBeRetrieved.StuLastName, });
+                    types.Add(new ConStuClass { CK_ClassName = conToBeRetrieved.CK_ClassName, CK_StuCPR = conToBeRetrieved.CK_StuCPR, StuFirstName = conToBeRetrieved.StuFirstName, StuLastName = conToBeRetrieved.StuLastName, });
 
                     types[i].SetUp = $"{types[i].StuFirstName} {types[i].StuLastName}";
                 }
@@ -489,7 +489,7 @@ namespace VindegadeKS_WPF
                     while (dr.Read())
                     {
                         //Sets conToBeRetrieve a new empty ClassStuConnection, which is then filled
-                        stuToBeRetrieved = new ConStuClass("", "", "", "", "", "", "")
+                        conToBeRetrieved = new ConStuClass("", "", "", "", "", "", "")
                         {
                             //Sets the attributes of conToBeRetrieved equal to the data from the current row of the database
                             
