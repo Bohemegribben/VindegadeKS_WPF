@@ -39,8 +39,7 @@ namespace VindegadeKS_WPF
             ClassComboBoxSetUp();
         }
 
-        ConStuClass conToBeRetrieved; /// Can conToBeRetrieved and stuToBeRetrieved be merged
-        //ConStuClass conToBeRetrieved;
+        ConStuClass conToBeRetrieved;
         Class classToBeRetrieved; /// This as well
 
         Class currentClass = new Class(); /// Is Class needed or is ConStu fine? (Combine?)
