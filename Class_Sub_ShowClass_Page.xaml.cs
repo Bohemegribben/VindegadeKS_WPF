@@ -93,7 +93,7 @@ namespace VindegadeKS_WPF
             {
                 //Sets currentConStuID to equal the ID of selected item
                 currentConStuID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as ConStuClass).CK_StuCPR; ///What are the IDs used for? And are both used?
-                currentConClassID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as ConStuClass).CK_ClassName;
+                //currentConClassID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as ConStuClass).CK_ClassName;
             }
         }
 
@@ -228,7 +228,6 @@ namespace VindegadeKS_WPF
             }
             Class_Sub_Year_ComboBox.ItemsSource = years;
             Class_Sub_Year_ComboBox.DisplayMemberPath = "ClassYear";
-            Class_Sub_Year_ComboBox.SelectedIndex = 0; ///Change default to currrent
         }
         private void ComboBoxFunctionQuarters()
         {
@@ -242,7 +241,6 @@ namespace VindegadeKS_WPF
 
             Class_Sub_Quarter_ComboBox.ItemsSource = quarters;
             Class_Sub_Quarter_ComboBox.DisplayMemberPath = "ClassQuarter";
-            Class_Sub_Quarter_ComboBox.SelectedIndex = 0; ///Change default to currrent
 
         }
         private void ComboBoxFunctionLicenseTypes()
@@ -257,7 +255,6 @@ namespace VindegadeKS_WPF
 
             Class_Sub_Type_ComboBox.ItemsSource = types;
             Class_Sub_Type_ComboBox.DisplayMemberPath = "ClassLicenseType";
-            Class_Sub_Type_ComboBox.SelectedIndex = 0; ///Change default to currrent
         }
         #endregion
 
