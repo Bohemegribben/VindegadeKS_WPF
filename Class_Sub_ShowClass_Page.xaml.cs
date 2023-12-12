@@ -26,17 +26,14 @@ namespace VindegadeKS_WPF
     /// Redo the comments (/add new), they are a mismatch of (unedited) copied and newly written comments
     public partial class Class_Sub_ShowClass_Page : Page
     {
-        public Class_Sub_ShowClass_Page(string cn)
+        public Class_Sub_ShowClass_Page(string cn) //Passed the classname from ClassPage on entry
         {
-            currentClassName = cn;
             InitializeComponent();
+            currentClassName = cn;
             Class_Sub_Title_TextBlock.Text = currentClassName;
             ListBoxFunction();
-            AddStuComboBoxFunction();
-            ComboBoxFunctionYear();
-            ComboBoxFunctionQuarters();
-            ComboBoxFunctionLicenseTypes();
             ClassComboBoxSetUp();
+            Class_Sub_Save_Button.IsEnabled = false;
         }
 
         ConStuClass conToBeRetrieved;
@@ -46,7 +43,6 @@ namespace VindegadeKS_WPF
         ConStuClass currentStu = new ConStuClass();
 
         string currentClassName; //Gets cn from ClassPage on entry
-
         string currentConStuID; //Keeps track of which student has been chosen - Used by DeleteConnection
 
         #region Hold Buttons
@@ -54,7 +50,7 @@ namespace VindegadeKS_WPF
         {
             Class_Sub_Year_ComboBox.IsEnabled = true;
             Class_Sub_Quarter_ComboBox.IsEnabled = true;
-            Class_Sub_ClassNumber_TextBox.IsEnabled = true; ///Change to auto (Done in ClassPage) - Disable if true
+            Class_Sub_ClassNumber_TextBox.IsEnabled = false;
             Class_Sub_Type_ComboBox.IsEnabled = true;
         }
 
@@ -68,7 +64,6 @@ namespace VindegadeKS_WPF
             currentClass.ClassNumber = Class_Sub_ClassNumber_TextBox.Text;
       
             UpdateClass(currentClass);
-
             
             Class_Sub_Title_TextBlock.Text = currentClassName;
             Class_Sub_ClassNumber_TextBox.Text = currentClass.ClassNumber;
@@ -77,6 +72,7 @@ namespace VindegadeKS_WPF
             Class_Sub_Quarter_ComboBox.IsEnabled = false;
             Class_Sub_ClassNumber_TextBox.IsEnabled = false;
             Class_Sub_Type_ComboBox.IsEnabled = false;
+            Class_Sub_Save_Button.IsEnabled = false;
         }
         #endregion
 
@@ -114,7 +110,6 @@ namespace VindegadeKS_WPF
                 //Forloop which adds intCount number of new stu to stu-list
                 for (int i = 0; i < intCount; i++)
                 {
-                    
                     //Calls RetrieveLessonData method, sending i as index
                     RetrieveConnection(i);
 
@@ -132,7 +127,8 @@ namespace VindegadeKS_WPF
 
                 //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
                 Class_Sub_ShowClass_DisStu_ListBox.ItemsSource = stu;
-                Class_Sub_NumberOfStudents_TextBox.Text = intCount.ToString();
+
+                Class_Sub_NumberOfStudents_TextBox.Text = intCount.ToString(); //Sets number of students in TextBox over in ClassData corner 
             }
         }
         public class ConStuClass 
@@ -170,6 +166,11 @@ namespace VindegadeKS_WPF
         #region ComboBox
         private void ClassComboBoxSetUp()
         {
+            AddStuComboBoxFunction();
+            ComboBoxFunctionYear();
+            ComboBoxFunctionQuarters();
+            ComboBoxFunctionLicenseTypes();
+
             RetrieveClassData(currentClassName);
             Class_Sub_Year_ComboBox.Text = classToBeRetrieved.ClassYear;
             Class_Sub_Quarter_ComboBox.Text = classToBeRetrieved.ClassQuarter.ToString();
@@ -517,6 +518,11 @@ namespace VindegadeKS_WPF
                 DeleteClass(currentClassName);
                 this.NavigationService.GoBack();
             }
+        }
+
+        private void Class_Sub_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Class_Sub_Save_Button.IsEnabled = true;
         }
     }
 }
