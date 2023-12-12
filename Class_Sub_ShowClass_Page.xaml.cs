@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 
+
 namespace VindegadeKS_WPF
 {
     /// <summary>
@@ -41,7 +42,7 @@ namespace VindegadeKS_WPF
         Class classToBeRetrieved; /// Let it be its own thing
 
         Class currentClass = new Class();
-        ConStuClass currentStu = new ConStuClass();
+        ConStuClass currentCon = new ConStuClass();
 
         string currentClassName; //Gets cn from ClassPage on entry
         string currentConStuID; //Keeps track of which student has been chosen - Used by DeleteConnection
@@ -197,12 +198,19 @@ namespace VindegadeKS_WPF
 
         private void Class_Sub_AddStu_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            RetrieveStudent(Class_Sub_AddStu_ComboBox.SelectedIndex);
-            currentStu.CK_StuCPR = conToBeRetrieved.CK_StuCPR.ToString();
-            currentStu.CK_ClassName = currentClassName;
-            CreateConnection(currentStu);
-            ListBoxFunction();
-            Class_Sub_AddStu_ComboBox.SelectedItem = null;
+            ComboBox comboBox = (ComboBox)sender;
+            if (!comboBox.IsDropDownOpen)
+                return;
+            else
+            {
+                RetrieveStudent(Class_Sub_AddStu_ComboBox.SelectedIndex);
+                currentCon.CK_StuCPR = conToBeRetrieved.CK_StuCPR.ToString();
+                currentCon.CK_ClassName = currentClassName;
+                CreateConnection(currentCon);
+                ListBoxFunction();
+                Class_Sub_AddStu_ComboBox.SelectedItem = null;
+            }
+            
         }
 
         private void Class_Sub_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -286,8 +294,11 @@ namespace VindegadeKS_WPF
             //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
+                MessageBox.Show("Works if there is a MessageBox somewhere in CreateConnection, \notherwise the program will run CreateConnection twice. \n\nHave tried 'IsLoaded' - Didn't work. \n\nHave tried making CreateConnection async and using an await timer - Didn't work. \n\nBut a MessageBox fixes it, so a MessageBox there shall be.");
+
                 //Opens said connection
                 con.Open();
+                
                 SqlCommand cmd = new SqlCommand("IF NOT EXISTS (SELECT * FROM VK_Class_Student WHERE CK_ClassName = @CK_ClassName AND CK_StuCPR = @CK_StuCPR) " +
                                                 "BEGIN INSERT INTO VK_Class_Student (CK_ClassName, CK_StuCPR) " +
                                                 "VALUES(@CK_ClassName, @CK_StuCPR) END " +
@@ -509,8 +520,5 @@ namespace VindegadeKS_WPF
         #endregion
         #endregion
 
-
-
-        
     }
 }
