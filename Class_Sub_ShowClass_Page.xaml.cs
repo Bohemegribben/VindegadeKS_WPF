@@ -40,17 +40,14 @@ namespace VindegadeKS_WPF
         }
 
         ConStuClass conToBeRetrieved;
-        Class classToBeRetrieved; /// This as well
+        Class classToBeRetrieved; /// Let it be its own thing
 
-        Class currentClass = new Class(); /// Is Class needed or is ConStu fine? (Combine?)
+        Class currentClass = new Class();
         ConStuClass currentStu = new ConStuClass();
 
-        string currentClassName; ///Send something when opening page
+        string currentClassName; //Gets cn from ClassPage on entry
 
-        string currentConStuID;
-       
-
-        string newName; /// Does this need to be accessable outside of it's method?
+        string currentConStuID; //Keeps track of which student has been chosen - Used by DeleteConnection
 
         #region Hold Buttons
         private void Class_Sub_Edit_Button_Click(object sender, RoutedEventArgs e)
@@ -425,7 +422,7 @@ namespace VindegadeKS_WPF
                     if ((intCount + 1) <= cCount) { classToBeUpdated.ClassNumber = (cCount + 1).ToString(); }
                 }
                 
-                newName = $"{currentClass.ClassQuarter}{currentClass.ClassYear}-{classToBeUpdated.ClassNumber}";
+                string newName = $"{currentClass.ClassQuarter}{currentClass.ClassYear}-{classToBeUpdated.ClassNumber}";
                 
                 //Gives @attribute the value of attribute
                 cmd.Parameters.AddWithValue("@PK_ClassName", currentClassName);
