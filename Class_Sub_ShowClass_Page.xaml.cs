@@ -200,8 +200,7 @@ namespace VindegadeKS_WPF
             RetrieveStudent(Class_Sub_AddStu_ComboBox.SelectedIndex);
             currentStu.CK_StuCPR = conToBeRetrieved.CK_StuCPR.ToString();
             currentStu.CK_ClassName = currentClassName;
-            if(DoesConExist(currentStu) == false)
-                CreateConnection(currentStu);
+            CreateConnection(currentStu);
             ListBoxFunction();
             Class_Sub_AddStu_ComboBox.SelectedItem = null;
         }
@@ -289,12 +288,10 @@ namespace VindegadeKS_WPF
             {
                 //Opens said connection
                 con.Open();
-                
-                //Creates a cmd SqlCommand, which enableds the ability to INSERT INTO the table with the corresponding attributes 
-                SqlCommand cmd = new SqlCommand("INSERT INTO VK_Class_Student (CK_ClassName, CK_StuCPR)" +
-                                                "VALUES(@CK_ClassName,@CK_StuCPR)" +
+                SqlCommand cmd = new SqlCommand("IF NOT EXISTS (SELECT * FROM VK_Class_Student WHERE CK_ClassName = @CK_ClassName AND CK_StuCPR = @CK_StuCPR) " +
+                                                "BEGIN INSERT INTO VK_Class_Student (CK_ClassName, CK_StuCPR) " +
+                                                "VALUES(@CK_ClassName, @CK_StuCPR) END " +
                                                 "SELECT @@IDENTITY", con);
-
 
                 //Add corresponding attribute to the database through the use of cmd
                 cmd.Parameters.AddWithValue("@CK_ClassName", conToBeCreated.CK_ClassName);
@@ -303,22 +300,6 @@ namespace VindegadeKS_WPF
                 //Tells the database to execute the sql commands
                 cmd.ExecuteScalar();
             }
-        }
-
-        public bool DoesConExist(ConStuClass conToBeCreated) /// Was it possible to add this back into the original method? 
-        {
-            bool exist = true;
-            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
-            {
-                //Opens said connection
-                con.Open();
-                SqlCommand exists = new SqlCommand("SELECT COUNT(CK_ClassName) FROM VK_Class_Student WHERE CK_ClassName = @CK_ClassName AND CK_StuCPR = @CK_StuCPR", con);
-                exists.Parameters.AddWithValue("@CK_StuCPR", currentStu.CK_StuCPR);
-                exists.Parameters.AddWithValue("@CK_ClassName", currentStu.CK_ClassName);
-                int stuCount = (int)exists.ExecuteScalar();
-                if (stuCount == 0) { exist = false; }
-            }
-            return exist;
         }
 
         //Retrieves the data of a specific row in the database where the row number is equal to dbRowNum + 1
