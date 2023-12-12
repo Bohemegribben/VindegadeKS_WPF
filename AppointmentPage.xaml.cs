@@ -18,6 +18,7 @@ using static VindegadeKS_WPF.Class_Sub_ShowClass_Page;
 using VindegadeKS_WPF;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using Microsoft.Identity.Client;
+using System.Data;
 
 namespace VindegadeKS_WPF
 {
@@ -29,19 +30,23 @@ namespace VindegadeKS_WPF
         public AppointmentPage()
         {
             InitializeComponent();
-            ComboBoxFunction();
+            AddLessonComboBoxFunction();
+            AddInstructorComboBoxFunction();
+            AddStudentComboBoxFunction();
+            AddClassComboBoxFunction();
+            LockInputFields();
             ListBoxFunction();
         }
         public Appointment CurrentAppointment = new Appointment();
         Appointment appointmentToBeRetrieved;
+        public Lesson CurrentLesson = new Lesson();
+        Lesson lessonToBeRetrieved;
         public Instructor CurrentInstructor = new Instructor();
         Instructor instructorToBeRetrieved;
         public Student CurrentStudent = new Student();
         Student studentToBeRetrieved;
         public Class CurrentClass = new Class();
         Class classToBeRetrieved;
-        public Lesson CurrentLesson = new Lesson();
-        Lesson lessonToBeRetrieved;
         int currentItem;
         bool edit = false;
 
@@ -98,22 +103,27 @@ namespace VindegadeKS_WPF
                 for (int i = 0; i < intCount; i++)
                 {
                     //Calls RetrieveLessonData method, sending i as index
-                    RetrieveData(i);
+                    RetrieveLessonData(i);
+                    RetrieveInstructorData(i);
+                    RetrieveStudentData(i);
+                    RetrieveClassData(i);
 
                     //Add new items from the item class with specific attributes to the list
                     //Will later be remade to automatically add items based on the database
 
+                    /*
                     items.Add((new Lesson() { LesName = lessonToBeRetrieved.LesName, LesType = lessonToBeRetrieved.LesType },
                             new Class() { ClassName = classToBeRetrieved.ClassName },
                             new Student() { StuFirstName = studentToBeRetrieved.StuFirstName, StuLastName = studentToBeRetrieved.StuLastName }, //kan det konkatineres?
                             new Instructor() { InstFirstName = instructorToBeRetrieved.InstFirstName, InstLastName = instructorToBeRetrieved.InstLastName }, //kan det konkatineres? 
-                            new Appointment() { ApmtDate = appointmentToBeRetrieved.ApmtDate, SetUp = "" }));
+                            new Appointment() { ApmtDate = appointmentToBeRetrieved.ApmtDate, Setup = "" }));
 
                     //Only necessary for multi-attribute ListBoxItem
                     //Set up the attribute 'SetUp' which is used to determine the appearance of the ListBoxItem 
                     //Forloop to go through all items in the items-list, to add and fill the 'SetUp' attribute
 
-                    items[i].Item5.SetUp = $"{items[i].Item1.LesName} - {items[i].Item1.LesType}\n{items[i].Item5.ApmtDate}";
+                    items[i].Item5.Setup = $"{items[i].Item1.LesName} - {items[i].Item1.LesType}\n{items[i].Item5.ApmtDate}";
+                    */
                 }
 
                 //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
@@ -121,111 +131,249 @@ namespace VindegadeKS_WPF
             }
         }
 
-        /*
-        //Class to define the content of the ListBoxItems for the ListBox
-        public class ApmtListBoxItems
+        private void AddLessonComboBoxFunction()
         {
-            //The attributes of the items for the ListBox
-            public string LesName { get; set; }
-            public string LesType { get; set; }
-            public string Class { get; set; }
-            public string Student { get; set; }
-            public string Instructor { get; set; }
-            public DateTime DateTime { get; set; }
-            //Extra attribute, used for visuals (Only needed for multi-attribute views)
-            public string SetUp { get; set; }
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                con.Open();
+
+                //Make lessons
+                SqlCommand count = new SqlCommand("SELECT COUNT(PK_LesID) from VK_Lessons", con);
+                int intCount = (int)count.ExecuteScalar();
+
+                List<Lesson> lessons = new List<Lesson>();
+
+                for (int i = 0; i < intCount; i++)
+                {
+                    RetrieveLessonData(i);
+
+                    lessons.Add(lessonToBeRetrieved);
+
+                    lessonToBeRetrieved.Setup = $"{lessonToBeRetrieved.LesName}, {lessonToBeRetrieved.LesType}";
+                    
+                    Apmt_PickLesson_ComboBox.Items.Add(lessonToBeRetrieved.Setup);
+
+                }
+            }
         }
-        */
-
-        private void ComboBoxFunction()
+        private void AddInstructorComboBoxFunction()
         {
-            //New list and datapoints for Combobox
-            List<ApmtComboBoxLesson> lessons = new List<ApmtComboBoxLesson>();
-            lessons.Add(new ApmtComboBoxLesson { Id = 1, DisplayValue = "One" });
-            lessons.Add(new ApmtComboBoxLesson { Id = 2, DisplayValue = "Two" });
-            lessons.Add(new ApmtComboBoxLesson { Id = 3, DisplayValue = "Three" });
-            //Set the ItemsSource
-            Apmt_PickLesson_ComboBox.ItemsSource = lessons;
-            //Sets which attribute is displayed
-            Apmt_PickLesson_ComboBox.DisplayMemberPath = "DisplayValue";
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                con.Open();
 
-            List<ApmtComboBoxClass> classes = new List<ApmtComboBoxClass>();
-            classes.Add(new ApmtComboBoxClass { Id = 1, DisplayValue = "One" });
-            classes.Add(new ApmtComboBoxClass { Id = 2, DisplayValue = "Two" });
-            classes.Add(new ApmtComboBoxClass { Id = 3, DisplayValue = "Three" });
-            Apmt_PickClass_ComboBox.ItemsSource = classes;
-            Apmt_PickClass_ComboBox.DisplayMemberPath = "DisplayValue";
+                //Make classes
+                SqlCommand count = new SqlCommand("SELECT COUNT(PK_InstID) from VK_Instructors", con);
+                int intCount = (int)count.ExecuteScalar();
 
-            List<ApmtComboBoxStudent> students = new List<ApmtComboBoxStudent>();
-            students.Add(new ApmtComboBoxStudent { Id = 1, DisplayValue = "One" });
-            students.Add(new ApmtComboBoxStudent { Id = 2, DisplayValue = "Two" });
-            students.Add(new ApmtComboBoxStudent { Id = 3, DisplayValue = "Three" });
-            Apmt_PickStudent_ComboBox.ItemsSource = students;
-            Apmt_PickStudent_ComboBox.DisplayMemberPath = "DisplayValue";
+                List<Instructor> instructors = new List<Instructor>();
 
-            List<ApmtComboBoxInstructor> instructors = new List<ApmtComboBoxInstructor>();
-            instructors.Add(new ApmtComboBoxInstructor { Id = 1, DisplayValue = "One" });
-            instructors.Add(new ApmtComboBoxInstructor { Id = 2, DisplayValue = "Two" });
-            instructors.Add(new ApmtComboBoxInstructor { Id = 3, DisplayValue = "Three" });
-            Apmt_PickInstructor_ComboBox.ItemsSource = instructors;
-            Apmt_PickInstructor_ComboBox.DisplayMemberPath = "DisplayValue";
+                for (int i = 0; i < intCount; i++)
+                {
+                    RetrieveInstructorData(i);
+
+                    instructors.Add(instructorToBeRetrieved);
+
+                    instructorToBeRetrieved.Setup = $"{instructorToBeRetrieved.InstFirstName} {instructorToBeRetrieved.InstLastName}";
+
+                    Apmt_PickInstructor_ComboBox.Items.Add(instructorToBeRetrieved.Setup);
+                }
+            }
         }
+        
+        private void AddStudentComboBoxFunction()
+        {
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                con.Open();
 
-        //Class which defines the ComboBox Data
-        public class ApmtComboBoxLesson
-        {
-            public int Id { get; set; }
-            public string DisplayValue { get; set; }
-        }
-        public class ApmtComboBoxClass
-        {
-            public int Id { get; set; }
-            public string DisplayValue { get; set; }
-        }
-        public class ApmtComboBoxStudent
-        {
-            public int Id { get; set; }
-            public string DisplayValue { get; set; }
-        }
-        public class ApmtComboBoxInstructor
-        {
-            public int Id { get; set; }
-            public string DisplayValue { get; set; }
-        }
+                //Make students
+                SqlCommand count = new SqlCommand("SELECT COUNT(PK_StuCPR) from VK_Students", con);
+                int intCount = (int)count.ExecuteScalar();
 
-        private void Apmt_ShowLessonType_TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
+                List<Student> students = new List<Student>();
 
+                for (int i = 0; i < intCount; i++)
+                {
+                    RetrieveStudentData(i);
+
+                    students.Add(studentToBeRetrieved);
+
+                    studentToBeRetrieved.Setup = $"{studentToBeRetrieved.StuFirstName} {studentToBeRetrieved.StuLastName}";
+
+                    Apmt_PickStudent_ComboBox.Items.Add(studentToBeRetrieved.Setup);
+                }
+            }
         }
 
-        private void Apmt_PickLesson_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void AddClassComboBoxFunction()
         {
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                con.Open();
 
+                //Make classes
+                SqlCommand count = new SqlCommand("SELECT COUNT(PK_ClassName) from VK_Classes", con);
+                int intCount = (int)count.ExecuteScalar();
+
+                List<Class> classes = new List<Class>();
+
+                for (int i = 0; i < intCount; i++)
+                {
+                    RetrieveClassData(i);
+
+                    classes.Add(classToBeRetrieved);
+
+                    classToBeRetrieved.Setup = $"{classToBeRetrieved.ClassName}, {classToBeRetrieved.ClassLicenseType}";
+
+                    Apmt_PickClass_ComboBox.Items.Add(classToBeRetrieved.Setup);
+                }
+            }
         }
 
-        private void Apmt_PickClass_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public void RetrieveLessonData(int dbRowNumber)
         {
+            //Setting up a connection to the database
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                //Opens said connection
+                con.Open();
+                //Creates a four cmd SqlCommand, which SELECTs specific rows from each table in the DB 
+                SqlCommand cmdLes = new SqlCommand("SELECT PK_LesID, LesName, LesType, LesDescription FROM VK_Lessons ORDER BY PK_LesID ASC OFFSET @dbRowNumber ROWS FETCH NEXT 1 ROW ONLY", con);
 
+                //Set dbRowNumber to 0 if under 0
+                if (dbRowNumber < 0)
+                {
+                    dbRowNumber = 0;
+                }
+                //Gives @dbRowNumber the value of dbRowNumber
+                cmdLes.Parameters.AddWithValue("@dbRowNumber", dbRowNumber);
+
+                //Set up a data reader called dr, which reads the data from cmd (the previous sql command)
+                using (SqlDataReader dr = cmdLes.ExecuteReader())
+                {
+                    //While-loop running while dr is reading 
+                    while (dr.Read())
+                    {
+                        //Sets lesToBeRetrieve a new empty Lesson, which is then filled
+                        lessonToBeRetrieved = new Lesson(int.Parse(dr["PK_LesID"].ToString()), dr["LesName"].ToString(), dr["LesType"].ToString(), dr["LesDescription"].ToString());
+                    }
+                }
+            }
         }
 
-        private void Apmt_PickStudent_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //Retrieves the data of a specific row in the database where the row number is equal to dbRowNum + 1
+        public void RetrieveInstructorData(int dbRowNumber)
         {
+            //Setting up a connection to the database
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                //Opens said connection
+                con.Open();
+                //Creates a four cmd SqlCommand, which SELECTs specific rows from each table in the DB 
+                SqlCommand cmdInst = new SqlCommand("SELECT PK_InstID, InstFirstName, InstLastName, InstPhone, InstEmail FROM VK_Instructors ORDER BY PK_InstID ASC OFFSET @dBRowNumber ROWS FETCH NEXT 1 ROW ONLY", con);
 
+                //Set dbRowNumber to 0 if under 0
+                if (dbRowNumber < 0)
+                {
+                    dbRowNumber = 0;
+                }
+                //Gives @dbRowNumber the value of dbRowNumber
+                cmdInst.Parameters.AddWithValue("@dbRowNumber", dbRowNumber);
+
+                using (SqlDataReader dr = cmdInst.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        instructorToBeRetrieved = new Instructor(int.Parse(dr["PK_InstID"].ToString()), dr["InstFirstName"].ToString(), dr["InstLastName"].ToString(), dr["InstPhone"].ToString(), dr["InstEmail"].ToString());
+                    }
+                }
+            }
         }
-
-        private void Apmt_PickInstructor_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        
+        //Retrieves the data of a specific row in the database where the row number is equal to dbRowNumber + 1
+        public void RetrieveStudentData(int dbRowNumber)
         {
+            //Setting up a connection to the database
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                //Opens said connection
+                con.Open();
+                //Creates a four cmd SqlCommand, which SELECTs specific rows from each table in the DB 
+                SqlCommand cmdStu = new SqlCommand("SELECT PK_StuCPR, StuFirstName, StuLastName, StuPhone, StuEmail FROM VK_Students ORDER BY PK_StuCPR ASC OFFSET @dBRowNumber ROWS FETCH NEXT 1 ROW ONLY", con);
 
+                //Set dbRowNumber to 0 if under 0
+                if (dbRowNumber < 0)
+                {
+                    dbRowNumber = 0;
+                }
+                //Gives @dbRowNumber the value of dbRowNumber
+                cmdStu.Parameters.AddWithValue("@dbRowNumber", dbRowNumber);
+
+                using (SqlDataReader dr = cmdStu.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        studentToBeRetrieved = new Student(dr["PK_StuCPR"].ToString(), dr["StuFirstName"].ToString(), dr["StuLastName"].ToString(), dr["StuPhone"].ToString(), dr["StuEmail"].ToString());
+                    }
+                }
+            }
         }
+        
+        //Retrieves the data of a specific row in the database where the row number is equal to dbRowNum + 1
+        public void RetrieveClassData(int dbRowNumber)
+        {
+            //Setting up a connection to the database
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                //Opens said connection
+                con.Open();
+                //Creates a four cmd SqlCommand, which SELECTs specific rows from each table in the DB 
+                SqlCommand cmdClass = new SqlCommand("SELECT PK_ClassName, ClassYear, ClassNumber, ClassQuarter, ClassLicenseType FROM VK_Classes ORDER BY PK_ClassName ASC OFFSET @dbRowNumber ROWS FETCH NEXT 1 ROW ONLY", con);
 
+                //Set dbRowNumber to 0 if under 0
+                if (dbRowNumber < 0)
+                {
+                    dbRowNumber = 0;
+                }
+                //Gives @dbRowNumber the value of dbRowNumber
+                cmdClass.Parameters.AddWithValue("@dbRowNumber", dbRowNumber);
+
+                using (SqlDataReader dr = cmdClass.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        classToBeRetrieved = new Class((Quarter)Enum.Parse(typeof(Quarter), dr["ClassQuarter"].ToString()), dr["ClassYear"].ToString(), dr["ClassNumber"].ToString(), (LicenseType)Enum.Parse(typeof(LicenseType), dr["ClassLicenseType"].ToString()), dr["PK_ClassName"].ToString());
+                    }
+                }
+            }
+        }
+        public void SaveAppointment(Appointment appointmentToBeCreated, Instructor instructorToBeCreated, Lesson lessonToBeCreated, Class classToBeCreated)
+        {
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                con.Open();
+                SqlCommand cmd = new SqlCommand("INSERT INTO VK_Appointments (ApmtDate, FK_InstID, FK_LesID, FK_ClassName)" +
+                                                 "VALUES(@ApmtDate, @FK_InstID, @FK_LesID, @FK_ClassName)" +
+                                                 "SELECT @@IDENTITY", con);
+                cmd.Parameters.Add("@ApmtDate", SqlDbType.DateTime2).Value = appointmentToBeCreated.ApmtDate;
+                cmd.Parameters.Add("@FK_InstID", SqlDbType.Int).Value = instructorToBeCreated.InstId;
+                cmd.Parameters.Add("@FK_LesID", SqlDbType.Int).Value = lessonToBeCreated.LesId;
+                cmd.Parameters.Add("@FK_ClassName", SqlDbType.NVarChar).Value = classToBeCreated.ClassName;
+                appointmentToBeCreated.ApmtId = Convert.ToInt32(cmd.ExecuteScalar());
+            }
+        }
+        
         private void Apmt_Add_Button_Click(object sender, RoutedEventArgs e)
         {
-
+            UnlockInputFields();
         }
 
         private void Apmt_Save_Button_Click(object sender, RoutedEventArgs e)
         {
-
+            SaveAppointment(CurrentAppointment, CurrentInstructor, CurrentLesson, CurrentClass);
+            ClearInputFields();
+            LockInputFields();
         }
 
         private void Apmt_Edit_Button_Click(object sender, RoutedEventArgs e)
@@ -238,84 +386,65 @@ namespace VindegadeKS_WPF
 
         }
 
-
-        //Retrieves the data of a specific row in the database where the row number is equal to dbRowNum + 1
-        public void RetrieveData(int dbRowNumber)
+        private void ClearInputFields()
         {
-            //Setting up a connection to the database
-            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
-            {
-                //Opens said connection
-                con.Open();
-                //Creates a four cmd SqlCommand, which SELECTs specific rows from each table in the DB 
-                SqlCommand cmdLes = new SqlCommand("SELECT PK_LesID, LesName, LesType, LesDescription FROM VK_Lessons ORDER BY PK_LesID ASC OFFSET @dbRowNum ROWS FETCH NEXT 1 ROW ONLY", con);
-                SqlCommand cmdInst = new SqlCommand("SELECT PK_InstID, InstFirstName, InstLastName, InstPhone, InstEmail FROM VK_Instructors ORDER BY PK_InstID ASC OFFSET @dBRowNumber ROWS FETCH NEXT 1 ROW ONLY", con);
-                SqlCommand cmdStu = new SqlCommand("SELECT PK_StuCPR, StuFirstName, StuLastName, StuPhone, StuEmail FROM VK_Students ORDER BY PK_StuCPR ASC OFFSET @dBRowNumber ROWS FETCH NEXT 1 ROW ONLY", con);
-                SqlCommand cmdClass = new SqlCommand("SELECT PK_ClassName, ClassYear, ClassNumber, ClassQuarter, ClassLicenseType FROM VK_Classes ORDER BY PK_ClassName ASC OFFSET @dbRowNum ROWS FETCH NEXT 1 ROW ONLY", con);
+            Apmt_PickLesson_ComboBox.SelectedItem = null;
+            Apmt_PickClass_ComboBox.SelectedItem = null;
+            Apmt_PickStudent_ComboBox.SelectedItem = null;
+            Apmt_PickInstructor_ComboBox.SelectedItem = null;
+        }
 
-                //Set dbRowNumber to 0 if under 0
-                if (dbRowNumber < 0)
-                {
-                    dbRowNumber = 0;
-                }
-                //Gives @dbRowNumber the value of dbRowNumber
-                cmdLes.Parameters.AddWithValue("@dbRowNum", dbRowNumber);
-                cmdInst.Parameters.AddWithValue("@dbRowNum", dbRowNumber);
-                cmdStu.Parameters.AddWithValue("@dbRowNum", dbRowNumber);
-                cmdClass.Parameters.AddWithValue("@dbRowNum", dbRowNumber);
+        private void LockInputFields()
+        {
+            Apmt_PickLesson_ComboBox.IsEnabled = false;
+            Apmt_PickClass_ComboBox.IsEnabled = false;
+            Apmt_PickStudent_ComboBox.IsEnabled = false;
+            Apmt_PickInstructor_ComboBox.IsEnabled = false;
+        }
 
+        private void UnlockInputFields()
+        {
+            Apmt_PickLesson_ComboBox.IsEnabled = true;
+            Apmt_PickClass_ComboBox.IsEnabled = true;
+            Apmt_PickStudent_ComboBox.IsEnabled = true;
+            Apmt_PickInstructor_ComboBox.IsEnabled = true;
+        }
 
-                //Set up a data reader called dr, which reads the data from cmd (the previous sql command)
-                using (SqlDataReader dr = cmdLes.ExecuteReader())
-                {
-                    //While-loop running while dr is reading 
-                    while (dr.Read())
-                    {
-                        //Sets lesToBeRetrieve a new empty Lesson, which is then filled
-                        lessonToBeRetrieved = new Lesson(0, "", "", "")
-                        {
-                            //Sets the attributes of lesToBeRetrieved equal to the data from the current row of the database
-                            LesName = dr["LesName"].ToString(),
-                            LesType = dr["LesType"].ToString(),
-                        };
-                    }
-                }
-                using (SqlDataReader dr = cmdInst.ExecuteReader())
-                {
-                    while (dr.Read())
-                    {
-                        instructorToBeRetrieved = new Instructor(0, "", "", "", "")
-                        {
-                            InstFirstName = dr["InstFirstName"].ToString(),
-                            InstLastName = dr["InstLastName"].ToString(),
-                        };
-                    }
-                }
-                using (SqlDataReader dr = cmdStu.ExecuteReader())
-                {
-                    while (dr.Read())
-                    {
-                        studentToBeRetrieved = new Student("", "", "", "", "")
-                        {
-                            StuFirstName = dr["StuFirstName"].ToString(),
-                            StuLastName = dr["StuLastName"].ToString(),
-                        };
-                    }
-                }
-                using (SqlDataReader dr = cmdClass.ExecuteReader())
-                {
-                    while (dr.Read())
-                    {
-                        classToBeRetrieved = new Class(default, "", "", default, "")
-                        {
-                            ClassName = dr["PK_ClassName"].ToString(),
-                            ClassYear = dr["ClassYear"].ToString(),
-                            ClassNumber = dr["ClassNumber"].ToString(),
-                            ClassQuarter = (Quarter)Enum.Parse(typeof(Quarter), dr["ClassQuarter"].ToString()),
-                        };
-                    }
-                }
-            }
+        private void Apmt_ShowLessonType_TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void Apmt_PickLesson_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            RetrieveLessonData(Apmt_PickLesson_ComboBox.SelectedIndex);
+            CurrentLesson.LesId = lessonToBeRetrieved.LesId;
+            //Apmt_PickLesson_ComboBox.SelectedItem = null;
+        }
+
+        private void Apmt_PickClass_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            RetrieveClassData(Apmt_PickClass_ComboBox.SelectedIndex);
+            CurrentClass.ClassQuarter = classToBeRetrieved.ClassQuarter;
+            CurrentClass.ClassYear = classToBeRetrieved.ClassYear;
+            CurrentClass.ClassNumber = classToBeRetrieved.ClassNumber;
+            CurrentClass.ClassName = classToBeRetrieved.ClassName;
+            //Apmt_PickClass_ComboBox.SelectedItem = null;
+        }
+
+        private void Apmt_PickStudent_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            RetrieveStudentData(Apmt_PickStudent_ComboBox.SelectedIndex);
+            CurrentStudent.StuCPR = studentToBeRetrieved.StuCPR;
+            //Apmt_PickStudent_ComboBox.SelectedItem = null;
+        }
+
+        private void Apmt_PickInstructor_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            RetrieveInstructorData(Apmt_PickInstructor_ComboBox.SelectedIndex);
+            CurrentInstructor.InstId = instructorToBeRetrieved.InstId;
+            //Apmt_PickInstructor_ComboBox.SelectedItem = null;
+            //??? ListBoxFunction();
         }
     }
 }

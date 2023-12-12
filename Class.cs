@@ -12,6 +12,7 @@ namespace VindegadeKS_WPF
         public string ClassYear { get; set; }
         public string ClassNumber { get; set; }
         public LicenseType ClassLicenseType { get; set; }
+        public string Setup;
 
         public string ClassName
         {
