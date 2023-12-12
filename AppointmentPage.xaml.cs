@@ -392,6 +392,7 @@ namespace VindegadeKS_WPF
             Apmt_PickClass_ComboBox.SelectedItem = null;
             Apmt_PickStudent_ComboBox.SelectedItem = null;
             Apmt_PickInstructor_ComboBox.SelectedItem = null;
+            Apmt_PickDateTime_DateTimePicker.Value = DateTime.Now;
         }
 
         private void LockInputFields()
@@ -419,7 +420,6 @@ namespace VindegadeKS_WPF
         {
             RetrieveLessonData(Apmt_PickLesson_ComboBox.SelectedIndex);
             CurrentLesson.LesId = lessonToBeRetrieved.LesId;
-            //Apmt_PickLesson_ComboBox.SelectedItem = null;
         }
 
         private void Apmt_PickClass_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -429,22 +429,24 @@ namespace VindegadeKS_WPF
             CurrentClass.ClassYear = classToBeRetrieved.ClassYear;
             CurrentClass.ClassNumber = classToBeRetrieved.ClassNumber;
             CurrentClass.ClassName = classToBeRetrieved.ClassName;
-            //Apmt_PickClass_ComboBox.SelectedItem = null;
         }
 
         private void Apmt_PickStudent_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             RetrieveStudentData(Apmt_PickStudent_ComboBox.SelectedIndex);
             CurrentStudent.StuCPR = studentToBeRetrieved.StuCPR;
-            //Apmt_PickStudent_ComboBox.SelectedItem = null;
         }
 
         private void Apmt_PickInstructor_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             RetrieveInstructorData(Apmt_PickInstructor_ComboBox.SelectedIndex);
             CurrentInstructor.InstId = instructorToBeRetrieved.InstId;
-            //Apmt_PickInstructor_ComboBox.SelectedItem = null;
             //??? ListBoxFunction();
+        }
+        
+        private void Apmt_PickDateTime_DateTimePicker_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            CurrentAppointment.ApmtDate = (DateTime)Apmt_PickDateTime_DateTimePicker.Value;
         }
     }
 }
