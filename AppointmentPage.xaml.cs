@@ -392,6 +392,7 @@ namespace VindegadeKS_WPF
             Apmt_PickClass_ComboBox.SelectedItem = null;
             Apmt_PickStudent_ComboBox.SelectedItem = null;
             Apmt_PickInstructor_ComboBox.SelectedItem = null;
+            Apmt_PickDateTime_DateTimePicker.Value = DateTime.Now;
         }
 
         private void LockInputFields()
