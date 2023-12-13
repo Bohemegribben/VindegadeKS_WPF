@@ -80,6 +80,14 @@ namespace VindegadeKS_WPF
             Menu_Les_Button.Background = Brushes.Gray;
         }
 
+        private void Menu_Dok_Button_Click(object sender, RoutedEventArgs e)
+        {
+            LightGrayButtons();
+            PageView.Content = lP;
+            Menu_Dok_Button.Background = Brushes.Gray;
+
+        }
+
         //LightGrayButtons: Metode der gør alle knapper lysegrå.
         //Den kaldes som det første, når der trykke på en ny knap
         private void LightGrayButtons() 
@@ -90,6 +98,10 @@ namespace VindegadeKS_WPF
             Menu_Inst_Button.Background = Brushes.LightGray;
             Menu_Les_Button.Background = Brushes.LightGray;
             Menu_Apmt_Button.Background = Brushes.LightGray;
+            Menu_Dok_Button.Background = Brushes.LightGray;
+
         }
+
+      
     }
 }

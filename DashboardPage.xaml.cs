@@ -92,29 +92,7 @@ namespace VindegadeKS_WPF
         #region ListBoxFunctionApmt
         private void ListBoxFunctionApmt()
         {
-            //Make a list with the Item Class from below called items (Name doesn't matter)
-            //LesListBoxItems in my case
-            List<ApmtListBoxItems> items = new List<ApmtListBoxItems>();
-
-            //Add new items from the item class with specific attributes to the list
-            //Will later be remade to automatically add items based on the database
-            items.Add(new ApmtListBoxItems() { Lesson = "A", LessonType = "A", Class = "A", Student = "A", Instructor = "A", DateTime = default });
-            items.Add(new ApmtListBoxItems() { Lesson = "B", LessonType = "B", Class = "B", Student = "B", Instructor = "B", DateTime = default });
-            items.Add(new ApmtListBoxItems() { Lesson = "C", LessonType = "C", Class = "C", Student = "C", Instructor = "C", DateTime = default });
-            items.Add(new ApmtListBoxItems() { Lesson = "D", LessonType = "D", Class = "D", Student = "D", Instructor = "D", DateTime = default });
-            items.Add(new ApmtListBoxItems() { Lesson = "E", LessonType = "E", Class = "E", Student = "E", Instructor = "E", DateTime = default });
-            items.Add(new ApmtListBoxItems() { Lesson = "F", LessonType = "F", Class = "F", Student = "F", Instructor = "F", DateTime = default });
-
-            //Only necessary for multi-attribute ListBoxItem
-            //Set up the attribute 'SetUp' which is used to determine the appearance of the ListBoxItem 
-            //Forloop to go through all items in the items-list, to add and fill the 'SetUp' attribute
-            for (int i = 0; items.Count > i; i++)
-            {
-                items[i].SetUp = $"{items[i].Lesson} - {items[i].LessonType}\n{items[i].DateTime}";
-            }
-
-            //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
-            Dash_DisApmt_ListBox.ItemsSource = items;
+           ;
         }
 
         #endregion
