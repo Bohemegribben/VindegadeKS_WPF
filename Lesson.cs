@@ -12,7 +12,7 @@ namespace VindegadeKS_WPF
         public string LesName { get; set; }
         public string LesType { get; set; }
         public string LesDescription { get; set; }
-        public string SetUp;
+        public string Setup;
 
         public Lesson(int _lesId, string _lesName, string _lesType, string _lesDescription)
         {

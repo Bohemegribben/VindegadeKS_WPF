@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 
+
 namespace VindegadeKS_WPF
 {
     /// <summary>
@@ -26,40 +27,34 @@ namespace VindegadeKS_WPF
     /// Redo the comments (/add new), they are a mismatch of (unedited) copied and newly written comments
     public partial class Class_Sub_ShowClass_Page : Page
     {
-        public Class_Sub_ShowClass_Page(string cn)
+        public Class_Sub_ShowClass_Page(string cn) //Passed the classname from ClassPage on entry
         {
-            currentClassName = cn;
             InitializeComponent();
-            Class_Sub_Title_TextBlock.Text = currentClassName;
-            ListBoxFunction();
-            AddStuComboBoxFunction();
-            ComboBoxFunctionYear();
-            ComboBoxFunctionQuarters();
-            ComboBoxFunctionLicenseTypes();
-            ClassComboBoxSetUp();
+            currentClassName = cn; //Sets currentClassName to cn - which is the ClassName of the selected class in ClassPage passed on entry
+            Class_Sub_Title_TextBlock.Text = currentClassName; //Sets the TextBlock at the top of the page to reflect the current class
+            ListBoxFunction(); //Runs ListBoxFunction when the page is opened
+            ComboBoxStartUp(); //Runs ComboBoxStartUp with all of the set up for the ComboBoxes to minimize clutter
+            Class_Sub_Save_Button.IsEnabled = false; //Makes sure that the 'Gem' button is not enabled when the page is opened - There were some issues with it staying enabled if it was open and the user left the page
         }
-        public ClassPage cP;
 
-        ConStuClass conToBeRetrieved; /// Can conToBeRetrieved and stuToBeRetrieved be merged
-        ConStuClass stuToBeRetrieved;
-        Class classToBeRetrieved; /// This as well
+        #region Variables
+        ConStuClass conToBeRetrieved; //Used to store the data retrieved when calling either RetrieveConnection or RetrieveStudent both of which stores the data in the class ConStuClass
+        Class classToBeRetrieved; //Used to store the data retrieved when calling RetrieveClassData - Is its own class because the class properties has not been added to ConStuClass
 
-        Class currentClass = new Class(); /// Is Class needed or is ConStu fine? (Combine?)
-        ConStuClass currentStu = new ConStuClass();
+        ConStuClass currentCon = new ConStuClass(); //Instantiation of ConStuClass
+        Class currentClass = new Class(); //Instantiation of Class
 
-        string currentClassName; ///Send something when opening page
+        string currentClassName; //Stores the ClassName of the current class of the page - Used by many methods, when only the name of the current class is needed
+        string currentConStuID; //Keeps track of which student has been chosen - Used by DeleteConnection
+        #endregion
 
-        string currentConStuID;/// Are two ID strings needed?
-        string currentConClassID;
-
-        string newName; /// Does this need to be accessable outside of it's method?
-
-        #region Hold Buttons
+        #region Buttons - Handles all the Click Events of the buttons
+        //
         private void Class_Sub_Edit_Button_Click(object sender, RoutedEventArgs e)
         {
             Class_Sub_Year_ComboBox.IsEnabled = true;
             Class_Sub_Quarter_ComboBox.IsEnabled = true;
-            Class_Sub_ClassNumber_TextBox.IsEnabled = true; ///Change to auto (Done in ClassPage) - Disable if true
+            Class_Sub_ClassNumber_TextBox.IsEnabled = false;
             Class_Sub_Type_ComboBox.IsEnabled = true;
         }
 
@@ -73,7 +68,6 @@ namespace VindegadeKS_WPF
             currentClass.ClassNumber = Class_Sub_ClassNumber_TextBox.Text;
       
             UpdateClass(currentClass);
-
             
             Class_Sub_Title_TextBlock.Text = currentClassName;
             Class_Sub_ClassNumber_TextBox.Text = currentClass.ClassNumber;
@@ -82,6 +76,30 @@ namespace VindegadeKS_WPF
             Class_Sub_Quarter_ComboBox.IsEnabled = false;
             Class_Sub_ClassNumber_TextBox.IsEnabled = false;
             Class_Sub_Type_ComboBox.IsEnabled = false;
+            Class_Sub_Save_Button.IsEnabled = false;
+        }
+        private void Class_Sub_DelClass_Button_Click(object sender, RoutedEventArgs e)
+        {
+            string messageBoxText = $"Du er ved at slette {currentClassName}.\nEr du sikker på at du gerne vil slette {currentClassName}?";
+            string caption = "ADVARSEL";
+            MessageBoxButton button = MessageBoxButton.OKCancel;
+            MessageBoxImage icon = MessageBoxImage.Warning;
+            MessageBoxResult result;
+
+            result = MessageBox.Show(messageBoxText, caption, button, icon);
+            if (result == MessageBoxResult.OK)
+            {
+                DeleteClass(currentClassName);
+                this.NavigationService.GoBack();
+            }
+        }
+        private void Class_Sub_DelStu_Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem != null)
+            {
+                DeleteConnection(currentConStuID);
+            }
+            ListBoxFunction();
         }
         #endregion
 
@@ -93,8 +111,7 @@ namespace VindegadeKS_WPF
             if (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem != null)
             {
                 //Sets currentConStuID to equal the ID of selected item
-                currentConStuID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as ConStuClass).CK_StuCPR; ///What are the IDs used for? And are both used?
-                currentConClassID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as ConStuClass).CK_ClassName;
+                currentConStuID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as ConStuClass).CK_StuCPR;
             }
         }
 
@@ -120,7 +137,6 @@ namespace VindegadeKS_WPF
                 //Forloop which adds intCount number of new stu to stu-list
                 for (int i = 0; i < intCount; i++)
                 {
-                    
                     //Calls RetrieveLessonData method, sending i as index
                     RetrieveConnection(i);
 
@@ -138,7 +154,8 @@ namespace VindegadeKS_WPF
 
                 //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
                 Class_Sub_ShowClass_DisStu_ListBox.ItemsSource = stu;
-                Class_Sub_NumberOfStudents_TextBox.Text = intCount.ToString();
+
+                Class_Sub_NumberOfStudents_TextBox.Text = intCount.ToString(); //Sets number of students in TextBox over in ClassData corner 
             }
         }
         public class ConStuClass 
@@ -163,19 +180,17 @@ namespace VindegadeKS_WPF
             public ConStuClass() : this("", "", "", "", "", "", "")
             { }
         }
-        private void Class_Sub_DelStu_Button_Click(object sender, RoutedEventArgs e)
-        {
-            if(Class_Sub_ShowClass_DisStu_ListBox.SelectedItem != null)
-            {
-                DeleteConnection(currentConStuID);
-            }
-            ListBoxFunction();
-        }
+        
         #endregion
 
         #region ComboBox
-        private void ClassComboBoxSetUp()
+        private void ComboBoxStartUp()
         {
+            AddStuComboBoxSetUp();
+            ComboBoxYearSetUp();
+            ComboBoxQuarterSetUp();
+            ComboBoxTypeSetUp();
+
             RetrieveClassData(currentClassName);
             Class_Sub_Year_ComboBox.Text = classToBeRetrieved.ClassYear;
             Class_Sub_Quarter_ComboBox.Text = classToBeRetrieved.ClassQuarter.ToString();
@@ -185,15 +200,28 @@ namespace VindegadeKS_WPF
 
         private void Class_Sub_AddStu_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            RetrieveStudent(Class_Sub_AddStu_ComboBox.SelectedIndex);
-            currentStu.CK_StuCPR = stuToBeRetrieved.CK_StuCPR.ToString();
-            currentStu.CK_ClassName = currentClassName;
-            while(DoesConExist(currentStu) == false)
-                CreateConnection(currentStu);
-            ListBoxFunction();
-            Class_Sub_AddStu_ComboBox.SelectedItem = null;
+            ComboBox comboBox = (ComboBox)sender;
+            if (!comboBox.IsDropDownOpen)
+                return;
+            else
+            {
+                RetrieveStudent(Class_Sub_AddStu_ComboBox.SelectedIndex);
+                currentCon.CK_StuCPR = conToBeRetrieved.CK_StuCPR.ToString();
+                currentCon.CK_ClassName = currentClassName;
+                CreateConnection(currentCon);
+                ListBoxFunction();
+                Class_Sub_AddStu_ComboBox.SelectedItem = null;
+            }
+            
         }
-        private void AddStuComboBoxFunction()
+
+        private void Class_Sub_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Class_Sub_Save_Button.IsEnabled = true;
+        }
+
+        #region ComboBox SetUp
+        private void AddStuComboBoxSetUp()
         {
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
@@ -209,7 +237,7 @@ namespace VindegadeKS_WPF
                 {
                     RetrieveStudent(i);
 
-                    types.Add(new ConStuClass { CK_ClassName = stuToBeRetrieved.CK_ClassName, CK_StuCPR = stuToBeRetrieved.CK_StuCPR, StuFirstName = stuToBeRetrieved.StuFirstName, StuLastName = stuToBeRetrieved.StuLastName, });
+                    types.Add(new ConStuClass { CK_ClassName = conToBeRetrieved.CK_ClassName, CK_StuCPR = conToBeRetrieved.CK_StuCPR, StuFirstName = conToBeRetrieved.StuFirstName, StuLastName = conToBeRetrieved.StuLastName, });
 
                     types[i].SetUp = $"{types[i].StuFirstName} {types[i].StuLastName}";
                 }
@@ -219,7 +247,8 @@ namespace VindegadeKS_WPF
                 Class_Sub_AddStu_ComboBox.ItemsSource = types;
             }
         }
-        private void ComboBoxFunctionYear()
+
+        private void ComboBoxYearSetUp()
         {
             List<Class> years = new List<Class>();
 
@@ -229,11 +258,10 @@ namespace VindegadeKS_WPF
             }
             Class_Sub_Year_ComboBox.ItemsSource = years;
             Class_Sub_Year_ComboBox.DisplayMemberPath = "ClassYear";
-            Class_Sub_Year_ComboBox.SelectedIndex = 0; ///Change default to currrent
         }
-        private void ComboBoxFunctionQuarters()
-        {
 
+        private void ComboBoxQuarterSetUp()
+        {
             List<Class> quarters = new List<Class>();
 
             quarters.Add(new Class { ClassQuarter = Quarter.F });
@@ -243,12 +271,10 @@ namespace VindegadeKS_WPF
 
             Class_Sub_Quarter_ComboBox.ItemsSource = quarters;
             Class_Sub_Quarter_ComboBox.DisplayMemberPath = "ClassQuarter";
-            Class_Sub_Quarter_ComboBox.SelectedIndex = 0; ///Change default to currrent
-
         }
-        private void ComboBoxFunctionLicenseTypes()
-        {
 
+        private void ComboBoxTypeSetUp()
+        {
             List<Class> types = new List<Class>();
 
             types.Add(new Class { ClassLicenseType = LicenseType.B });
@@ -258,8 +284,8 @@ namespace VindegadeKS_WPF
 
             Class_Sub_Type_ComboBox.ItemsSource = types;
             Class_Sub_Type_ComboBox.DisplayMemberPath = "ClassLicenseType";
-            Class_Sub_Type_ComboBox.SelectedIndex = 0; ///Change default to currrent
         }
+        #endregion
         #endregion
 
         #region Database
@@ -270,38 +296,23 @@ namespace VindegadeKS_WPF
             //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
+                MessageBox.Show("Works if there is a MessageBox somewhere in CreateConnection, \notherwise the program will run CreateConnection twice. \n\nHave tried 'IsLoaded' - Didn't work. \n\nHave tried making CreateConnection async and using an await timer - Didn't work. \n\nBut a MessageBox fixes it, so a MessageBox there shall be.");
+
                 //Opens said connection
                 con.Open();
                 
-                //Creates a cmd SqlCommand, which enableds the ability to INSERT INTO the table with the corresponding attributes 
-                SqlCommand cmd = new SqlCommand("INSERT INTO VK_Class_Student (CK_ClassName, CK_StuCPR)" +
-                                                "VALUES(@CK_ClassName,@CK_StuCPR)" +
+                SqlCommand cmd = new SqlCommand("IF NOT EXISTS (SELECT * FROM VK_Class_Student WHERE CK_ClassName = @CK_ClassName AND CK_StuCPR = @CK_StuCPR) " +
+                                                "BEGIN INSERT INTO VK_Class_Student (CK_ClassName, CK_StuCPR) " +
+                                                "VALUES(@CK_ClassName, @CK_StuCPR) END " +
                                                 "SELECT @@IDENTITY", con);
 
-               
-                    //Add corresponding attribute to the database through the use of cmd
-                    cmd.Parameters.Add("@CK_ClassName", SqlDbType.NVarChar).Value = conToBeCreated.CK_ClassName;
-                    cmd.Parameters.Add("@CK_StuCPR", SqlDbType.NVarChar).Value = conToBeCreated.CK_StuCPR;
-                    //Tells the database to execute the sql commands
-                    cmd.ExecuteScalar();
-                                
+                //Add corresponding attribute to the database through the use of cmd
+                cmd.Parameters.AddWithValue("@CK_ClassName", conToBeCreated.CK_ClassName);
+                cmd.Parameters.AddWithValue("@CK_StuCPR", conToBeCreated.CK_StuCPR);
+                
+                //Tells the database to execute the sql commands
+                cmd.ExecuteScalar();
             }
-        }
-
-        public bool DoesConExist(ConStuClass conToBeCreated) /// Was it possible to add this back into the original method? 
-        {
-            bool exist = true;
-            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
-            {
-                //Opens said connection
-                con.Open();
-                SqlCommand count = new SqlCommand("SELECT COUNT(CK_ClassName) FROM VK_Class_Student WHERE CK_ClassName = @CK_ClassName AND CK_StuCPR = @CK_StuCPR", con);
-                count.Parameters.AddWithValue("@CK_StuCPR", currentStu.CK_StuCPR); 
-                count.Parameters.AddWithValue("@CK_ClassName", currentStu.CK_ClassName);
-                int stuCount = (int)count.ExecuteScalar();
-                if (stuCount == 0) { exist = false; }
-            }
-            return exist;
         }
 
         //Retrieves the data of a specific row in the database where the row number is equal to dbRowNum + 1
@@ -422,7 +433,16 @@ namespace VindegadeKS_WPF
                 int intCount = (int)count.ExecuteScalar();
                 classToBeUpdated.ClassNumber = (intCount + 1).ToString();
 
-                newName = $"{currentClass.ClassQuarter}{currentClass.ClassYear}-{classToBeUpdated.ClassNumber}"; ///Can this be moved?
+                if(intCount != 0)
+                {
+                    SqlCommand c = new SqlCommand("SELECT MAX(CAST(ClassNumber AS Int)) FROM VK_Classes WHERE ClassQuarter = @ClassQuarter AND ClassYear = @ClassYear AND IsNumeric(ClassNumber) = 1", con);
+                    c.Parameters.Add("@ClassQuarter", SqlDbType.NVarChar).Value = classToBeUpdated.ClassQuarter;
+                    c.Parameters.Add("@ClassYear", SqlDbType.NVarChar).Value = classToBeUpdated.ClassYear;
+                    int cCount = (int)c.ExecuteScalar();
+                    if ((intCount + 1) <= cCount) { classToBeUpdated.ClassNumber = (cCount + 1).ToString(); }
+                }
+                
+                string newName = $"{currentClass.ClassQuarter}{currentClass.ClassYear}-{classToBeUpdated.ClassNumber}";
                 
                 //Gives @attribute the value of attribute
                 cmd.Parameters.AddWithValue("@PK_ClassName", currentClassName);
@@ -485,7 +505,7 @@ namespace VindegadeKS_WPF
                     while (dr.Read())
                     {
                         //Sets conToBeRetrieve a new empty ClassStuConnection, which is then filled
-                        stuToBeRetrieved = new ConStuClass("", "", "", "", "", "", "")
+                        conToBeRetrieved = new ConStuClass("", "", "", "", "", "", "")
                         {
                             //Sets the attributes of conToBeRetrieved equal to the data from the current row of the database
                             
@@ -500,23 +520,7 @@ namespace VindegadeKS_WPF
             }
         }
         #endregion
-
         #endregion
 
-        private void Class_Sub_DelClass_Button_Click(object sender, RoutedEventArgs e)
-        {
-            string messageBoxText = $"Du er ved at slette {currentClassName}.\nEr du sikker på at du gerne vil slette {currentClassName}?";
-            string caption = "ADVARSEL";
-            MessageBoxButton button = MessageBoxButton.OKCancel;
-            MessageBoxImage icon = MessageBoxImage.Warning;
-            MessageBoxResult result;
-
-            result = MessageBox.Show(messageBoxText, caption, button, icon);
-            if (result == MessageBoxResult.OK) 
-            {
-                DeleteClass(currentClassName);
-                this.NavigationService.GoBack();
-            }
-        }
     }
 }
