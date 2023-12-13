@@ -51,7 +51,7 @@
                 </Style>
             </Button.Resources>
         </Button>
-        <Button x:Name="Class_Sub_DelStu_Button" Content="FJERN ELEV FRA HOLD" FontWeight="Bold" Margin="20,440,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30" Click="Class_Sub_DelStu_Button_Click">
+        <Button x:Name="Class_Sub_DelStu_Button" Content="FJERN ELEV FRA HOLD" FontWeight="Bold" Margin="20,440,10,20" HorizontalAlignment="Right" VerticalAlignment="Top" Width="240" Height="30" Click="Class_Sub_DelCon_Button_Click">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="10"/>
