@@ -21,6 +21,7 @@ using Microsoft.Identity.Client;
 using System.Data;
 using static System.Net.Mime.MediaTypeNames;
 using System.Text.RegularExpressions;
+using System.Security.Policy;
 
 namespace VindegadeKS_WPF
 {
@@ -40,15 +41,15 @@ namespace VindegadeKS_WPF
             ListBoxFunction();
         }
         public Appointment CurrentAppointment = new Appointment();
-        AppointmentListBox appointmentDetailsToBeRetrieved;
         public Lesson CurrentLesson = new Lesson();
-        Lesson lessonToBeRetrieved;
         public Instructor CurrentInstructor = new Instructor();
-        Instructor instructorToBeRetrieved;
         public Student CurrentStudent = new Student();
-        Student studentToBeRetrieved;
         public Class CurrentClass = new Class();
-        Class classToBeRetrieved;
+        public AppointmentListBox appointmentDetailsToBeRetrieved;
+        public Lesson lessonToBeRetrieved;
+        public Instructor instructorToBeRetrieved;
+        public Student studentToBeRetrieved;
+        public Class classToBeRetrieved;
         int currentItem;
         bool edit = false;
 
@@ -101,7 +102,6 @@ namespace VindegadeKS_WPF
                 //Make a list of 5-tuples containing instanses of each class necessary in appointments
 
                 List<AppointmentListBox> appointments = new List<AppointmentListBox>();
-
                 
                 //Forloop which adds intCount number of new items to items-list
                 for (int i = 0; i < intCount; i++)
@@ -116,7 +116,6 @@ namespace VindegadeKS_WPF
                     //Only necessary for multi-attribute ListBoxItem
                     //Set up the attribute 'SetUp' which is used to determine the appearance of the ListBoxItem 
                     //Forloop to go through all items in the items-list, to add and fill the 'SetUp' attribute
-
                     appointments[i].Setup = $"{appointments[i].ListBoxLesName} - {appointments[i].ListBoxLesType} \n{appointments[i].ListBoxApmtDate}";
                 }
                 
@@ -366,8 +365,8 @@ namespace VindegadeKS_WPF
                                                     "FROM VK_Lessons " +
                                                     "JOIN VK_Appointments ON VK_Lessons.PK_LesID = VK_Appointments.FK_LesID " +
                                                     "JOIN VK_Classes ON VK_Appointments.FK_ClassName = VK_Classes.PK_ClassName " +
-                                                    "JOIN VK_Class_Student ON VK_Classes.PK_ClassName = VK_Class_Student.CK_ClassName " +
-                                                    "JOIN VK_Students ON VK_Class_Student.CK_StuCPR = VK_Students.PK_StuCPR " +
+                                                    "JOIN VK_Student_Appointment ON VK_Appointments.PK_ApmtID = VK_Student_Appointment.CK_ApmtID " +
+                                                    "JOIN VK_Students ON VK_Student_Appointment.CK_StuCPR = VK_Students.PK_StuCPR " +
                                                     "JOIN VK_Instructors ON VK_Appointments.FK_InstID = VK_Instructors.PK_InstID " +
                                                     "GROUP BY " +
                                                     "VK_Lessons.LesName, " +
@@ -385,7 +384,7 @@ namespace VindegadeKS_WPF
                                                     "ASC OFFSET @dbRowNumber ROWS " +
                                                     "FETCH NEXT 1 ROW ONLY", con);
 
-
+                
                 //Set dbRowNumber to 0 if under 0
                 if (dbRowNumber < 0)
                 {
@@ -420,7 +419,6 @@ namespace VindegadeKS_WPF
             public string ListBoxStuName { get; set; }
             public string ListBoxInstName { get; set; }
             public DateTime ListBoxApmtDate { get; set; }
-
             public string Setup { get; set; }
             
             public AppointmentListBox(int _listBoxApmtId,
@@ -442,7 +440,7 @@ namespace VindegadeKS_WPF
                 Setup = _setup;
             }
 
-            public AppointmentListBox() : this(0 ,"", "", "", "", "", default, "")
+            public AppointmentListBox() : this(0 ,"", "", "", "", "", DateTime.Now, "")
             { }
         }
 
@@ -514,6 +512,14 @@ namespace VindegadeKS_WPF
         {
             DeleteAppointment(currentItem);
             ListBoxFunction();
+
+            Apmt_DisLesson_TextBlock.Text = "Lektion: ";
+            Apmt_DisLessonType_TextBlock.Text = "Lektionstype: ";
+            Apmt_DisClass_TextBlock.Text = "Hold: ";
+            Apmt_DisStudent_TextBlock.Text = "Elev: ";
+            Apmt_DisInstructor_TextBlock.Text = "Underviser: ";
+            Apmt_DisDateTime_TextBlock.Text = "Aftale: ";
+
         }
 
         private void ClearInputFields()
