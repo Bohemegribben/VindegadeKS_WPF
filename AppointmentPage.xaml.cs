@@ -63,15 +63,15 @@ namespace VindegadeKS_WPF
                 //Changes the text from the display window 
                 //After the equal sign; (#ListBoxName.SelectedItem as #itemClass).#attribute;
                 //The parts after a #, are the parts that needs to change based on your page
-                Apmt_DisLesson_TextBlock.Text = "Lektion: " + (Apmt_DisApmt_ListBox.SelectedItem as Lesson).LesName;
-                Apmt_DisLessonType_TextBlock.Text = "Lektionstype: " + (Apmt_DisApmt_ListBox.SelectedItem as Lesson).LesType;
-                Apmt_DisClass_TextBlock.Text = "Hold: " + (Apmt_DisApmt_ListBox.SelectedItem as Class).ClassName;
-                Apmt_DisStudent_TextBlock.Text = "Elev: " + (Apmt_DisApmt_ListBox.SelectedItem as Student).StuFirstName + (Apmt_DisApmt_ListBox.SelectedItem as Student).StuLastName;
-                Apmt_DisInstructor_TextBlock.Text = "Underviser: " + (Apmt_DisApmt_ListBox.SelectedItem as Instructor).InstFirstName + (Apmt_DisApmt_ListBox.SelectedItem as Instructor).InstLastName;
-                Apmt_DisDateTime_TextBlock.Text = "Aftale: " + (Apmt_DisApmt_ListBox.SelectedItem as Appointment).ApmtDate;
+                Apmt_DisLesson_TextBlock.Text = "Lektion: " + (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxLesName;
+                Apmt_DisLessonType_TextBlock.Text = "Lektionstype: " + (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxLesType;
+                Apmt_DisClass_TextBlock.Text = "Hold: " + (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxClassName;
+                Apmt_DisStudent_TextBlock.Text = "Elev: " + (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxStuName;
+                Apmt_DisInstructor_TextBlock.Text = "Underviser: " + (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxInstName;
+                Apmt_DisDateTime_TextBlock.Text = "Aftale: " + (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxApmtDate;
 
                 //Sets currentItem to equal the ID of selected item
-                currentItem = (Apmt_DisApmt_ListBox.SelectedItem as Appointment).ApmtId;
+                currentItem = (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxApmtId;
 
                 //Sets edit to false, as it is impossible for it to be true currently
                 edit = false;
@@ -102,15 +102,15 @@ namespace VindegadeKS_WPF
 
                 List<AppointmentListBox> appointments = new List<AppointmentListBox>();
 
+                
                 //Forloop which adds intCount number of new items to items-list
                 for (int i = 0; i < intCount; i++)
                 {
                     //Calls RetrieveLessonData method, sending i as index
-                    RetrieveAppointmentData(i);;
+                    RetrieveAppointmentData(i);
 
                     //Add new items from the item class with specific attributes to the list
                     //Will later be remade to automatically add items based on the database
-
                     appointments.Add(appointmentDetailsToBeRetrieved);
 
                     //Only necessary for multi-attribute ListBoxItem
@@ -119,7 +119,7 @@ namespace VindegadeKS_WPF
 
                     appointments[i].Setup = $"{appointments[i].ListBoxLesName} - {appointments[i].ListBoxLesType} \n{appointments[i].ListBoxApmtDate}";
                 }
-
+                
                 //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
                 Apmt_DisApmt_ListBox.ItemsSource = appointments;
             }
@@ -350,9 +350,8 @@ namespace VindegadeKS_WPF
             {
                 //Opens said connection
                 con.Open();
-                //Creates a four cmd SqlCommand, which SELECTs specific rows from each table in the DB 
-                //SqlCommand cmdApmt = new SqlCommand("SELECT PK_ApmtID, ApmtDate, FK_InstID, FK_LesID, FK_ClassName FROM VK_Appointments ORDER BY PK_ApmtID ASC OFFSET @dbRowNumber ROWS FETCH NEXT 1 ROW ONLY", con);
 
+                //Creates a SqlCommand, which SELECTs specific rows from all five tables in the DB and joins them 
                 SqlCommand cmdApmt = new SqlCommand("SELECT " +
                                                     "VK_Lessons.LesName, " +
                                                     "VK_Lessons.LesType, " +
@@ -399,11 +398,12 @@ namespace VindegadeKS_WPF
                 {
                     while (dr.Read())
                     {
-                        appointmentDetailsToBeRetrieved = new AppointmentListBox(dr["LesName"].ToString(),
+                        appointmentDetailsToBeRetrieved = new AppointmentListBox(Convert.ToInt32(dr["PK_ApmtID"]),
+                                                                                 dr["LesName"].ToString(),
                                                                                  dr["LesType"].ToString(),
                                                                                  dr["PK_ClassName"].ToString(),
-                                                                                 dr["StuFirstName"].ToString() + dr["StuLastName"].ToString(),
-                                                                                 dr["InstFirstName"].ToString() + dr["InstLastName"].ToString(),
+                                                                                 dr["StuFirstName"].ToString() + " " + dr["StuLastName"].ToString(),
+                                                                                 dr["InstFirstName"].ToString() + " " + dr["InstLastName"].ToString(),
                                                                                  (DateTime)dr["ApmtDate"],
                                                                                  "");
                     }
@@ -413,6 +413,7 @@ namespace VindegadeKS_WPF
 
         public class AppointmentListBox
         {
+            public int ListBoxApmtId { get; set; }
             public string ListBoxLesName { get; set; }
             public string ListBoxLesType { get; set; }
             public string ListBoxClassName { get; set; }
@@ -422,7 +423,8 @@ namespace VindegadeKS_WPF
 
             public string Setup { get; set; }
             
-            public AppointmentListBox(string _listBoxLesName, 
+            public AppointmentListBox(int _listBoxApmtId,
+                                      string _listBoxLesName, 
                                       string _listBoxLesType,
                                       string _listBoxClassName,
                                       string _listBoxStuName,
@@ -430,6 +432,7 @@ namespace VindegadeKS_WPF
                                       DateTime _listBoxApmtDate,
                                       string _setup)
             {
+                ListBoxApmtId = _listBoxApmtId;
                 ListBoxLesName = _listBoxLesName;
                 ListBoxLesType = _listBoxLesType;
                 ListBoxClassName = _listBoxClassName;
@@ -439,46 +442,78 @@ namespace VindegadeKS_WPF
                 Setup = _setup;
             }
 
-            public AppointmentListBox() : this("", "", "", "", "", default, "")
+            public AppointmentListBox() : this(0 ,"", "", "", "", "", default, "")
             { }
         }
 
-        public void SaveAppointment(Appointment appointmentToBeCreated, Instructor instructorToBeCreated, Lesson lessonToBeCreated, Class classToBeCreated)
+        public void SaveAppointment(Appointment appointmentToBeCreated, Instructor instructorToBeCreated, Lesson lessonToBeCreated, Class classToBeCreated, Student studentToBeCreated)
         {
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
                 con.Open();
-                SqlCommand cmd = new SqlCommand("INSERT INTO VK_Appointments (ApmtDate, FK_InstID, FK_LesID, FK_ClassName)" +
-                                                 "VALUES(@ApmtDate, @FK_InstID, @FK_LesID, @FK_ClassName)" +
-                                                 "SELECT @@IDENTITY", con);
-                cmd.Parameters.Add("@ApmtDate", SqlDbType.DateTime2).Value = appointmentToBeCreated.ApmtDate;
-                cmd.Parameters.Add("@FK_InstID", SqlDbType.Int).Value = instructorToBeCreated.InstId;
-                cmd.Parameters.Add("@FK_LesID", SqlDbType.Int).Value = lessonToBeCreated.LesId;
-                cmd.Parameters.Add("@FK_ClassName", SqlDbType.NVarChar).Value = classToBeCreated.ClassName;
-                appointmentToBeCreated.ApmtId = Convert.ToInt32(cmd.ExecuteScalar());
+                SqlCommand cmdApmt = new SqlCommand("INSERT INTO VK_Appointments (ApmtDate, FK_InstID, FK_LesID, FK_ClassName) " +
+                                                    "VALUES(@ApmtDate, @FK_InstID, @FK_LesID, @FK_ClassName) " +
+                                                    "SELECT @@IDENTITY", con);
+                cmdApmt.Parameters.Add("@ApmtDate", SqlDbType.DateTime2).Value = appointmentToBeCreated.ApmtDate;
+                cmdApmt.Parameters.Add("@FK_InstID", SqlDbType.Int).Value = instructorToBeCreated.InstId;
+                cmdApmt.Parameters.Add("@FK_LesID", SqlDbType.Int).Value = lessonToBeCreated.LesId;
+                cmdApmt.Parameters.Add("@FK_ClassName", SqlDbType.NVarChar).Value = classToBeCreated.ClassName;
+                appointmentToBeCreated.ApmtId = Convert.ToInt32(cmdApmt.ExecuteScalar());
+
+                SqlCommand cmdStu = new SqlCommand("INSERT INTO VK_STUDENT_APPOINTMENT (CK_StuCPR, CK_ApmtID) " +
+                                                   "VALUES(@CK_StuCPR, @CK_ApmtID) " +
+                                                   "SELECT @@IDENTITY", con);
+                cmdStu.Parameters.Add("@CK_StuCPR", SqlDbType.NVarChar).Value = studentToBeCreated.StuCPR;
+                cmdStu.Parameters.Add("@CK_ApmtID", SqlDbType.Int).Value = appointmentToBeCreated.ApmtId;
+                cmdStu.ExecuteScalar();
             }
         }
-        
+
+        public void DeleteAppointment(int appointmentIdToBeDeleted) // DeleteAppointment-metoden defineres med parameteren int appointmentIdToBeDeleted,
+                                                                    // Metoden tager CurrentAppointment.ListBoxApmtId (som har referencesemantisk lighed med currentItem)
+                                                                    // som argument, når den kaldes
+        {
+            // Sql-Connection definerer forbindelsen 'con' til databasen
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                con.Open(); // 'Open' åbner forbindelsen 'con' til databasen
+                SqlCommand cmd = new SqlCommand("DELETE FROM VK_Appointments WHERE PK_ApmtID = @PK_ApmtId", con); // SqlCommand definerer Sql-query-indholdet
+                                                                                                                  // (en DELETE-kommando rettet mod en specifik
+                                                                                                                  // tabel i databasen) af 'cmd', som skal
+                                                                                                                  // sendes via forbindelsen 'con'
+
+                cmd.Parameters.AddWithValue("@PK_ApmtId", appointmentIdToBeDeleted); // cmd.Parameters.AddWithValue sætter en SQL-variabel (@PK_InstId) lig
+                                                                                    // med parameteren 'instructorIdToBeDeleted', der får sit argument, når
+                                                                                    // metoden bliver kaldt
+                cmd.ExecuteScalar(); // ExecuteScalar-metoden kører kommandoen cmd
+            }
+
+            ClearInputFields(); // Input-felterne cleares for at indikere, at sletningen er gennemført
+        }
+
         private void Apmt_Add_Button_Click(object sender, RoutedEventArgs e)
         {
             UnlockInputFields();
+            Apmt_Save_Button.IsEnabled = true;
         }
 
         private void Apmt_Save_Button_Click(object sender, RoutedEventArgs e)
         {
-            SaveAppointment(CurrentAppointment, CurrentInstructor, CurrentLesson, CurrentClass);
+            SaveAppointment(CurrentAppointment, CurrentInstructor, CurrentLesson, CurrentClass, CurrentStudent);
             ClearInputFields();
             LockInputFields();
+            ListBoxFunction();
         }
 
         private void Apmt_Edit_Button_Click(object sender, RoutedEventArgs e)
         {
-
+            //Apmt_Save_Button.IsEnabled = true;
         }
 
         private void Apmt_Delete_Button_Click(object sender, RoutedEventArgs e)
         {
-
+            DeleteAppointment(currentItem);
+            ListBoxFunction();
         }
 
         private void ClearInputFields()
