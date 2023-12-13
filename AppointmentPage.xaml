@@ -27,6 +27,7 @@
             <TextBlock x:Name="Apmt_DisLesson_TextBlock" TextWrapping="Wrap" Text="Lektion: " FontSize="20" Height="50" Margin="10, 10, 10, 0" />
             <TextBlock x:Name="Apmt_DisLessonType_TextBlock" TextWrapping="Wrap" Text="LektionsType: " FontSize="20" Height="50" Margin="10, 10, 10, 0"/>
             <TextBlock x:Name="Apmt_DisClass_TextBlock" TextWrapping="Wrap" Text="Hold: " FontSize="20" Height="50" Margin="10, 10, 10, 0"/>
+            <TextBlock x:Name="Apmt_DisClassLicenseType_TextBlock" TextWrapping="Wrap" Text="Kørekorttype: " FontSize="20" Height="50" Margin="10, 10, 10, 0"/>
             <TextBlock x:Name="Apmt_DisStudent_TextBlock" TextWrapping="Wrap" Text="Student: " FontSize="20" Height="50" Margin="10, 10, 10, 0"/>
             <TextBlock x:Name="Apmt_DisInstructor_TextBlock" TextWrapping="Wrap" Text="Instructor: " FontSize="20" Height="50" Margin="10, 10, 10, 0"/>
             <TextBlock x:Name="Apmt_DisDateTime_TextBlock" TextWrapping="Wrap" Text="DateTime: " FontSize="20" Height="50" Margin="10, 10, 10, 0"/>
@@ -36,7 +37,7 @@
         <Label x:Name="Apmt_MakeAppointment_Label" Content="OPRET AFTALE" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="20" Margin="140,455,0,0" Height="50" Width="315"/>
         <Label x:Name="Apmt_PickLesson_Label" Content="Lektion" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,510,0,0" Height="50"/>
         <Label x:Name="Apmt_PickClass_Label" Content="Hold" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,580,0,0" Height="50"/>
-        <Label x:Name="Apmt_PickStudent_Label" Content="Student(er)" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,650,0,0" Height="50"/>
+        <Label x:Name="Apmt_PickStudent_Label" Content="Student" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,650,0,0" Height="50"/>
         <Label x:Name="Apmt_PickInstructor_Label" Content="Underviser" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,720,0,0" Height="50"/>
         <Label x:Name="Apmt_PickDateTime_Label" Content="Dato og tid" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,790,0,0" Height="50"/>
 
