@@ -131,12 +131,12 @@ namespace VindegadeKS_WPF
             //Safety check, to make sure that the selected item exists
             if (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem != null)
             {
-                //Sets currentConStuID equal to CK_StuCPR of selected item
+                //Sets currentConStuID equal to the CK_StuCPR of selected item - Used by Class_Sub_DelCon_Button_Click
                 currentConStuID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as ConStuClass).CK_StuCPR;
             }
         }
 
-        //Method to create, control and add stu to the ListBox
+        //Method to create, control and add items to the ListBox
         private void ListBoxFunction()
         {
             //Setting up a connection to the database
