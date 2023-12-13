@@ -17,7 +17,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <!-- Change what it's binding to based on what you want written in the ListBoxItem -->
-                    <TextBlock Text="{Binding SetUp}" />
+                    <TextBlock Text="{Binding Setup}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
             <!-- Remember to close the ListBox -->

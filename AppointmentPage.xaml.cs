@@ -19,6 +19,8 @@ using VindegadeKS_WPF;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using Microsoft.Identity.Client;
 using System.Data;
+using static System.Net.Mime.MediaTypeNames;
+using System.Text.RegularExpressions;
 
 namespace VindegadeKS_WPF
 {
@@ -38,7 +40,7 @@ namespace VindegadeKS_WPF
             ListBoxFunction();
         }
         public Appointment CurrentAppointment = new Appointment();
-        Appointment appointmentToBeRetrieved;
+        AppointmentListBox appointmentDetailsToBeRetrieved;
         public Lesson CurrentLesson = new Lesson();
         Lesson lessonToBeRetrieved;
         public Instructor CurrentInstructor = new Instructor();
@@ -92,42 +94,34 @@ namespace VindegadeKS_WPF
 
                 //Creates a count SqlCommand, which gets the number of rows in the table 
                 SqlCommand count = new SqlCommand("SELECT COUNT(PK_ApmtID) from VK_Appointments", con);
+
                 //Saves count command result to int
                 int intCount = (int)count.ExecuteScalar();
+                
+                //Make a list of 5-tuples containing instanses of each class necessary in appointments
 
-
-                //Make a list of 5-tuples containing instanses of each class necessary in apointments
-                List<(Lesson, Class, Student, Instructor, Appointment)> items = new List<(Lesson, Class, Student, Instructor, Appointment)>();
+                List<AppointmentListBox> appointments = new List<AppointmentListBox>();
 
                 //Forloop which adds intCount number of new items to items-list
                 for (int i = 0; i < intCount; i++)
                 {
                     //Calls RetrieveLessonData method, sending i as index
-                    RetrieveLessonData(i);
-                    RetrieveInstructorData(i);
-                    RetrieveStudentData(i);
-                    RetrieveClassData(i);
+                    RetrieveAppointmentData(i);;
 
                     //Add new items from the item class with specific attributes to the list
                     //Will later be remade to automatically add items based on the database
 
-                    /*
-                    items.Add((new Lesson() { LesName = lessonToBeRetrieved.LesName, LesType = lessonToBeRetrieved.LesType },
-                            new Class() { ClassName = classToBeRetrieved.ClassName },
-                            new Student() { StuFirstName = studentToBeRetrieved.StuFirstName, StuLastName = studentToBeRetrieved.StuLastName }, //kan det konkatineres?
-                            new Instructor() { InstFirstName = instructorToBeRetrieved.InstFirstName, InstLastName = instructorToBeRetrieved.InstLastName }, //kan det konkatineres? 
-                            new Appointment() { ApmtDate = appointmentToBeRetrieved.ApmtDate, Setup = "" }));
+                    appointments.Add(appointmentDetailsToBeRetrieved);
 
                     //Only necessary for multi-attribute ListBoxItem
                     //Set up the attribute 'SetUp' which is used to determine the appearance of the ListBoxItem 
                     //Forloop to go through all items in the items-list, to add and fill the 'SetUp' attribute
 
-                    items[i].Item5.Setup = $"{items[i].Item1.LesName} - {items[i].Item1.LesType}\n{items[i].Item5.ApmtDate}";
-                    */
+                    appointments[i].Setup = $"{appointments[i].ListBoxLesName} - {appointments[i].ListBoxLesType} \n{appointments[i].ListBoxApmtDate}";
                 }
 
                 //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
-                Apmt_DisApmt_ListBox.ItemsSource = items;
+                Apmt_DisApmt_ListBox.ItemsSource = appointments;
             }
         }
 
@@ -152,7 +146,6 @@ namespace VindegadeKS_WPF
                     lessonToBeRetrieved.Setup = $"{lessonToBeRetrieved.LesName}, {lessonToBeRetrieved.LesType}";
                     
                     Apmt_PickLesson_ComboBox.Items.Add(lessonToBeRetrieved.Setup);
-
                 }
             }
         }
@@ -348,6 +341,108 @@ namespace VindegadeKS_WPF
                 }
             }
         }
+
+        //Retrieves the data of a specific row in the database where the row number is equal to dbRowNum + 1
+        public void RetrieveAppointmentData(int dbRowNumber)
+        {
+            //Setting up a connection to the database
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                //Opens said connection
+                con.Open();
+                //Creates a four cmd SqlCommand, which SELECTs specific rows from each table in the DB 
+                //SqlCommand cmdApmt = new SqlCommand("SELECT PK_ApmtID, ApmtDate, FK_InstID, FK_LesID, FK_ClassName FROM VK_Appointments ORDER BY PK_ApmtID ASC OFFSET @dbRowNumber ROWS FETCH NEXT 1 ROW ONLY", con);
+
+                SqlCommand cmdApmt = new SqlCommand("SELECT " +
+                                                    "VK_Lessons.LesName, " +
+                                                    "VK_Lessons.LesType, " +
+                                                    "VK_Classes.PK_ClassName, " +
+                                                    "VK_Classes.ClassLicenseType, " +
+                                                    "VK_Students.StuFirstName, " +
+                                                    "VK_Students.StuLastName, " +
+                                                    "VK_Instructors.InstFirstName, " +
+                                                    "VK_Instructors.InstLastName, " +
+                                                    "VK_Appointments.ApmtDate, " +
+                                                    "VK_Appointments.PK_ApmtID " +
+                                                    "FROM VK_Lessons " +
+                                                    "JOIN VK_Appointments ON VK_Lessons.PK_LesID = VK_Appointments.FK_LesID " +
+                                                    "JOIN VK_Classes ON VK_Appointments.FK_ClassName = VK_Classes.PK_ClassName " +
+                                                    "JOIN VK_Class_Student ON VK_Classes.PK_ClassName = VK_Class_Student.CK_ClassName " +
+                                                    "JOIN VK_Students ON VK_Class_Student.CK_StuCPR = VK_Students.PK_StuCPR " +
+                                                    "JOIN VK_Instructors ON VK_Appointments.FK_InstID = VK_Instructors.PK_InstID " +
+                                                    "GROUP BY " +
+                                                    "VK_Lessons.LesName, " +
+                                                    "VK_Lessons.LesType, " +
+                                                    "VK_Classes.PK_ClassName, " +
+                                                    "VK_Classes.ClassLicenseType, " +
+                                                    "VK_Students.StuFirstName, " +
+                                                    "VK_Students.StuLastName, " +
+                                                    "VK_Instructors.InstFirstName, " +
+                                                    "VK_Instructors.InstLastName, " +
+                                                    "VK_Appointments.ApmtDate, " +
+                                                    "VK_Appointments.PK_ApmtID " +
+                                                    "ORDER BY " + 
+                                                    "PK_ApmtID " +
+                                                    "ASC OFFSET @dbRowNumber ROWS " +
+                                                    "FETCH NEXT 1 ROW ONLY", con);
+
+
+                //Set dbRowNumber to 0 if under 0
+                if (dbRowNumber < 0)
+                {
+                    dbRowNumber = 0;
+                }
+                //Gives @dbRowNumber the value of dbRowNumber
+                cmdApmt.Parameters.AddWithValue("@dbRowNumber", dbRowNumber);
+
+                using (SqlDataReader dr = cmdApmt.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        appointmentDetailsToBeRetrieved = new AppointmentListBox(dr["LesName"].ToString(),
+                                                                                 dr["LesType"].ToString(),
+                                                                                 dr["PK_ClassName"].ToString(),
+                                                                                 dr["StuFirstName"].ToString() + dr["StuLastName"].ToString(),
+                                                                                 dr["InstFirstName"].ToString() + dr["InstLastName"].ToString(),
+                                                                                 (DateTime)dr["ApmtDate"],
+                                                                                 "");
+                    }
+                }
+            }
+        }
+
+        public class AppointmentListBox
+        {
+            public string ListBoxLesName { get; set; }
+            public string ListBoxLesType { get; set; }
+            public string ListBoxClassName { get; set; }
+            public string ListBoxStuName { get; set; }
+            public string ListBoxInstName { get; set; }
+            public DateTime ListBoxApmtDate { get; set; }
+
+            public string Setup { get; set; }
+            
+            public AppointmentListBox(string _listBoxLesName, 
+                                      string _listBoxLesType,
+                                      string _listBoxClassName,
+                                      string _listBoxStuName,
+                                      string _listBoxInstName,
+                                      DateTime _listBoxApmtDate,
+                                      string _setup)
+            {
+                ListBoxLesName = _listBoxLesName;
+                ListBoxLesType = _listBoxLesType;
+                ListBoxClassName = _listBoxClassName;
+                ListBoxStuName = _listBoxStuName;
+                ListBoxInstName = _listBoxInstName;
+                ListBoxApmtDate = _listBoxApmtDate;
+                Setup = _setup;
+            }
+
+            public AppointmentListBox() : this("", "", "", "", "", default, "")
+            { }
+        }
+
         public void SaveAppointment(Appointment appointmentToBeCreated, Instructor instructorToBeCreated, Lesson lessonToBeCreated, Class classToBeCreated)
         {
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))

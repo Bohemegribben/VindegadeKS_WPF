@@ -10,6 +10,7 @@ namespace VindegadeKS_WPF
     {
         public int ApmtId { get; set; }
         public DateTime ApmtDate { get; set; }
+
         public string Setup;
 
         public Appointment(int _apmtId, DateTime _apmtDate)
