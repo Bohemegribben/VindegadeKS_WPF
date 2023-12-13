@@ -443,19 +443,26 @@ namespace VindegadeKS_WPF
             { }
         }
 
-        public void SaveAppointment(Appointment appointmentToBeCreated, Instructor instructorToBeCreated, Lesson lessonToBeCreated, Class classToBeCreated)
+        public void SaveAppointment(Appointment appointmentToBeCreated, Instructor instructorToBeCreated, Lesson lessonToBeCreated, Class classToBeCreated, Student studentToBeCreated)
         {
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
                 con.Open();
-                SqlCommand cmd = new SqlCommand("INSERT INTO VK_Appointments (ApmtDate, FK_InstID, FK_LesID, FK_ClassName)" +
-                                                 "VALUES(@ApmtDate, @FK_InstID, @FK_LesID, @FK_ClassName)" +
-                                                 "SELECT @@IDENTITY", con);
-                cmd.Parameters.Add("@ApmtDate", SqlDbType.DateTime2).Value = appointmentToBeCreated.ApmtDate;
-                cmd.Parameters.Add("@FK_InstID", SqlDbType.Int).Value = instructorToBeCreated.InstId;
-                cmd.Parameters.Add("@FK_LesID", SqlDbType.Int).Value = lessonToBeCreated.LesId;
-                cmd.Parameters.Add("@FK_ClassName", SqlDbType.NVarChar).Value = classToBeCreated.ClassName;
-                appointmentToBeCreated.ApmtId = Convert.ToInt32(cmd.ExecuteScalar());
+                SqlCommand cmdApmt = new SqlCommand("INSERT INTO VK_Appointments (ApmtDate, FK_InstID, FK_LesID, FK_ClassName) " +
+                                                    "VALUES(@ApmtDate, @FK_InstID, @FK_LesID, @FK_ClassName) " +
+                                                    "SELECT @@IDENTITY", con);
+                cmdApmt.Parameters.Add("@ApmtDate", SqlDbType.DateTime2).Value = appointmentToBeCreated.ApmtDate;
+                cmdApmt.Parameters.Add("@FK_InstID", SqlDbType.Int).Value = instructorToBeCreated.InstId;
+                cmdApmt.Parameters.Add("@FK_LesID", SqlDbType.Int).Value = lessonToBeCreated.LesId;
+                cmdApmt.Parameters.Add("@FK_ClassName", SqlDbType.NVarChar).Value = classToBeCreated.ClassName;
+                appointmentToBeCreated.ApmtId = Convert.ToInt32(cmdApmt.ExecuteScalar());
+
+                SqlCommand cmdStu = new SqlCommand("INSERT INTO VK_STUDENT_APPOINTMENT (CK_StuCPR, CK_ApmtID) " +
+                                                   "VALUES(@CK_StuCPR, @CK_ApmtID) " +
+                                                   "SELECT @@IDENTITY", con);
+                cmdStu.Parameters.Add("@CK_StuCPR", SqlDbType.NVarChar).Value = studentToBeCreated.StuCPR;
+                cmdStu.Parameters.Add("@CK_ApmtID", SqlDbType.Int).Value = appointmentToBeCreated.ApmtId;
+                cmdStu.ExecuteScalar();
             }
         }
         
@@ -466,9 +473,10 @@ namespace VindegadeKS_WPF
 
         private void Apmt_Save_Button_Click(object sender, RoutedEventArgs e)
         {
-            SaveAppointment(CurrentAppointment, CurrentInstructor, CurrentLesson, CurrentClass);
+            SaveAppointment(CurrentAppointment, CurrentInstructor, CurrentLesson, CurrentClass, CurrentStudent);
             ClearInputFields();
             LockInputFields();
+            ListBoxFunction();
         }
 
         private void Apmt_Edit_Button_Click(object sender, RoutedEventArgs e)
