@@ -30,25 +30,26 @@ namespace VindegadeKS_WPF
         public Class_Sub_ShowClass_Page(string cn) //Passed the classname from ClassPage on entry
         {
             InitializeComponent();
-            currentClassName = cn;
-            Class_Sub_Title_TextBlock.Text = currentClassName;
-            ListBoxFunction();
-            ComboBoxStartUp();
-            Class_Sub_Save_Button.IsEnabled = false;
+            currentClassName = cn; //Sets currentClassName to cn - which is the ClassName of the selected class in ClassPage passed on entry
+            Class_Sub_Title_TextBlock.Text = currentClassName; //Sets the TextBlock at the top of the page to reflect the current class
+            ListBoxFunction(); //Runs ListBoxFunction when the page is opened
+            ComboBoxStartUp(); //Runs ComboBoxStartUp with all of the set up for the ComboBoxes to minimize clutter
+            Class_Sub_Save_Button.IsEnabled = false; //Makes sure that the 'Gem' button is not enabled when the page is opened - There were some issues with it staying enabled if it was open and the user left the page
         }
 
         #region Variables
-        ConStuClass conToBeRetrieved;
-        Class classToBeRetrieved; /// Let it be its own thing
+        ConStuClass conToBeRetrieved; //Used to store the data retrieved when calling either RetrieveConnection or RetrieveStudent both of which stores the data in the class ConStuClass
+        Class classToBeRetrieved; //Used to store the data retrieved when calling RetrieveClassData - Is its own class because the class properties has not been added to ConStuClass
 
-        Class currentClass = new Class();
-        ConStuClass currentCon = new ConStuClass();
+        ConStuClass currentCon = new ConStuClass(); //Instantiation of ConStuClass
+        Class currentClass = new Class(); //Instantiation of Class
 
-        string currentClassName; //Gets cn from ClassPage on entry
+        string currentClassName; //Stores the ClassName of the current class of the page - Used by many methods, when only the name of the current class is needed
         string currentConStuID; //Keeps track of which student has been chosen - Used by DeleteConnection
         #endregion
 
-        #region Hold Buttons
+        #region Buttons - Handles all the Click Events of the buttons
+        //
         private void Class_Sub_Edit_Button_Click(object sender, RoutedEventArgs e)
         {
             Class_Sub_Year_ComboBox.IsEnabled = true;
@@ -91,6 +92,14 @@ namespace VindegadeKS_WPF
                 DeleteClass(currentClassName);
                 this.NavigationService.GoBack();
             }
+        }
+        private void Class_Sub_DelStu_Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem != null)
+            {
+                DeleteConnection(currentConStuID);
+            }
+            ListBoxFunction();
         }
         #endregion
 
@@ -171,14 +180,7 @@ namespace VindegadeKS_WPF
             public ConStuClass() : this("", "", "", "", "", "", "")
             { }
         }
-        private void Class_Sub_DelStu_Button_Click(object sender, RoutedEventArgs e)
-        {
-            if(Class_Sub_ShowClass_DisStu_ListBox.SelectedItem != null)
-            {
-                DeleteConnection(currentConStuID);
-            }
-            ListBoxFunction();
-        }
+        
         #endregion
 
         #region ComboBox
