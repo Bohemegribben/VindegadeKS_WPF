@@ -39,6 +39,11 @@ namespace VindegadeKS_WPF
             AddClassComboBoxFunction();
             ListBoxFunction();
             LockInputFields();
+
+            //Controls which button the user can interact with - User needs able to edit and delete, but not save
+            Apmt_Save_Button.IsEnabled = false;
+            Apmt_Edit_Button.IsEnabled = false;
+            Apmt_Delete_Button.IsEnabled = false;
         }
 
         List<Lesson> lessons;
@@ -118,7 +123,7 @@ namespace VindegadeKS_WPF
                 Apmt_DisLessonType_TextBlock.Text = "Lektionstype: " + (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxLesType;
                 Apmt_DisClass_TextBlock.Text = "Hold: " + (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxClassName;
                 Apmt_DisClassLicenseType_TextBlock.Text = "Kørekorttype: " + (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxClassLicenseType;
-                Apmt_DisStudent_TextBlock.Text = "Student: " + (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxStuName;
+                Apmt_DisStudent_TextBlock.Text = "Elev: " + (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxStuName;
                 Apmt_DisInstructor_TextBlock.Text = "Underviser: " + (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxInstName;
                 Apmt_DisDateTime_TextBlock.Text = "Aftale: " + (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxApmtDate;
 
@@ -217,7 +222,7 @@ namespace VindegadeKS_WPF
 
                     instructors.Add(instructorToBeRetrieved);
 
-                    instructorToBeRetrieved.Setup = $"{instructorToBeRetrieved.InstFirstName} {instructorToBeRetrieved.InstLastName}";
+                    instructorToBeRetrieved.Setup = $"{instructorToBeRetrieved.InstLastName}, {instructorToBeRetrieved.InstFirstName}";
 
                     Apmt_PickInstructor_ComboBox.Items.Add(instructorToBeRetrieved.Setup);
                 }
@@ -242,7 +247,7 @@ namespace VindegadeKS_WPF
 
                     students.Add(studentToBeRetrieved);
 
-                    studentToBeRetrieved.Setup = $"{studentToBeRetrieved.StuFirstName} {studentToBeRetrieved.StuLastName}";
+                    studentToBeRetrieved.Setup = $"{studentToBeRetrieved.StuLastName}, {studentToBeRetrieved.StuFirstName}";
 
                     Apmt_PickStudent_ComboBox.Items.Add(studentToBeRetrieved.Setup);
                 }
@@ -453,8 +458,8 @@ namespace VindegadeKS_WPF
                                                                                  dr["LesType"].ToString(),
                                                                                  dr["PK_ClassName"].ToString(),
                                                                                  dr["ClassLicenseType"].ToString(),
-                                                                                 dr["StuFirstName"].ToString() + " " + dr["StuLastName"].ToString(),
-                                                                                 dr["InstFirstName"].ToString() + " " + dr["InstLastName"].ToString(),
+                                                                                 dr["StuLastName"].ToString() + ", " + dr["StuFirstName"].ToString(),
+                                                                                 dr["InstLastName"].ToString() + ", " + dr["InstFirstName"].ToString(),
                                                                                  (DateTime)dr["ApmtDate"],
                                                                                  "");
                     }
@@ -587,13 +592,32 @@ namespace VindegadeKS_WPF
             if (edit == false)
             { SaveAppointment(CurrentAppointment, CurrentInstructor, CurrentLesson, CurrentClass, CurrentStudent); }
             else
-            { EditAppointment(CurrentAppointment, CurrentInstructor, CurrentLesson, CurrentClass, CurrentStudent); }
+            {
+                /*
+                char delimitor = ',';
+                int delimitorIndex = Apmt_PickLesson_ComboBox.Text.IndexOf(delimitor);
+                CurrentLesson.LesName = Apmt_PickLesson_ComboBox.Text.Substring(0, delimitorIndex);
+                CurrentLesson.LesType = Apmt_PickLesson_ComboBox.Text.Substring(delimitorIndex +2);
+                delimitorIndex = Apmt_PickClass_ComboBox.Text.IndexOf(delimitor);
+                CurrentClass.ClassName = Apmt_PickClass_ComboBox.Text.Substring(0, delimitorIndex);
+                CurrentClass.ClassLicenseType = (LicenseType)Enum.Parse(typeof(LicenseType), Apmt_PickClass_ComboBox.Text.Substring(delimitorIndex + 2));
+                delimitorIndex = Apmt_PickStudent_ComboBox.Text.IndexOf(delimitor);
+                CurrentStudent.StuFirstName = Apmt_PickStudent_ComboBox.Text.Substring(0, delimitorIndex);
+                CurrentStudent.StuLastName = Apmt_PickStudent_ComboBox.Text.Substring(delimitorIndex +2);
+                delimitorIndex = Apmt_PickInstructor_ComboBox.Text.IndexOf(delimitor);
+                CurrentInstructor.InstFirstName = Apmt_PickInstructor_ComboBox.Text.Substring(0, delimitorIndex);
+                CurrentInstructor.InstLastName = Apmt_PickInstructor_ComboBox.Text.Substring(delimitorIndex + 2);
+                CurrentAppointment.ApmtDate = (DateTime)Apmt_PickDateTime_DateTimePicker.Value;
+                */
+
+                EditAppointment(CurrentAppointment, CurrentInstructor, CurrentLesson, CurrentClass, CurrentStudent);
+            }
 
             Apmt_DisLesson_TextBlock.Text = "Lektion: ";
             Apmt_DisLessonType_TextBlock.Text = "Lektionstype: ";
             Apmt_DisClass_TextBlock.Text = "Hold: ";
             Apmt_DisClassLicenseType_TextBlock.Text = "Kørekorttype: ";
-            Apmt_DisStudent_TextBlock.Text = "Student: ";
+            Apmt_DisStudent_TextBlock.Text = "Elev: ";
             Apmt_DisInstructor_TextBlock.Text = "Underviser: ";
             Apmt_DisDateTime_TextBlock.Text = "Aftale: ";
 
@@ -602,6 +626,8 @@ namespace VindegadeKS_WPF
             ListBoxFunction();
             edit = false;
             Apmt_Edit_Button.IsEnabled = false;
+            Apmt_Save_Button.IsEnabled = false;
+            Apmt_Delete_Button.IsEnabled = false;
         }
 
         private void Apmt_Edit_Button_Click(object sender, RoutedEventArgs e)
@@ -626,11 +652,13 @@ namespace VindegadeKS_WPF
             Apmt_DisLessonType_TextBlock.Text = "Lektionstype: ";
             Apmt_DisClass_TextBlock.Text = "Hold: ";
             Apmt_DisClassLicenseType_TextBlock.Text = "Kørekorttype: ";
-            Apmt_DisStudent_TextBlock.Text = "Student: ";
+            Apmt_DisStudent_TextBlock.Text = "Elev: ";
             Apmt_DisInstructor_TextBlock.Text = "Underviser: ";
             Apmt_DisDateTime_TextBlock.Text = "Aftale: ";
 
             Apmt_Edit_Button.IsEnabled = false;
+            Apmt_Save_Button.IsEnabled = false;
+            Apmt_Delete_Button.IsEnabled = false;
         }
 
         private void ClearInputFields()
