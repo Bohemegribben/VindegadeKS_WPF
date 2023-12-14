@@ -24,7 +24,6 @@ namespace VindegadeKS_WPF
     /// Interaction logic for Class_Sub_ShowClass_Page.xaml
     /// </summary>
 
-    /// Redo the comments (/add new), they are a mismatch of (unedited) copied and newly written comments
     public partial class Class_Sub_ShowClass_Page : Page
     {
         //The Class_Sub_ShowClass_Page constructor
@@ -520,19 +519,30 @@ namespace VindegadeKS_WPF
                 count.Parameters.Add("@ClassQuarter", SqlDbType.NVarChar).Value = classToBeUpdated.ClassQuarter;
                 count.Parameters.Add("@ClassYear", SqlDbType.NVarChar).Value = classToBeUpdated.ClassYear;
                 
-                //
+                //Run count and save the result to intCount
                 int intCount = (int)count.ExecuteScalar();
+
+                //Set ClassNumber to be intCount+1
                 classToBeUpdated.ClassNumber = (intCount + 1).ToString();
 
+                //Checks if intCount isn't null
                 if(intCount != 0)
                 {
+                    //Find the highest number in ClassNumber
                     SqlCommand c = new SqlCommand("SELECT MAX(CAST(ClassNumber AS Int)) FROM VK_Classes WHERE ClassQuarter = @ClassQuarter AND ClassYear = @ClassYear AND IsNumeric(ClassNumber) = 1", con);
+                    
+                    //Sets the attributes
                     c.Parameters.Add("@ClassQuarter", SqlDbType.NVarChar).Value = classToBeUpdated.ClassQuarter;
                     c.Parameters.Add("@ClassYear", SqlDbType.NVarChar).Value = classToBeUpdated.ClassYear;
+                    
+                    //Runs the command and saves the result
                     int cCount = (int)c.ExecuteScalar();
+                    
+                    //Checks if intCount+1 is less then or equal to cCount, if true then set ClassNumber to cCount+1
                     if ((intCount + 1) <= cCount) { classToBeUpdated.ClassNumber = (cCount + 1).ToString(); }
                 }
                 
+                //Sets up a string with the new ClassName
                 string newName = $"{currentClass.ClassQuarter}{currentClass.ClassYear}-{classToBeUpdated.ClassNumber}";
                 
                 //Gives @attribute the value of attribute
@@ -545,11 +555,13 @@ namespace VindegadeKS_WPF
 
                 //Tells the database to execute the cmd sql command
                 cmd.ExecuteNonQuery();
+
+                //Sets currentClassName to the new ClassName
                 currentClassName = newName;
             }
         }
 
-        //Deletes the selected connection from the database
+        //Deletes the Class from the database
         public void DeleteClass(string classToBeDeleted)
         {
             //Setting up a connection to the database
@@ -558,10 +570,10 @@ namespace VindegadeKS_WPF
                 //Opens said connection
                 con.Open();
 
-                //Creates a cmd SqlCommand, which DELETEs a specific row in the table, based on the CK_ClassName
+                //Creates a SqlCommand, which DELETEs a specific row in the table, based on the CK_ClassName
                 SqlCommand cmd = new SqlCommand("DELETE FROM VK_Classes WHERE PK_ClassName = @PK_ClassName", con);
 
-                //Gives @PK_LesId the value of conToBeDeleted
+                //Gives @PK_ClassName the value of classToBeDeleted
                 cmd.Parameters.AddWithValue("@PK_ClassName", classToBeDeleted);
 
                 //Tells the database to execute the cmd sql command
@@ -570,6 +582,7 @@ namespace VindegadeKS_WPF
         }
         #endregion
         #region Students
+        //Retrieves a specific row of Student in the database where the row number is equal to dbRowNum + 1
         public void RetrieveStudent(int dbRowNum)
         {
             //Setting up a connection to the database
@@ -577,29 +590,29 @@ namespace VindegadeKS_WPF
             {
                 //Opens said connection
                 con.Open();
-                //Creates a cmd SqlCommand, which SELECTs a specific row 
-                SqlCommand stu = new SqlCommand("SELECT PK_StuCPR, StuFirstName, StuLastName, StuPhone, StuEmail FROM VK_Students ORDER BY StuFirstName ASC OFFSET @dbRowNum ROWS FETCH NEXT 1 ROW ONLY", con);
 
+                //Creates a SqlCommand, which SELECTs a specific row 
+                SqlCommand stu = new SqlCommand("SELECT PK_StuCPR, StuFirstName, StuLastName, StuPhone, StuEmail FROM VK_Students ORDER BY StuFirstName ASC OFFSET @dbRowNum ROWS FETCH NEXT 1 ROW ONLY", con);
 
                 //Set dbRowNum to 0 if under 0
                 if (dbRowNum < 0)
                 {
                     dbRowNum = 0;
                 }
+
                 //Gives @dbRowNum the value of dbRowNum
                 stu.Parameters.AddWithValue("@dbRowNum", dbRowNum);
 
-                //Set up a data reader called dr, which reads the data from cmd (the previous sql command)
-               
+                //Set up a data reader called dr, which reads the data from cmd
                 using (SqlDataReader dr = stu.ExecuteReader())
                 {
+                    //While-loop running while dr is reading 
                     while (dr.Read())
                     {
                         //Sets conToBeRetrieve a new empty ClassStuConnection, which is then filled
                         conToBeRetrieved = new ConStuClass("", "", "", "", "", "", "")
                         {
                             //Sets the attributes of conToBeRetrieved equal to the data from the current row of the database
-                            
                             CK_StuCPR = dr["PK_StuCPR"].ToString(),
                             StuFirstName = dr["StuFirstName"].ToString(),
                             StuLastName = dr["StuLastName"].ToString(),
