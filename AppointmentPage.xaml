@@ -35,7 +35,7 @@
         </StackPanel>
 
         <!-- Labels er kosmetiske i dette projekt, så navngivningen er ikke nødvendig -->
-        <Label x:Name="Apmt_MakeAppointment_Label" Content="OPRET AFTALE" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="20" Margin="140,455,0,0" Height="50" Width="315"/>
+        <Label x:Name="Apmt_CreateAppointment_Label" Content="OPRET AFTALE" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="20" Margin="140,455,0,0" Height="50" Width="315"/>
         <Label x:Name="Apmt_PickLesson_Label" Content="Lektion" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,510,0,0" Height="50"/>
         <Label x:Name="Apmt_PickClass_Label" Content="Hold" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,580,0,0" Height="50"/>
         <Label x:Name="Apmt_PickStudent_Label" Content="Elev" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,650,0,0" Height="50"/>
@@ -43,10 +43,36 @@
         <Label x:Name="Apmt_PickDateTime_Label" Content="Dato og tid" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,790,0,0" Height="50"/>
 
         <!-- Control buttons -->
-        <Button x:Name="Apmt_Add_Button" Content="TILFØJ" HorizontalAlignment="Left" Margin="475,510,0,0" VerticalAlignment="Top" Height="50" Width="185" FontSize="20" Click="Apmt_Add_Button_Click"/>
-        <Button x:Name="Apmt_Save_Button" Content="GEM" HorizontalAlignment="Right" Margin="0,580,20,0" VerticalAlignment="Top" Height="50" Width="185" FontSize="20" Click="Apmt_Save_Button_Click"/>
-        <Button x:Name="Apmt_Edit_Button" Content="REDIGER" HorizontalAlignment="Right" Margin="0,650,20,0" VerticalAlignment="Top" Height="50" Width="185" FontSize="20" Click="Apmt_Edit_Button_Click"/>
-        <Button x:Name="Apmt_Delete_Button" Content="SLET" HorizontalAlignment="Right" Margin="0,720,20,0" VerticalAlignment="Top" Height="50" Width="185" FontSize="20" Click="Apmt_Delete_Button_Click"/>
+        <Button x:Name="Apmt_Add_Button" Content="TILFØJ" HorizontalAlignment="Right" Margin="0,510,20,0" VerticalAlignment="Top" Height="50" Width="185" FontSize="20" Click="Apmt_Add_Button_Click">
+        <Button.Resources>
+            <Style TargetType="Border">
+                <Setter Property="CornerRadius" Value="10"/>
+            </Style>
+        </Button.Resources>
+        </Button>
+
+        <Button x:Name="Apmt_Save_Button" Content="GEM" HorizontalAlignment="Right" Margin="0,580,20,0" VerticalAlignment="Top" Height="50" Width="185" FontSize="20" Click="Apmt_Save_Button_Click">
+        <Button.Resources>
+            <Style TargetType="Border">
+                <Setter Property="CornerRadius" Value="10"/>
+            </Style>
+        </Button.Resources>
+        </Button>
+    
+        <Button x:Name="Apmt_Edit_Button" Content="REDIGER" HorizontalAlignment="Right" Margin="0,650,20,0" VerticalAlignment="Top" Height="50" Width="185" FontSize="20" Click="Apmt_Edit_Button_Click">
+        <Button.Resources>
+            <Style TargetType="Border">
+                <Setter Property="CornerRadius" Value="10"/>
+            </Style>
+        </Button.Resources>
+        </Button>
+        <Button x:Name="Apmt_Delete_Button" Content="SLET" HorizontalAlignment="Right" Margin="0,720,20,0" VerticalAlignment="Top" Height="50" Width="185" FontSize="20" Click="Apmt_Delete_Button_Click">
+        <Button.Resources>
+            <Style TargetType="Border">
+                <Setter Property="CornerRadius" Value="10"/>
+            </Style>
+        </Button.Resources>
+        </Button>
 
         <!-- Comboboxe, en textbox og en datepicker til at definere attributter for aftalen -->
         <ComboBox x:Name="Apmt_PickLesson_ComboBox" HorizontalAlignment="Left" Margin="140,510,0,0" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10" SelectionChanged="Apmt_PickLesson_ComboBox_SelectionChanged"/>

@@ -15,7 +15,7 @@
     <Grid>
         
         <!-- ListBox -->
-        <ListBox x:Name="Class_DisClass_ListBox" Width="640" Height="350" Margin="0, 20, 20, 0" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="20" SelectionChanged="Class_DisClass_ListBox_SelectionChanged">
+        <ListBox x:Name="Class_DisClass_ListBox" Width="640" Height="425" Margin="0, 20, 20, 0" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="20" SelectionChanged="Class_DisClass_ListBox_SelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <!-- Change what it's binding to based on what you want written in the ListBoxItem -->
@@ -24,28 +24,9 @@
             </ListBox.ItemTemplate>
         <!-- Remember to close the ListBox -->
         </ListBox>
-
-
-        <!-- Knap til sub page for valgte hold-->
-        <Button x:Name="Class_Subpage_button" Content="Fremvis valgt hold" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Margin="20,435,0,0" FontSize="20" Height="50" Width="185" Click="Class_Subpage_button_Click" IsEnabled="False">
-            <Button.Resources>
-                <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="10"/>
-                </Style>
-            </Button.Resources>
-        </Button>  
-
-        <!-- Knap til at aktivere comboboxene -->
-        <Button x:Name="Class_Save_button" Content="GEM" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Margin="20,875,0,0" FontSize="20" Height="50" Width="185" Click="Class_Save_button_Click">
-            <Button.Resources>
-                <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="10"/>
-                </Style>
-            </Button.Resources>
-        </Button>
         
         <!-- Knap til oprettelse af nyt hold -->
-        <Button x:Name="Class_Create_button" Content="TILFØJ" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Margin="20,805,0,0" FontSize="20" Height="50" Width="185" Click="Class_Create_button_Click">
+        <Button x:Name="Class_Create_button" Content="TILFØJ" HorizontalAlignment="Right" VerticalAlignment="Top" VerticalContentAlignment="Center" Margin="0,510,20,0" FontSize="20" Height="50" Width="185" Click="Class_Create_button_Click">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="10"/>
@@ -53,15 +34,35 @@
             </Button.Resources>
         </Button>
 
+        <!-- Knap til at aktivere comboboxene -->
+        <Button x:Name="Class_Save_button" Content="GEM" HorizontalAlignment="Right" VerticalAlignment="Top" VerticalContentAlignment="Center" Margin="0,580,20,0" FontSize="20" Height="50" Width="185" Click="Class_Save_button_Click">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+
+        <!-- Knap til sub page for valgte hold-->
+        <Button x:Name="Class_Subpage_button" Content="Fremvis valgt hold" HorizontalAlignment="Right" VerticalAlignment="Top" VerticalContentAlignment="Center" Margin="0,650,20,0" FontSize="20" Height="50" Width="185" Click="Class_Subpage_button_Click" IsEnabled="False">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+
+        <Label x:Name="Apmt_CreateClass_Label" Content="OPRET HOLD" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="20" Margin="140,455,0,0" Height="50" Width="315"/>
+
         <!-- Labels til ComboBoxe -->
-        <Label x:Name="Class_Year_Label" Content="År" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,555,0,0" Height="50"/>
-        <Label x:Name="Class_Quarter_Label" Content="Kvartal" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,625,0,0" Height="50"/>
-        <Label x:Name="Class_LicenseType_Label" Content="Kørekortstype" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,695,0,0" Height="50"/>
+        <Label x:Name="Class_Year_Label" Content="År" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,510,0,0" Height="50"/>
+        <Label x:Name="Class_Quarter_Label" Content="Kvartal" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,580,0,0" Height="50"/>
+        <Label x:Name="Class_LicenseType_Label" Content="Kørekort" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="20" Margin="20,650,0,0" Height="50"/>
 
         <!-- comboboxe til valg af variable -->
-        <ComboBox x:Name="Class_Year_ComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="200,555,0,0" Width="315" Height="50"/>
-        <ComboBox x:Name="Class_Quarter_ComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="200,625,0,0" Width="315" Height="50"/>
-        <ComboBox x:Name="Class_LicenseType_ComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="200,695,0,0" Width="315" Height="50"/>
+        <ComboBox x:Name="Class_Year_ComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="140,510,0,0" Width="315" Height="50"/>
+        <ComboBox x:Name="Class_Quarter_ComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="140,580,0,0" Width="315" Height="50"/>
+        <ComboBox x:Name="Class_LicenseType_ComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="140,650,0,0" Width="315" Height="50"/>
         
     </Grid>
 </Page>

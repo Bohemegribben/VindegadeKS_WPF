@@ -16,7 +16,7 @@
         <!-- Databinding: https://stackoverflow.com/questions/3558945/populating-a-wpf-listbox-with-items-from-an-sql-sdf-database -->
         
         <!-- ListBox with name and design elements -->
-        <ListBox x:Name="Les_DisLes_ListBox" Width="185" Height="425" Margin="0, 20, 20, 0" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="20" SelectionChanged="Les_DisLes_ListBox_SelectionChanged">
+        <ListBox x:Name="Les_DisLes_ListBox" Width="220" Height="425" Margin="0, 20, 20, 0" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="20" SelectionChanged="Les_DisLes_ListBox_SelectionChanged">
             <!-- Just copy the next 6 lines -->
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -29,26 +29,52 @@
 
 
         <!-- Display with name, type + des from pre-existing lesson -->
-        <StackPanel Background="AliceBlue" HorizontalAlignment="Left" Height="425" Margin="20,20,0,0" VerticalAlignment="Top" Width="435">
+        <StackPanel Background="AliceBlue" HorizontalAlignment="Left" Height="425" Margin="20,20,0,0" VerticalAlignment="Top" Width="400">
             <TextBlock x:Name="Les_DisName_TextBlock" TextWrapping="Wrap" Text="Modul Navn: " FontSize="20" Height="50" Margin="10, 10, 10, 0" />
             <TextBlock x:Name="Les_DisType_TextBlock" TextWrapping="Wrap" Text="Modul Type: " FontSize="20" Height="50" Margin="10, 10, 10, 0"/>
             <TextBlock x:Name="Les_DisDescription_TextBlock" TextWrapping="Wrap" Text="Modul Beskrivelse: " FontSize="20" Height="285" Margin="10, 10, 10, 0"/>
         </StackPanel>
-        
+
+        <Label x:Name="Apmt_CreateLesson_Label" Content="OPRET LEKTION" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="20" Margin="140,455,0,0" Height="50" Width="315"/>
+
         <!-- Control buttons -->
-        <Button x:Name="Les_Add_Button" Content="TILFØJ" HorizontalAlignment="Right" Margin="0,465,20,0" VerticalAlignment="Top" Height="50" Width="185" FontSize="20" Click="Les_Add_Button_Click"/>
-        <Button x:Name="Les_Save_Button" Content="GEM" HorizontalAlignment="Right" Margin="0,535,20,0" VerticalAlignment="Top" Height="50" Width="185" FontSize="20" Click="Les_Save_Button_Click"/>
-        <Button x:Name="Les_Edit_Button" Content="REDIGER" HorizontalAlignment="Right" Margin="0,605,20,0" VerticalAlignment="Top" Height="50" Width="185" FontSize="20" Click="Les_Edit_Button_Click"/>
-        <Button x:Name="Les_Delete_Button" Content="SLET" HorizontalAlignment="Right" Margin="0,675,20,0" VerticalAlignment="Top" Height="50" Width="185" FontSize="20" Click="Les_Delete_Button_Click"/>
+        <Button x:Name="Les_Add_Button" Content="TILFØJ" HorizontalAlignment="Right" Margin="0,510,20,0" VerticalAlignment="Top" Height="50" Width="185" FontSize="20" Click="Les_Add_Button_Click">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+        <Button x:Name="Les_Save_Button" Content="GEM" HorizontalAlignment="Right" Margin="0,580,20,0" VerticalAlignment="Top" Height="50" Width="185" FontSize="20" Click="Les_Save_Button_Click">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+        <Button x:Name="Les_Edit_Button" Content="REDIGER" HorizontalAlignment="Right" Margin="0,650,20,0" VerticalAlignment="Top" Height="50" Width="185" FontSize="20" Click="Les_Edit_Button_Click">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+        <Button x:Name="Les_Delete_Button" Content="SLET" HorizontalAlignment="Right" Margin="0,720,20,0" VerticalAlignment="Top" Height="50" Width="185" FontSize="20" Click="Les_Delete_Button_Click">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
+        </Button>
 
         <!-- Input box labels -->
-        <Label Content="Navn" HorizontalAlignment="Left" Margin="20,465,0,0" VerticalAlignment="Top" FontSize="20" Height="50" VerticalContentAlignment="Center"/>
-        <Label Content="Type" HorizontalAlignment="Left" Margin="20,535,0,0" VerticalAlignment="Top" FontSize="20" Height="50" VerticalContentAlignment="Center"/>
-        <Label Content="Beskrivelse" HorizontalAlignment="Left" Margin="20,605,0,0" VerticalAlignment="Top" FontSize="20" Height="50" VerticalContentAlignment="Center"/>
+        <Label Content="Navn" HorizontalAlignment="Left" Margin="20,510,0,0" VerticalAlignment="Top" FontSize="20" Height="50" VerticalContentAlignment="Center"/>
+        <Label Content="Type" HorizontalAlignment="Left" Margin="20,580,0,0" VerticalAlignment="Top" FontSize="20" Height="50" VerticalContentAlignment="Center"/>
+        <Label Content="Beskrivelse" HorizontalAlignment="Left" Margin="20,650,0,0" VerticalAlignment="Top" FontSize="20" Height="50" VerticalContentAlignment="Center"/>
         
         <!-- Input boxes -->
-        <TextBox  x:Name="Les_Name_TextBox" Text="Modul " HorizontalAlignment="Left" Margin="140,465,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10"/>
-        <ComboBox x:Name="Les_Type_ComboBox" HorizontalAlignment="Left" Margin="140,535,0,0" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10"/>
-        <TextBox  x:Name="Les_Description_TextBox" Text="Læringsmål " HorizontalAlignment="Left" Margin="140,605,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="315" Height="225" FontSize="20" Padding="10" AcceptsReturn="True"/>
+        <TextBox  x:Name="Les_Name_TextBox" Text="Modul " HorizontalAlignment="Left" Margin="140,510,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10"/>
+        <ComboBox x:Name="Les_Type_ComboBox" HorizontalAlignment="Left" Margin="140,580,0,0" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10"/>
+        <TextBox  x:Name="Les_Description_TextBox" Text="Læringsmål " HorizontalAlignment="Left" Margin="140,650,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="315" Height="180" FontSize="20" Padding="10" AcceptsReturn="True"/>
     </Grid>
 </Page>

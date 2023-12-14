@@ -5,26 +5,18 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:VindegadeKS_WPF"
       mc:Ignorable="d"
-      Background="Snow"
+      Background="LightGreen"
       d:DesignHeight="1000" d:DesignWidth="680"
       Title="StudentPage">
 
     <Grid>
-        <Grid.Background>
-            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                <GradientStop Color="#FFEAEDF0" Offset="0.569"/>
-                <GradientStop Color="#FF8DC4FC" Offset="0"/>
-                <GradientStop Color="#FF65707B" Offset="0.982"/>
-            </LinearGradientBrush>
-        </Grid.Background>
-
 
         <!--Search bar-->
-        <TextBox x:Name="stu_txtBox_search" LostFocus="searchTxtBox_LostFocus" HorizontalAlignment="Left" Height="30" Margin="25,36,0,0" VerticalAlignment="Top" Width="150"/>
-        <TextBox x:Name="stu_txtBox_watermark" GotFocus="watermarkTxtBox_GotFocus" HorizontalAlignment="Left" Height="30" Margin="25,36,0,0" Text="Search" VerticalAlignment="Top" Width="150" FontSize="16"/>
+        <TextBox x:Name="stu_txtBox_search" LostFocus="searchTxtBox_LostFocus" HorizontalAlignment="Left" Height="30" Margin="25,36,0,0" VerticalAlignment="Top" Width="150" Visibility="Hidden"/>
+        <TextBox x:Name="stu_txtBox_watermark" GotFocus="watermarkTxtBox_GotFocus" HorizontalAlignment="Left" Height="30" Margin="25,36,0,0" Text="Search" VerticalAlignment="Top" Width="150" FontSize="16" Visibility="Hidden"/>
 
         <!-- ListBox-->
-        <ListBox x:Name="Stu_DisStu_ListBox" Width="185" Height="300" Margin="22,88, 0, 0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="20" SelectionChanged="studentsListBox_SelectionChanged_1">
+        <ListBox x:Name="Stu_DisStu_ListBox" Width="220" Height="425" Margin="0,20, 20, 0" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="20" SelectionChanged="studentsListBox_SelectionChanged_1">
 
 
             <ListBox.ItemTemplate>
@@ -35,7 +27,7 @@
         </ListBox>
 
         <!-- TextBlock-->
-        <StackPanel Background="AliceBlue" HorizontalAlignment="Left" Height="350" Margin="250,37,0,0" VerticalAlignment="Top" Width="435">
+        <StackPanel Background="AliceBlue" HorizontalAlignment="Left" Height="425" Margin="20,20,0,0" VerticalAlignment="Top" Width="400">
             <TextBlock x:Name="Stu_DisCPR_TextBlock" TextWrapping="Wrap" Text="CPR:" FontSize="20" Height="50" Margin="10, 10, 10, 0" />
             <TextBlock x:Name="Stu_DisFirstName_TextBlock" TextWrapping="Wrap" Text="Fornavn:" FontSize="20" Height="50" Margin="10, 10, 10, 0"/>
             <TextBlock x:Name="Stu_DisLastName_TextBlock" TextWrapping="Wrap" Text="Efternavn: " FontSize="20" Height="50" Margin="10, 10, 10, 0"/>
@@ -43,56 +35,50 @@
             <TextBlock x:Name="Stu_DisEmail_TextBlock" TextWrapping="Wrap" Text="Email: " FontSize="20" Height="50" Margin="10, 10, 10, 0"/>
         </StackPanel>
 
+        <Label x:Name="Apmt_CreateStudent_Label" Content="OPRET ELEV" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="20" Margin="140,455,0,0" Height="50" Width="315"/>
 
         <!--Labels-->
-        <Label x:Name="stu_label_cpr" HorizontalAlignment="Left" VerticalAlignment="Top" Content="CPR NR." Width="105" Margin="75,401,0,0" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold" d:LayoutOverrides="VerticalAlignment"/>
-        <Label x:Name="stu_label_fornavn" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Fornavn" Width="105" Margin="75,479,0,0" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
-        <Label x:Name="stu_label_efternavn" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Efternavn" Height="30" Width="105" Margin="75,564,0,0" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
-        <Label x:Name="stu_label_telefon" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Telefon" Height="30" Width="105" Margin="75,644,0,0" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
-        <Label x:Name="stu_label_email" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Email" Height="30" Width="105" Margin="75,722,0,0" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
-
-
+        <Label x:Name="stu_label_cpr" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" Content="CPR NR." Height="50" Margin="20,510,0,0" FontSize="20"/>
+        <Label x:Name="stu_label_fornavn" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" Content="Fornavn" Height="50" Margin="20,580,0,0" FontSize="20"/>
+        <Label x:Name="stu_label_efternavn" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" Content="Efternavn" Height="50" Margin="20,650,0,0" FontSize="20"/>
+        <Label x:Name="stu_label_telefon" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" Content="Telefon" Height="50" Margin="20,720,0,0" FontSize="20"/>
+        <Label x:Name="stu_label_email" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" Content="Email" Height="50" Margin="20,790,0,0" FontSize="20"/>
 
         <!-- Textboxes -->
-        <TextBox x:Name="Stu_CPR_TextBox" HorizontalAlignment="Left" Height="35" Width="300" Margin="100,434,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="Stu_FirstName_TextBox" HorizontalAlignment="Left" Height="35" Width="300" Margin="100,514,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="Stu_LastName_TextBox" HorizontalAlignment="Left" Height="35" Width="300" Margin="100,594,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="Stu_Phone_TextBox" HorizontalAlignment="Left" Height="35" Width="300" Margin="100,674,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="Stu_Email_TextBox" HorizontalAlignment="Left" Height="35" Width="300" Margin="100,754,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="Stu_CPR_TextBox" HorizontalAlignment="Left" Height="50" Width="315" Margin="140,510,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="Stu_FirstName_TextBox" HorizontalAlignment="Left" Height="50" Width="315" Margin="140,580,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="Stu_LastName_TextBox" HorizontalAlignment="Left" Height="50" Width="315" Margin="140,650,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="Stu_Phone_TextBox" HorizontalAlignment="Left" Height="50" Width="315" Margin="140,720,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="Stu_Email_TextBox" HorizontalAlignment="Left" Height="50" Width="315" Margin="140,790,0,0" VerticalAlignment="Top"/>
 
         <!--Buttons-->
-        <Button x:Name="Stu_Add_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="495,484,0,0" Content="TILFØJ" Height="35" Width="100" FontSize="16" Click="Stu_Add_Button_Click">
-            <Button.Effect>
-                <DropShadowEffect/>
-            </Button.Effect>
+        <Button x:Name="Stu_Add_Button" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,510,20,0" Content="TILFØJ" Height="50" Width="185" FontSize="20" Click="Stu_Add_Button_Click">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
         </Button>
-        <Button x:Name="Stu_Save_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="495,534,0,0" Content="GEM" Height="35" Width="100" FontSize="16" Click="Stu_Save_Button_Click">
-            <Button.Effect>
-                <DropShadowEffect/>
-            </Button.Effect>
+        <Button x:Name="Stu_Save_Button" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,580,20,0" Content="GEM" Height="50" Width="185" FontSize="20" Click="Stu_Save_Button_Click">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
         </Button>
-        <Button x:Name="Stu_Edit_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="495,584,0,0" Content="REDIGER" Height="35" Width="100" FontSize="16" Click="Stu_Edit_Button_Click">
-            <Button.Effect>
-                <DropShadowEffect/>
-            </Button.Effect>
+        <Button x:Name="Stu_Edit_Button" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,650,20,0" Content="REDIGER" Height="50" Width="185" FontSize="20" Click="Stu_Edit_Button_Click">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
         </Button>
-        <Button x:Name="Stu_Delete_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="600,664,0,0" Content="SLET" Height="35" Width="60" FontSize="16" Click="Stu_Delete_Button_Click">
-            <Button.Effect>
-                <DropShadowEffect/>
-            </Button.Effect>
-            <Button.Background>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#FFF65252"/>
-                    <GradientStop Color="#FFE3BBBB" Offset="1"/>
-                </LinearGradientBrush>
-            </Button.Background>
+        <Button x:Name="Stu_Delete_Button" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,720,20,0" Content="SLET" Height="50" Width="185" FontSize="20" Click="Stu_Delete_Button_Click">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
         </Button>
-
-
-
     </Grid>
-
-
-
-
 </Page>
