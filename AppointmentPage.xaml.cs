@@ -37,9 +37,59 @@ namespace VindegadeKS_WPF
             AddInstructorComboBoxFunction();
             AddStudentComboBoxFunction();
             AddClassComboBoxFunction();
-            LockInputFields();
             ListBoxFunction();
+            LockInputFields();
         }
+
+        List<Lesson> lessons;
+        List<Instructor> instructors;
+        List<Student> students;
+        List<Class> classes;
+
+        private void OnLoad(object sender, RoutedEventArgs e)
+        {
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                con.Open();
+
+                SqlCommand countLessons = new SqlCommand("SELECT COUNT(PK_LesID) from VK_Lessons", con);
+                int intCount = (int)countLessons.ExecuteScalar();
+
+                if (intCount != lessons.Count())
+                {
+                    Apmt_PickLesson_ComboBox.Items.Clear();
+                    AddLessonComboBoxFunction();
+                }
+
+                SqlCommand countInstructors = new SqlCommand("SELECT COUNT(PK_InstID) from VK_Instructors", con);
+                intCount = (int)countInstructors.ExecuteScalar();
+                
+                if (intCount != instructors.Count())
+                {
+                    Apmt_PickInstructor_ComboBox.Items.Clear();
+                    AddInstructorComboBoxFunction();
+                }
+
+                SqlCommand countStudents = new SqlCommand("SELECT COUNT(PK_StuCPR) from VK_Students", con);
+                intCount = (int)countStudents.ExecuteScalar();
+
+                if (intCount != students.Count())
+                {
+                    Apmt_PickStudent_ComboBox.Items.Clear();
+                    AddStudentComboBoxFunction();
+                }
+
+                SqlCommand countClasses = new SqlCommand("SELECT COUNT(PK_ClassName) from VK_Classes", con);
+                intCount = (int)countClasses.ExecuteScalar();
+
+                if (intCount != classes.Count())
+                {
+                    Apmt_PickClass_ComboBox.Items.Clear();
+                    AddClassComboBoxFunction();
+                }
+            }
+        }
+
         public Appointment CurrentAppointment = new Appointment();
         public Lesson CurrentLesson = new Lesson();
         public Instructor CurrentInstructor = new Instructor();
@@ -135,7 +185,7 @@ namespace VindegadeKS_WPF
                 SqlCommand count = new SqlCommand("SELECT COUNT(PK_LesID) from VK_Lessons", con);
                 int intCount = (int)count.ExecuteScalar();
 
-                List<Lesson> lessons = new List<Lesson>();
+                lessons = new List<Lesson>();
 
                 for (int i = 0; i < intCount; i++)
                 {
@@ -159,7 +209,7 @@ namespace VindegadeKS_WPF
                 SqlCommand count = new SqlCommand("SELECT COUNT(PK_InstID) from VK_Instructors", con);
                 int intCount = (int)count.ExecuteScalar();
 
-                List<Instructor> instructors = new List<Instructor>();
+                instructors = new List<Instructor>();
 
                 for (int i = 0; i < intCount; i++)
                 {
@@ -184,7 +234,7 @@ namespace VindegadeKS_WPF
                 SqlCommand count = new SqlCommand("SELECT COUNT(PK_StuCPR) from VK_Students", con);
                 int intCount = (int)count.ExecuteScalar();
 
-                List<Student> students = new List<Student>();
+                students = new List<Student>();
 
                 for (int i = 0; i < intCount; i++)
                 {
@@ -209,7 +259,7 @@ namespace VindegadeKS_WPF
                 SqlCommand count = new SqlCommand("SELECT COUNT(PK_ClassName) from VK_Classes", con);
                 int intCount = (int)count.ExecuteScalar();
 
-                List<Class> classes = new List<Class>();
+                classes = new List<Class>();
 
                 for (int i = 0; i < intCount; i++)
                 {
@@ -482,21 +532,21 @@ namespace VindegadeKS_WPF
                 con.Open();
 
                 //Creates a cmd SqlCommand, which UPDATEs the attributes of a specific row in the table, based on the LesId
-                SqlCommand cmdApmt = new SqlCommand("UPDATE VK_Appointments SET ApmtDate = @ApmtDate, FK_InstID = @FK_InstID, FK_LesID = @FK_LesID, FK_ClassName = @FK_ClassName " +
-                                                "WHERE PK_ApmtID = @PK_ApmtID", con);
+                SqlCommand cmdApmt = new SqlCommand("UPDATE VK_Appointments SET ApmtDate = @ApmtDate, FK_InstID = @InstID, FK_LesID = @LesID, FK_ClassName = @ClassName " +
+                                                "WHERE PK_ApmtID = @ApmtID", con);
 
                 //Gives @attribute the value of attribute
                 cmdApmt.Parameters.AddWithValue("@ApmtDate", appointmentToBeCreated.ApmtDate);
-                cmdApmt.Parameters.AddWithValue("@FK_InstID", instructorToBeCreated.InstId);
-                cmdApmt.Parameters.AddWithValue("@FK_LesID", lessonToBeCreated.LesId);
-                cmdApmt.Parameters.AddWithValue("@FK_ClassName", classToBeCreated.ClassName);
-                cmdApmt.Parameters.AddWithValue("@PK_ApmtID", appointmentToBeCreated.ApmtId);
+                cmdApmt.Parameters.AddWithValue("@InstID", instructorToBeCreated.InstId);
+                cmdApmt.Parameters.AddWithValue("@LesID", lessonToBeCreated.LesId);
+                cmdApmt.Parameters.AddWithValue("@ClassName", classToBeCreated.ClassName);
+                cmdApmt.Parameters.AddWithValue("@ApmtID", appointmentToBeCreated.ApmtId);
                 cmdApmt.ExecuteNonQuery();
 
-                SqlCommand cmdStu = new SqlCommand("UPDATE VK_Student_Appointment SET CK_StuCPR = @CK_StuCPR " +
-                                                   "WHERE CK_ApmtID = @CK_ApmtID", con);
-                cmdStu.Parameters.AddWithValue("@CK_StuCPR", studentToBeCreated.StuCPR);
-                cmdStu.Parameters.AddWithValue("@CK_ApmtID", appointmentToBeCreated.ApmtId);
+                SqlCommand cmdStu = new SqlCommand("UPDATE VK_Student_Appointment SET CK_StuCPR = @StuCPR " +
+                                                   "WHERE CK_ApmtID = @ApmtID", con);
+                cmdStu.Parameters.AddWithValue("@StuCPR", studentToBeCreated.StuCPR);
+                cmdStu.Parameters.AddWithValue("@ApmtID", appointmentToBeCreated.ApmtId);
                 cmdStu.ExecuteNonQuery();
 
                 //Tells the database to execute the cmd sql command
@@ -529,6 +579,7 @@ namespace VindegadeKS_WPF
         {
             UnlockInputFields();
             Apmt_Save_Button.IsEnabled = true;
+            Apmt_Edit_Button.IsEnabled = false;
         }
 
         private void Apmt_Save_Button_Click(object sender, RoutedEventArgs e)
@@ -536,12 +587,21 @@ namespace VindegadeKS_WPF
             if (edit == false)
             { SaveAppointment(CurrentAppointment, CurrentInstructor, CurrentLesson, CurrentClass, CurrentStudent); }
             else
-            { EditAppointment(CurrentAppointment, CurrentInstructor, CurrentLesson, CurrentClass, CurrentStudent);}
+            { EditAppointment(CurrentAppointment, CurrentInstructor, CurrentLesson, CurrentClass, CurrentStudent); }
+
+            Apmt_DisLesson_TextBlock.Text = "Lektion: ";
+            Apmt_DisLessonType_TextBlock.Text = "Lektionstype: ";
+            Apmt_DisClass_TextBlock.Text = "Hold: ";
+            Apmt_DisClassLicenseType_TextBlock.Text = "Kørekorttype: ";
+            Apmt_DisStudent_TextBlock.Text = "Student: ";
+            Apmt_DisInstructor_TextBlock.Text = "Underviser: ";
+            Apmt_DisDateTime_TextBlock.Text = "Aftale: ";
 
             ClearInputFields();
             LockInputFields();
             ListBoxFunction();
             edit = false;
+            Apmt_Edit_Button.IsEnabled = false;
         }
 
         private void Apmt_Edit_Button_Click(object sender, RoutedEventArgs e)
@@ -566,10 +626,11 @@ namespace VindegadeKS_WPF
             Apmt_DisLessonType_TextBlock.Text = "Lektionstype: ";
             Apmt_DisClass_TextBlock.Text = "Hold: ";
             Apmt_DisClassLicenseType_TextBlock.Text = "Kørekorttype: ";
-            Apmt_DisStudent_TextBlock.Text = "Elev: ";
+            Apmt_DisStudent_TextBlock.Text = "Student: ";
             Apmt_DisInstructor_TextBlock.Text = "Underviser: ";
             Apmt_DisDateTime_TextBlock.Text = "Aftale: ";
 
+            Apmt_Edit_Button.IsEnabled = false;
         }
 
         private void ClearInputFields()
@@ -597,11 +658,6 @@ namespace VindegadeKS_WPF
             Apmt_PickInstructor_ComboBox.IsEnabled = true;
         }
 
-        private void Apmt_ShowLessonType_TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
         private void Apmt_PickLesson_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             RetrieveLessonData(Apmt_PickLesson_ComboBox.SelectedIndex);
@@ -627,7 +683,6 @@ namespace VindegadeKS_WPF
         {
             RetrieveInstructorData(Apmt_PickInstructor_ComboBox.SelectedIndex);
             CurrentInstructor.InstId = instructorToBeRetrieved.InstId;
-            //??? ListBoxFunction();
         }
         
         private void Apmt_PickDateTime_DateTimePicker_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
