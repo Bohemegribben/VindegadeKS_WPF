@@ -39,7 +39,7 @@ namespace VindegadeKS_WPF
 
         #region Variables
         ConStuClass conToBeRetrieved; //Used to store the data retrieved when calling either RetrieveConnection or RetrieveStudent both of which stores the data in the class ConStuClass
-        Class classToBeRetrieved; //Used to store the data retrieved when calling RetrieveClassData - Is its own class because the class properties has not been added to ConStuClass
+        Class classToBeRetrieved; //Used to store the data retrieved when calling RetrieveClass - Is its own class because the class properties has not been added to ConStuClass
 
         ConStuClass currentCon = new ConStuClass(); //Instantiation of ConStuClass
         Class currentClass = new Class(); //Instantiation of Class
@@ -49,56 +49,77 @@ namespace VindegadeKS_WPF
         #endregion
 
         #region Buttons - Handles all the Click Events of the buttons
-        //
+        //Allows the user to edit the data of the current class - Enables the ComboBoxes in the upper right corner
         private void Class_Sub_Edit_Button_Click(object sender, RoutedEventArgs e)
         {
+            //Set IsEnabled to true on the ComboBoxes
             Class_Sub_Year_ComboBox.IsEnabled = true;
             Class_Sub_Quarter_ComboBox.IsEnabled = true;
-            Class_Sub_ClassNumber_TextBox.IsEnabled = false;
             Class_Sub_Type_ComboBox.IsEnabled = true;
+
+            //Set IsEnabled on the ClassNumber TextBox to false, as a safety measure because the user should never manually set it
+            Class_Sub_ClassNumber_TextBox.IsEnabled = false;
         }
 
+        //Allows the user to save the editted data of the current class
         private void Class_Sub_Save_Button_Click(object sender, RoutedEventArgs e)
         {
-            RetrieveClassData(currentClassName); ///Can the Retrieve(/other database) methods (if only used once) be moved into here?
-
+            //Sets the currentClass attributes to data from the ComboBoxes 
             currentClass.ClassYear = Class_Sub_Year_ComboBox.Text;
             currentClass.ClassQuarter = (Quarter)Enum.Parse(typeof(Quarter), Class_Sub_Quarter_ComboBox.Text);
             currentClass.ClassLicenseType = (LicenseType)Enum.Parse(typeof(LicenseType), Class_Sub_Type_ComboBox.Text);
-            currentClass.ClassNumber = Class_Sub_ClassNumber_TextBox.Text;
-      
-            UpdateClass(currentClass);
             
+            //Runs the method to UPDATE the data of the current class with the data of currentClass
+            UpdateClass(currentClass);
+
+            //Updates the text of Class_Sub_Title_TextBlock and Class_Sub_ClassNumber_TextBox to reflect the updated data
             Class_Sub_Title_TextBlock.Text = currentClassName;
             Class_Sub_ClassNumber_TextBox.Text = currentClass.ClassNumber;
 
+            //Sets IsEnabled of all the class ComboBoxes and the save button to false
             Class_Sub_Year_ComboBox.IsEnabled = false;
             Class_Sub_Quarter_ComboBox.IsEnabled = false;
-            Class_Sub_ClassNumber_TextBox.IsEnabled = false;
             Class_Sub_Type_ComboBox.IsEnabled = false;
             Class_Sub_Save_Button.IsEnabled = false;
         }
+
+        //Allows the user to delete the current class
         private void Class_Sub_DelClass_Button_Click(object sender, RoutedEventArgs e)
         {
+            //Sets up a MessageBox in which the user confirms that they wish to delete the current class
+
+            //Save two strings message and caption
             string messageBoxText = $"Du er ved at slette {currentClassName}.\nEr du sikker på at du gerne vil slette {currentClassName}?";
             string caption = "ADVARSEL";
+            //Saves other MessageBox data
             MessageBoxButton button = MessageBoxButton.OKCancel;
             MessageBoxImage icon = MessageBoxImage.Warning;
+            //Create a variable to save the resultat of the message box
             MessageBoxResult result;
 
+            //Runs the MessageBox with the previously established variables and saves the result
             result = MessageBox.Show(messageBoxText, caption, button, icon);
+
+            //If the MessageBoxResult is equal to OK
             if (result == MessageBoxResult.OK)
             {
+                //Delete the class
                 DeleteClass(currentClassName);
+                //Go back to the ClassPage
                 this.NavigationService.GoBack();
             }
         }
-        private void Class_Sub_DelStu_Button_Click(object sender, RoutedEventArgs e)
+
+        //Allows the user to delete the connection between Class and Student
+        private void Class_Sub_DelCon_Button_Click(object sender, RoutedEventArgs e)
         {
+            //Checks that a student is selected 
             if (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem != null)
             {
+                //DELETE the connection
                 DeleteConnection(currentConStuID);
             }
+            //Rerun ListBoxFunction to make sure it reflect the current situation
             ListBoxFunction();
         }
         #endregion
@@ -110,12 +131,12 @@ namespace VindegadeKS_WPF
             //Safety check, to make sure that the selected item exists
             if (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem != null)
             {
-                //Sets currentConStuID to equal the ID of selected item
+                //Sets currentConStuID equal to the CK_StuCPR of selected item - Used by Class_Sub_DelCon_Button_Click
                 currentConStuID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as ConStuClass).CK_StuCPR;
             }
         }
 
-        //Method to create, control and add stu to the ListBox
+        //Method to create, control and add items to the ListBox
         private void ListBoxFunction()
         {
             //Setting up a connection to the database
@@ -191,7 +212,7 @@ namespace VindegadeKS_WPF
             ComboBoxQuarterSetUp();
             ComboBoxTypeSetUp();
 
-            RetrieveClassData(currentClassName);
+            RetrieveClass(currentClassName);
             Class_Sub_Year_ComboBox.Text = classToBeRetrieved.ClassYear;
             Class_Sub_Quarter_ComboBox.Text = classToBeRetrieved.ClassQuarter.ToString();
             Class_Sub_ClassNumber_TextBox.Text = classToBeRetrieved.ClassNumber;
@@ -388,7 +409,7 @@ namespace VindegadeKS_WPF
         #endregion
         #region Class
         //Retrieves the data of a specific row in the database where the row number is equal to dbRowNum + 1
-        public void RetrieveClassData(string dbRow)
+        public void RetrieveClass(string dbRow)
         {
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
