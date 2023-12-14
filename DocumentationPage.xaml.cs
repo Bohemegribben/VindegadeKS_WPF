@@ -33,7 +33,7 @@ namespace VindegadeKS_WPF
         {
             InitializeComponent();
             LockInputFields();
-            //ListBoxFunction();
+            ListBoxFunction();
 
             //Disables the buttons which aren't relevant yet
             Dok_Save_Button.IsEnabled = false;
@@ -43,9 +43,13 @@ namespace VindegadeKS_WPF
 
         // Create CurrentStudent to contain current object - Needed in: Save_Button_Click & Edit_Button_Click
         public Documentation CurrentDocumentation = new Documentation();
+        public Student CurrentStudent = new Student();
 
         // Moved out here instead of staying in 'Retrieve', so ListBoxFunction can access - Needed in: ListBoxFunction & RetrieveData
-        public Documentation DocumentationToBeRetrieved;
+        public DocListBoxItems documentationToBeRetrieved;
+        public Student studentToBeRetrieved;
+        
+
         // Keeps track of if CurrentLesson is a new object or an old one being edited -
         // Needed in: Add_Button_Click, Save_Button_Click, Edit_Button_Click & ListBox_SelectionChanged
         bool edit = false;
@@ -62,17 +66,26 @@ namespace VindegadeKS_WPF
             public string ListBoxStuCPR { get; set; }
             public string ListBoxStuFirstName { get; set; }
             public string ListBoxStuLastName { get; set; }
-            public DateTime ListBoxDocStartDate { get; set; }
-            public DateTime ListBoxDocEndDate { get; set; }
+            public DateOnly ListBoxDocStartDate { get; set; }
+            public DateOnly ListBoxDocEndDate { get; set; }
             public string ListBoxDocType { get; set; }
+            public string Setup { get; set; }
+
+            // To be able to see both First and Last name in our listbox,
+            // we have to concatenate (the joining of two or more strings) our two properties ListBoxStuFirstName and ListBoxStuLastName 
+            public string ListBoxStuFullName
+            {
+                get { return $"{ListBoxStuFirstName} {ListBoxStuLastName}".Trim(); }
+            }
 
             public DocListBoxItems(int _listBoxDocId,
                                       string _listBoxStuCPR,
                                       string _listBoxStuFirstName,
                                       string _listBoxStuLastName,
-                                      DateTime _listBoxDocStartDate,
-                                      DateTime _listBoxDocEndDate,
-                                      string _listBoxDocType)
+                                      DateOnly _listBoxDocStartDate,
+                                      DateOnly _listBoxDocEndDate,
+                                      string _listBoxDocType,
+                                      string setup)
             {
                 ListBoxDocId = _listBoxDocId;
                 ListBoxStuCPR = _listBoxStuCPR;
@@ -81,10 +94,10 @@ namespace VindegadeKS_WPF
                 ListBoxDocStartDate = _listBoxDocStartDate;
                 ListBoxDocEndDate = _listBoxDocEndDate;
                 ListBoxDocType = _listBoxDocType;
-                
+                Setup = setup;
             }
 
-            public DocListBoxItems() : this(0, "", "", "", default, default, "")
+            public DocListBoxItems() : this(0, "", "", "", default, default, "","")
             { }
 
         }
@@ -96,36 +109,46 @@ namespace VindegadeKS_WPF
 
         }
 
-        private void ListBoxFuntion () 
+        private void ListBoxFunction () 
         {
+            //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
-                //Opens said connection
+                //Opens the connection
                 con.Open();
 
                 //Creates a count SqlCommand, which gets the number of rows in the table 
-                SqlCommand count = new SqlCommand("SELECT COUNT(FK_StuCPR) from VK_Doumentations", con);
+                SqlCommand count = new SqlCommand("SELECT COUNT(PK_ApmtID) from VK_Appointments", con);
+
                 //Saves count command result to int
                 int intCount = (int)count.ExecuteScalar();
 
-                //Make a list with the Item Class from below called items (Name doesn't matter)
-                //LesListBoxItems in my case
+                //Make a list of 5-tuples containing instanses of each class necessary in appointments
+
                 List<DocListBoxItems> items = new List<DocListBoxItems>();
 
                 //Forloop which adds intCount number of new items to items-list
                 for (int i = 0; i < intCount; i++)
                 {
                     //Calls RetrieveLessonData method, sending i as index
-                    RetrieveDocumentationData(i);
+                    RetrieveStudentData(i);
+
+                    //Add new items from the item class with specific attributes to the list
+                    //Will later be remade to automatically add items based on the database
+                    items.Add(documentationToBeRetrieved);
 
                     //Adds a new item from the item class with specific attributes to the list
                     //The data added comes from RetrieveLessonData
-                    items.Add(new DocListBoxItems() { ListBoxStuCPR = DocumentationToBeRetrieved.Doc, ListBoxStuFirstName = StudentToBeRetrieved.StuFirstName, ListBoxStuLastName = StudentToBeRetrieved.StuLastName });
+                    // items.Add(new DocListBoxItems() { ListBoxStuCPR = studentToBeRetrieved.StuCPR, ListBoxStuFirstName = studentToBeRetrieved.StuFirstName, ListBoxStuLastName = studentToBeRetrieved.StuLastName, ListBoxDocStartDate = documentationToBeRetrieved.ListBoxDocStartDate, ListBoxDocEndDate = documentationToBeRetrieved.ListBoxDocEndDate, ListBoxDocType = documentationToBeRetrieved.ListBoxDocType });
+
+                    items.Add(new DocListBoxItems() { ListBoxStuCPR = studentToBeRetrieved.StuCPR, ListBoxStuFirstName = studentToBeRetrieved.StuFirstName, ListBoxStuLastName = studentToBeRetrieved.StuLastName });
+
 
                     //Only necessary for multi-attribute ListBoxItem
                     //Set up the attribute 'SetUp' which is used to determine the appearance of the ListBoxItem 
-                    //Mine isn't, so it's out commented
-                    //items[i].SetUp = $"{items[i].Name}\n{items[i].Type}\n{items[i].Description}";
+                    //Forloop to go through all items in the items-list, to add and fill the 'SetUp' attribute
+
+                    // documentations[i].Setup = $"{documentations[i].ListBoxStuFirstName} - {documentations[i].ListBoxDocStartDate} \n{documentations[i].ListBoxDocEndDate} - {documentations[i].ListBoxDocType}";
                 }
 
                 //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
@@ -271,7 +294,7 @@ namespace VindegadeKS_WPF
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
                 con.Open();
-                SqlCommand cmd = new SqlCommand("SELECT PK_DocID, DocStartDate, DocEndDate, DocType, FK_StuCPR, DocumentationFile FROM VK_Documentations ORDER BY PK_StuCPR ASC OFFSET @dBRowNumber ROWS FETCH NEXT 1 ROW ONLY", con);
+                SqlCommand cmd = new SqlCommand("SELECT PK_DocID, DocStartDate, DocEndDate, DocType, FK_StuCPR, DocumentationFile FROM VK_Documentations ORDER BY PK_DocId ASC OFFSET @dBRowNumber ROWS FETCH NEXT 1 ROW ONLY", con);
 
                 if (dBRowNumber < 0)
                 {
@@ -284,13 +307,12 @@ namespace VindegadeKS_WPF
                     while (dr.Read())
                     {
 
-                        DocumentationToBeRetrieved = new DocListBoxItems (0, "", "", "", default, default, "")
+                        documentationToBeRetrieved = new DocListBoxItems (0, "", "", "", default, default, "", "")
                         {
                             ListBoxDocId = int.Parse(dr["PK_DocID"].ToString()),
-                            ListBoxStuFirstName = dr["Stu"]
-                            DocStartDate = DateOnly.FromDateTime((DateTime)dr["DocStarDate"]),
-                            DocEndDate = DateOnly.FromDateTime((DateTime)dr["DocEndDate"]),
-                            DocType = dr["DocType"].ToString(),
+                            ListBoxDocStartDate = DateOnly.FromDateTime((DateTime)dr["DocStarDate"]),
+                            ListBoxDocEndDate = DateOnly.FromDateTime((DateTime)dr["DocEndDate"]),
+                            ListBoxDocType = dr["DocType"].ToString(),
                            
                         };
                     }
@@ -298,8 +320,39 @@ namespace VindegadeKS_WPF
             }
         }
 
+
+
         #endregion
 
+        #region RetrieveStudentData
+        public void RetrieveStudentData(int dbRowNumber)
+        {
+            //Setting up a connection to the database
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                //Opens said connection
+                con.Open();
+                //Creates a four cmd SqlCommand, which SELECTs specific rows from each table in the DB 
+                SqlCommand cmdStu = new SqlCommand("SELECT PK_StuCPR, StuFirstName, StuLastName, StuPhone, StuEmail FROM VK_Students ORDER BY PK_StuCPR ASC OFFSET @dBRowNumber ROWS FETCH NEXT 1 ROW ONLY", con);
+
+                //Set dbRowNumber to 0 if under 0
+                if (dbRowNumber < 0)
+                {
+                    dbRowNumber = 0;
+                }
+                //Gives @dbRowNumber the value of dbRowNumber
+                cmdStu.Parameters.AddWithValue("@dbRowNumber", dbRowNumber);
+
+                using (SqlDataReader dr = cmdStu.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        studentToBeRetrieved = new Student(dr["PK_StuCPR"].ToString(), dr["StuFirstName"].ToString(), dr["StuLastName"].ToString(), dr["StuPhone"].ToString(), dr["StuEmail"].ToString());
+                    }
+                }
+            }
+        }
+        #endregion
 
         #endregion
 

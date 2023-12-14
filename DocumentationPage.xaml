@@ -30,7 +30,7 @@
 
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding FirstName}"/>
+                    <TextBlock Text="{Binding ListBoxStuFullName}"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
