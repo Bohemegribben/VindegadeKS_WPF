@@ -24,9 +24,9 @@ namespace VindegadeKS_WPF
     /// Interaction logic for Class_Sub_ShowClass_Page.xaml
     /// </summary>
 
-    /// Redo the comments (/add new), they are a mismatch of (unedited) copied and newly written comments
     public partial class Class_Sub_ShowClass_Page : Page
     {
+        //The Class_Sub_ShowClass_Page constructor
         public Class_Sub_ShowClass_Page(string cn) //Passed the classname from ClassPage on entry
         {
             InitializeComponent();
@@ -37,7 +37,7 @@ namespace VindegadeKS_WPF
             Class_Sub_Save_Button.IsEnabled = false; //Makes sure that the 'Gem' button is not enabled when the page is opened - There were some issues with it staying enabled if it was open and the user left the page
         }
 
-        #region Variables
+        #region Variables and ConStuClass
         ConStuClass conToBeRetrieved; //Used to store the data retrieved when calling either RetrieveConnection or RetrieveStudent both of which stores the data in the class ConStuClass
         Class classToBeRetrieved; //Used to store the data retrieved when calling RetrieveClass - Is its own class because the class properties has not been added to ConStuClass
 
@@ -46,6 +46,36 @@ namespace VindegadeKS_WPF
 
         string currentClassName; //Stores the ClassName of the current class of the page - Used by many methods, when only the name of the current class is needed
         string currentConStuID; //Keeps track of which student has been chosen - Used by DeleteConnection
+
+        //A class used by the page storing data from the tables VK_Students and VK_Class_Student, as well as the extra attribute SetUp
+        public class ConStuClass
+        {
+            //Attributes from the tables VK_Students and VK_Class_Student
+            public string CK_ClassName { get; set; }
+            public string CK_StuCPR { get; set; }
+            public string StuFirstName { get; set; }
+            public string StuLastName { get; set; }
+            public string StuPhone { get; set; }
+            public string StuEmail { get; set; }
+
+            //Extra attribute used for the GUI
+            public string SetUp { get; set; }
+            
+            //Constructor for ConStuClass
+            public ConStuClass(string _cK_ClassName, string _cK_StuCPR, string _stuFirstName, string _stuLastName, string _stuPhone, string _stuEmail, string _setUp)
+            {
+                CK_ClassName = _cK_ClassName;
+                CK_StuCPR = _cK_StuCPR;
+                StuFirstName = _stuFirstName;
+                StuLastName = _stuLastName;
+                StuPhone = _stuPhone;
+                StuEmail = _stuEmail;
+                SetUp = _setUp;
+            }
+
+            //Acts as a parameterless default constructor
+            public ConStuClass() : this("", "", "", "", "", "", "") { }
+        }
         #endregion
 
         #region Buttons - Handles all the Click Events of the buttons
@@ -151,165 +181,182 @@ namespace VindegadeKS_WPF
                 //Saves count command result to int
                 int intCount = (int)count.ExecuteScalar();
 
-                //Make a list with the Item Class from below called stu (Name doesn't matter)
-                //LesListBoxItems in my case
+                //Make a list of the class ConStuClass called stu (Name doesn't matter)
                 List<ConStuClass> stu = new List<ConStuClass>();
                 
                 //Forloop which adds intCount number of new stu to stu-list
                 for (int i = 0; i < intCount; i++)
                 {
-                    //Calls RetrieveLessonData method, sending i as index
+                    //Calls RetrieveConnection sending i 
                     RetrieveConnection(i);
 
-                    //Adds a new item from the item class with specific attributes to the list
-                    //The data added comes from RetrieveLessonData
-                    stu.Add(new ConStuClass() { CK_StuCPR = conToBeRetrieved.CK_StuCPR, CK_ClassName = conToBeRetrieved.CK_ClassName, 
-                                              StuFirstName = conToBeRetrieved.StuFirstName, StuLastName = conToBeRetrieved.StuLastName, 
-                                              StuPhone = conToBeRetrieved.StuPhone, StuEmail = conToBeRetrieved.StuEmail });
-
+                    //Adds a new item with specific attributes to the list
+                    stu.Add(conToBeRetrieved);
+                   
                     //Only necessary for multi-attribute ListBoxItem
-                    //Set up the attribute 'SetUp' which is used to determine the appearance of the ListBoxItem 
-                    //Mine isn't, so it's out commented
+                    //Set up the attribute 'SetUp' which we use to determine the appearance of the ListBoxItem 
                     stu[i].SetUp = $"{stu[i].StuFirstName} {stu[i].StuLastName}\n{stu[i].StuPhone}\n{stu[i].StuEmail}";
                 }
 
                 //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
                 Class_Sub_ShowClass_DisStu_ListBox.ItemsSource = stu;
 
-                Class_Sub_NumberOfStudents_TextBox.Text = intCount.ToString(); //Sets number of students in TextBox over in ClassData corner 
+                //Sets number of students in TextBox over in ClassData corner 
+                Class_Sub_NumberOfStudents_TextBox.Text = intCount.ToString(); 
             }
         }
-        public class ConStuClass 
-        {
-            public string CK_ClassName { get; set; }
-            public string CK_StuCPR { get; set; }
-            public string StuFirstName { get; set; }
-            public string StuLastName { get; set; }
-            public string StuPhone { get; set; }
-            public string StuEmail { get; set; }
-            public string SetUp { get; set; }
-            public ConStuClass(string _cK_ClassName, string _cK_StuCPR, string _stuFirstName, string _stuLastName, string _stuPhone, string _stuEmail, string _setUp)
-            {
-                CK_ClassName = _cK_ClassName;
-                CK_StuCPR = _cK_StuCPR;
-                StuFirstName = _stuFirstName;
-                StuLastName = _stuLastName;
-                StuPhone = _stuPhone;
-                StuEmail = _stuEmail;
-                SetUp = _setUp;
-            }
-            public ConStuClass() : this("", "", "", "", "", "", "")
-            { }
-        }
-        
         #endregion
 
         #region ComboBox
+        //Run by the Class_Sub_ShowClass_Page constructor to minimize the clutter in the constructor
         private void ComboBoxStartUp()
         {
-            AddStuComboBoxSetUp();
+            //Calls the SetUp methods for the ComboBoxes
+            ComboBoxAddStuSetUp();
             ComboBoxYearSetUp();
             ComboBoxQuarterSetUp();
             ComboBoxTypeSetUp();
 
+            //Retrives the Class data from the database using the currentClassName, saving the data as classToBeRetrived
             RetrieveClass(currentClassName);
+
+            //Sets the ComboBoxes and the TextBox to the data from classToBeRetrived
             Class_Sub_Year_ComboBox.Text = classToBeRetrieved.ClassYear;
             Class_Sub_Quarter_ComboBox.Text = classToBeRetrieved.ClassQuarter.ToString();
             Class_Sub_ClassNumber_TextBox.Text = classToBeRetrieved.ClassNumber;
             Class_Sub_Type_ComboBox.Text = classToBeRetrieved.ClassLicenseType.ToString();
         }
 
+        //Event for when a student is chosen in AddStu ComboBox 
         private void Class_Sub_AddStu_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            //The if/else-statement is used (together with a MessageBox)
+            //to stop the program from running the event twice
+
+            //Declare the comboBox variable and set it to the sender of the type ComboBox
             ComboBox comboBox = (ComboBox)sender;
+            //Checks if comboBox is not open, then it should simply return
             if (!comboBox.IsDropDownOpen)
                 return;
+            //Runs when the DropDown of the ComboBox is open
             else
             {
+                //Retrives the data of the chosen student
                 RetrieveStudent(Class_Sub_AddStu_ComboBox.SelectedIndex);
+                
+                //Sets currentCon to the correct data
                 currentCon.CK_StuCPR = conToBeRetrieved.CK_StuCPR.ToString();
                 currentCon.CK_ClassName = currentClassName;
+                
+                //Creates a new connection using currentCon
                 CreateConnection(currentCon);
+                
+                //Rerun ListBoxFunction to update it with the new connection
                 ListBoxFunction();
+                
+                //Makes sure there is no SelectedItem in the ListBox
                 Class_Sub_AddStu_ComboBox.SelectedItem = null;
             }
-            
         }
 
+        //When anything is changed in the ComboBoxes Year, Quarter or Type, enable the Save button
         private void Class_Sub_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Class_Sub_Save_Button.IsEnabled = true;
         }
 
-        #region ComboBox SetUp
-        private void AddStuComboBoxSetUp()
+        #region ComboBox SetUp Method
+        //Set up the add student ComboBox
+        private void ComboBoxAddStuSetUp()
         {
+            //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
+                //Opens said connection
                 con.Open();
 
-                //Make students instead
+                //Make a count command to find how many students exist in VK_Students
                 SqlCommand count = new SqlCommand("SELECT COUNT(PK_StuCPR) from VK_Students", con);
+                
+                //Run the command and saves the resultat in intCount
                 int intCount = (int)count.ExecuteScalar();
 
+                //Make a list of the class ConStuClass
                 List<ConStuClass> types = new List<ConStuClass>();
 
+                //Forloop which runs intCount amount of times
                 for (int i = 0; i < intCount; i++)
                 {
+                    //Retrives the data from VK_Students 
                     RetrieveStudent(i);
 
-                    types.Add(new ConStuClass { CK_ClassName = conToBeRetrieved.CK_ClassName, CK_StuCPR = conToBeRetrieved.CK_StuCPR, StuFirstName = conToBeRetrieved.StuFirstName, StuLastName = conToBeRetrieved.StuLastName, });
+                    //Adds a new item to the list (Could specify which attributes)
+                    types.Add(conToBeRetrieved);
 
+                    //Sets SetUp to what should be shown in the ComboBox
                     types[i].SetUp = $"{types[i].StuFirstName} {types[i].StuLastName}";
                 }
-
-                Class_Sub_AddStu_ComboBox.DisplayMemberPath = "SetUp";
-
+                //Sets the ItemsSource of the ComboBox to the list
                 Class_Sub_AddStu_ComboBox.ItemsSource = types;
+                
+                //Tells the ComboBox which attribute should be displayed
+                Class_Sub_AddStu_ComboBox.DisplayMemberPath = "SetUp";
             }
         }
 
+        //Set up the year ComboBox
         private void ComboBoxYearSetUp()
         {
+            //Make a list of the class Class
             List<Class> years = new List<Class>();
 
+            //Forloop which runs from 24 to 40
             for (int i = 24; i <= 40; i++)
             {
                 years.Add(new Class { ClassYear = $"{i}" });
             }
+            //Sets the ItemsSource and which attribute should be displayed
             Class_Sub_Year_ComboBox.ItemsSource = years;
             Class_Sub_Year_ComboBox.DisplayMemberPath = "ClassYear";
         }
 
+        //Set up the quarter ComboBox
         private void ComboBoxQuarterSetUp()
         {
+            //Make a list of the class Class
             List<Class> quarters = new List<Class>();
 
+            //Adds four items to the list reflecting the ClassQuarter enum
             quarters.Add(new Class { ClassQuarter = Quarter.F });
             quarters.Add(new Class { ClassQuarter = Quarter.S });
             quarters.Add(new Class { ClassQuarter = Quarter.E });
             quarters.Add(new Class { ClassQuarter = Quarter.V });
 
+            //Sets the ItemsSource and which attribute should be displayed
             Class_Sub_Quarter_ComboBox.ItemsSource = quarters;
             Class_Sub_Quarter_ComboBox.DisplayMemberPath = "ClassQuarter";
         }
 
+        //Set up the types ComboBox
         private void ComboBoxTypeSetUp()
         {
+            //Make a list of the class Class
             List<Class> types = new List<Class>();
 
+            //Adds four items to the list reflecting the LicenseType enum
             types.Add(new Class { ClassLicenseType = LicenseType.B });
             types.Add(new Class { ClassLicenseType = LicenseType.A1 });
             types.Add(new Class { ClassLicenseType = LicenseType.A2 });
             types.Add(new Class { ClassLicenseType = LicenseType.A });
 
+            //Sets the ItemsSource and which attribute should be displayed
             Class_Sub_Type_ComboBox.ItemsSource = types;
             Class_Sub_Type_ComboBox.DisplayMemberPath = "ClassLicenseType";
         }
         #endregion
         #endregion
 
-        #region Database
+        #region Database Methods
         #region Connection
         //Creates a connect between students and class
         public void CreateConnection(ConStuClass conToBeCreated)
@@ -317,11 +364,17 @@ namespace VindegadeKS_WPF
             //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
-                MessageBox.Show("Works if there is a MessageBox somewhere in CreateConnection, \notherwise the program will run CreateConnection twice. \n\nHave tried 'IsLoaded' - Didn't work. \n\nHave tried making CreateConnection async and using an await timer - Didn't work. \n\nBut a MessageBox fixes it, so a MessageBox there shall be.");
+                //MessageBox used to stop the program from running the method twice - Shouldn't be necessary, but it is. Have tried many things
+                MessageBox.Show("Works if there is a MessageBox somewhere in CreateConnection, " +
+                    "\notherwise the program will run CreateConnection twice. " +
+                    "\n\nHave tried 'IsLoaded' - Didn't work. " +
+                    "\n\nHave tried making CreateConnection async and using an await timer - Didn't work. " +
+                    "\n\nBut a MessageBox fixes it, so a MessageBox there shall be.");
 
                 //Opens said connection
                 con.Open();
                 
+                //Create the cmd command which checks if the connection already exist and if it doesn't; INSERT a new one with the given data
                 SqlCommand cmd = new SqlCommand("IF NOT EXISTS (SELECT * FROM VK_Class_Student WHERE CK_ClassName = @CK_ClassName AND CK_StuCPR = @CK_StuCPR) " +
                                                 "BEGIN INSERT INTO VK_Class_Student (CK_ClassName, CK_StuCPR) " +
                                                 "VALUES(@CK_ClassName, @CK_StuCPR) END " +
@@ -336,7 +389,7 @@ namespace VindegadeKS_WPF
             }
         }
 
-        //Retrieves the data of a specific row in the database where the row number is equal to dbRowNum + 1
+        //Retrieves a specific row of Connection in the database where the row number is equal to dbRowNum + 1
         public void RetrieveConnection(int dbRowNum)
         {
             //Setting up a connection to the database
@@ -344,27 +397,28 @@ namespace VindegadeKS_WPF
             {
                 //Opens said connection
                 con.Open();
-                //Creates a cmd SqlCommand, which SELECTs a specific row 
-                SqlCommand cmd = new SqlCommand("SELECT CK_ClassName, CK_StuCPR FROM VK_Class_Student ORDER BY CK_ClassName ASC OFFSET @dbRowNum ROWS FETCH NEXT 1 ROW ONLY", con);
 
+                //Creates two SqlCommand, which SELECTs a specific row in VK_Students and VK_Class_Student
+                //VK_Class_Student by row number and VK_Students by StuCPR
+                SqlCommand cmd = new SqlCommand("SELECT CK_ClassName, CK_StuCPR FROM VK_Class_Student ORDER BY CK_ClassName ASC OFFSET @dbRowNum ROWS FETCH NEXT 1 ROW ONLY", con);
                 SqlCommand stu = new SqlCommand("SELECT StuFirstName, StuLastName, StuPhone, StuEmail FROM VK_Students WHERE PK_StuCPR = @CK_StuCPR", con); 
 
                 //Set dbRowNum to 0 if under 0
-                if (dbRowNum < 0)
-                {
-                    dbRowNum = 0;
-                }
+                if (dbRowNum < 0) { dbRowNum = 0; }
+
                 //Gives @dbRowNum the value of dbRowNum
                 cmd.Parameters.AddWithValue("@dbRowNum", dbRowNum);
 
-                //Set up a data reader called dr, which reads the data from cmd (the previous sql command)
+                //Set up a data reader called dr, which reads the data specified by cmd
                 using (SqlDataReader dr = cmd.ExecuteReader())
                 {
                     //While-loop running while dr is reading 
                     while (dr.Read())
                     {
-                        string temp = dr["CK_StuCPR"].ToString();
-                        stu.Parameters.AddWithValue("@CK_StuCPR", temp);
+                        //Assigns value to @CK_StuCPR from stu based on a value from cmd
+                        stu.Parameters.AddWithValue("@CK_StuCPR", dr["CK_StuCPR"].ToString());
+
+                        //Initialization of conToBeRetrived
                         conToBeRetrieved = new ConStuClass("", "", "", "", "", "", "")
                         {
                             //Sets the attributes of conToBeRetrieved equal to the data from the current row of the database
@@ -373,11 +427,13 @@ namespace VindegadeKS_WPF
                         };
                     }
                 }
+                //Set up a second data reader for stu
                 using (SqlDataReader dr2 = stu.ExecuteReader())
                 {
+                    //While-loop running while dr2 is reading 
                     while (dr2.Read())
                     {
-                        //Sets conToBeRetrieve a new empty ClassStuConnection, which is then filled
+                        //Sets more of the attributes of the current conToBeRetrieved
                         conToBeRetrieved.StuFirstName = dr2["StuFirstName"].ToString();
                         conToBeRetrieved.StuLastName = dr2["StuLastName"].ToString();
                         conToBeRetrieved.StuPhone = dr2["StuPhone"].ToString();
@@ -396,10 +452,10 @@ namespace VindegadeKS_WPF
                 //Opens said connection
                 con.Open();
 
-                //Creates a cmd SqlCommand, which DELETEs a specific row in the table, based on the CK_ClassName
+                //Creates a cmd SqlCommand, which DELETEs a specific row in the table, based on the CK_StuCPR
                 SqlCommand cmd = new SqlCommand("DELETE FROM VK_Class_Student WHERE CK_StuCPR = @CK_StuCPR", con);
 
-                //Gives @PK_LesId the value of conToBeDeleted
+                //Gives @CK_StuCPR the value of conToBeDeleted
                 cmd.Parameters.AddWithValue("@CK_StuCPR", conToBeDeleted);
 
                 //Tells the database to execute the cmd sql command
@@ -408,23 +464,31 @@ namespace VindegadeKS_WPF
         }
         #endregion
         #region Class
-        //Retrieves the data of a specific row in the database where the row number is equal to dbRowNum + 1
-        public void RetrieveClass(string dbRow)
+        //Retrieves a specific row of Class in the database where the row number is equal to dbRowNum + 1
+        public void RetrieveClass(string className)
         {
+            //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
+                //Opens said connection
                 con.Open();
-                SqlCommand cmd = new SqlCommand("SELECT PK_ClassName, ClassYear, ClassNumber, ClassQuarter, ClassLicenseType FROM VK_Classes WHERE PK_ClassName = @dbRow", con);
 
-                
-                cmd.Parameters.AddWithValue("@dbRow", dbRow);
+                //Creates a SqlCommand, which SELECTs a specific row in VK_Classes based on PK_ClassName
+                SqlCommand cmd = new SqlCommand("SELECT PK_ClassName, ClassYear, ClassNumber, ClassQuarter, ClassLicenseType FROM VK_Classes WHERE PK_ClassName = @className", con);
 
+                //Gives @className the value of className
+                cmd.Parameters.AddWithValue("@className", className);
+
+                //Set up a data reader called dr, which reads the data specified by cmd
                 using (SqlDataReader dr = cmd.ExecuteReader())
                 {
+                    //While-loop running while dr is reading 
                     while (dr.Read())
                     {
+                        //Initialization of classToBeRetrieved
                         classToBeRetrieved = new Class(default, "", "", default, "")
                         {
+                            //Sets the attributes of classToBeRetrieved equal to the data from the current row of the database, enum-parsing two of them 
                             ClassQuarter = (Quarter)Enum.Parse(typeof(Quarter), dr["ClassQuarter"].ToString()),
                             ClassYear = dr["ClassYear"].ToString(),
                             ClassNumber = dr["ClassNumber"].ToString(),
@@ -436,7 +500,7 @@ namespace VindegadeKS_WPF
             }
         }
 
-        //Edits the data of a previously existing Lesson
+        //Edits the data of the current Class
         public void UpdateClass(Class classToBeUpdated)
         {
             //Setting up a connection to the database
@@ -445,24 +509,40 @@ namespace VindegadeKS_WPF
                 //Opens said connection
                 con.Open();
 
-                //Creates a cmd SqlCommand, which UPDATEs the attributes of a specific row in the table, based on the LesId
+                //Creates a SqlCommand, which UPDATEs the attributes of a specific row in the table, based on the PK_ClassName
                 SqlCommand cmd = new SqlCommand("UPDATE VK_Classes SET ClassYear = @ClassYear, ClassNumber = @ClassNumber, ClassQuarter = @ClassQuarter, ClassLicenseType = @ClassLicenseType, PK_ClassName = @NewClassName WHERE PK_ClassName = @PK_ClassName", con);
 
+                //Creates a SqlCommand, which COUNTs how many Classes exists with the same year and quarter
                 SqlCommand count = new SqlCommand("SELECT COUNT(ClassQuarter) FROM VK_Classes WHERE ClassQuarter = @ClassQuarter AND ClassYear = @ClassYear", con);
+                
+                //Sets the attributes
                 count.Parameters.Add("@ClassQuarter", SqlDbType.NVarChar).Value = classToBeUpdated.ClassQuarter;
                 count.Parameters.Add("@ClassYear", SqlDbType.NVarChar).Value = classToBeUpdated.ClassYear;
+                
+                //Run count and save the result to intCount
                 int intCount = (int)count.ExecuteScalar();
+
+                //Set ClassNumber to be intCount+1
                 classToBeUpdated.ClassNumber = (intCount + 1).ToString();
 
+                //Checks if intCount isn't null
                 if(intCount != 0)
                 {
+                    //Find the highest number in ClassNumber
                     SqlCommand c = new SqlCommand("SELECT MAX(CAST(ClassNumber AS Int)) FROM VK_Classes WHERE ClassQuarter = @ClassQuarter AND ClassYear = @ClassYear AND IsNumeric(ClassNumber) = 1", con);
+                    
+                    //Sets the attributes
                     c.Parameters.Add("@ClassQuarter", SqlDbType.NVarChar).Value = classToBeUpdated.ClassQuarter;
                     c.Parameters.Add("@ClassYear", SqlDbType.NVarChar).Value = classToBeUpdated.ClassYear;
+                    
+                    //Runs the command and saves the result
                     int cCount = (int)c.ExecuteScalar();
+                    
+                    //Checks if intCount+1 is less then or equal to cCount, if true then set ClassNumber to cCount+1
                     if ((intCount + 1) <= cCount) { classToBeUpdated.ClassNumber = (cCount + 1).ToString(); }
                 }
                 
+                //Sets up a string with the new ClassName
                 string newName = $"{currentClass.ClassQuarter}{currentClass.ClassYear}-{classToBeUpdated.ClassNumber}";
                 
                 //Gives @attribute the value of attribute
@@ -475,11 +555,13 @@ namespace VindegadeKS_WPF
 
                 //Tells the database to execute the cmd sql command
                 cmd.ExecuteNonQuery();
+
+                //Sets currentClassName to the new ClassName
                 currentClassName = newName;
             }
         }
 
-        //Deletes the selected connection from the database
+        //Deletes the Class from the database
         public void DeleteClass(string classToBeDeleted)
         {
             //Setting up a connection to the database
@@ -488,10 +570,10 @@ namespace VindegadeKS_WPF
                 //Opens said connection
                 con.Open();
 
-                //Creates a cmd SqlCommand, which DELETEs a specific row in the table, based on the CK_ClassName
+                //Creates a SqlCommand, which DELETEs a specific row in the table, based on the CK_ClassName
                 SqlCommand cmd = new SqlCommand("DELETE FROM VK_Classes WHERE PK_ClassName = @PK_ClassName", con);
 
-                //Gives @PK_LesId the value of conToBeDeleted
+                //Gives @PK_ClassName the value of classToBeDeleted
                 cmd.Parameters.AddWithValue("@PK_ClassName", classToBeDeleted);
 
                 //Tells the database to execute the cmd sql command
@@ -500,6 +582,7 @@ namespace VindegadeKS_WPF
         }
         #endregion
         #region Students
+        //Retrieves a specific row of Student in the database where the row number is equal to dbRowNum + 1
         public void RetrieveStudent(int dbRowNum)
         {
             //Setting up a connection to the database
@@ -507,29 +590,29 @@ namespace VindegadeKS_WPF
             {
                 //Opens said connection
                 con.Open();
-                //Creates a cmd SqlCommand, which SELECTs a specific row 
-                SqlCommand stu = new SqlCommand("SELECT PK_StuCPR, StuFirstName, StuLastName, StuPhone, StuEmail FROM VK_Students ORDER BY StuFirstName ASC OFFSET @dbRowNum ROWS FETCH NEXT 1 ROW ONLY", con);
 
+                //Creates a SqlCommand, which SELECTs a specific row 
+                SqlCommand stu = new SqlCommand("SELECT PK_StuCPR, StuFirstName, StuLastName, StuPhone, StuEmail FROM VK_Students ORDER BY StuFirstName ASC OFFSET @dbRowNum ROWS FETCH NEXT 1 ROW ONLY", con);
 
                 //Set dbRowNum to 0 if under 0
                 if (dbRowNum < 0)
                 {
                     dbRowNum = 0;
                 }
+
                 //Gives @dbRowNum the value of dbRowNum
                 stu.Parameters.AddWithValue("@dbRowNum", dbRowNum);
 
-                //Set up a data reader called dr, which reads the data from cmd (the previous sql command)
-               
+                //Set up a data reader called dr, which reads the data from cmd
                 using (SqlDataReader dr = stu.ExecuteReader())
                 {
+                    //While-loop running while dr is reading 
                     while (dr.Read())
                     {
                         //Sets conToBeRetrieve a new empty ClassStuConnection, which is then filled
                         conToBeRetrieved = new ConStuClass("", "", "", "", "", "", "")
                         {
                             //Sets the attributes of conToBeRetrieved equal to the data from the current row of the database
-                            
                             CK_StuCPR = dr["PK_StuCPR"].ToString(),
                             StuFirstName = dr["StuFirstName"].ToString(),
                             StuLastName = dr["StuLastName"].ToString(),
