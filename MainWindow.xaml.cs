@@ -27,6 +27,7 @@ namespace VindegadeKS_WPF
         InstructorPage iP = new InstructorPage();
         LessonPage lP = new LessonPage();
         StudentPage sP = new StudentPage();
+        DocumentationPage doP = new DocumentationPage();
 
         public MainWindow()
         {
@@ -83,7 +84,7 @@ namespace VindegadeKS_WPF
         private void Menu_Dok_Button_Click(object sender, RoutedEventArgs e)
         {
             LightGrayButtons();
-            PageView.Content = lP;
+            PageView.Content = doP;
             Menu_Dok_Button.Background = Brushes.Gray;
 
         }

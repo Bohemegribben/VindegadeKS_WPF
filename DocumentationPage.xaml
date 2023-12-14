@@ -57,8 +57,8 @@
         <!-- Input Boxes -->
         
         <ComboBox x:Name="Dok_PickCPR_ComboBox" HorizontalAlignment="Left" Margin="100,434,0,0" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10" SelectionChanged="Dok_PickCPR_ComboBox_SelectionChanged" />
-        <xctk:DateTimePicker HorizontalAlignment="Left" VerticalAlignment="Top" Margin="100,514,0,0" Width="315" Height="50" FontSize="20"/>
-        <xctk:DateTimePicker HorizontalAlignment="Left" VerticalAlignment="Top" Margin="100,594,0,0" Width="315" Height="50" FontSize="20"/>
+        <xctk:DateTimePicker x:Name="Dok_StartDate_DateTimePicker"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="100,513,0,0" Width="315" Height="50" FontSize="20" Format="Custom" FormatString="yyyy-MM-dd" TimePickerVisibility="Collapsed" ValueChanged="Dok_StartDate_DateTimePicker_ValueChanged" />
+        <xctk:DateTimePicker x:Name="Dok_EndDate_DateTimePicker" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="100,594,0,0" Width="315" Height="50" FontSize="20" Format="Custom" FormatString="yyyy-MM-dd" TimePickerVisibility="Collapsed" ValueChanged="Dok_EndDate_DateTimePicker_ValueChanged" />
         <ComboBox x:Name="Dok_PickType_ComboBox" HorizontalAlignment="Left" Margin="100,674,0,0" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10" SelectionChanged="Dok_PickType_ComboBox_SelectionChanged" />
 
         <Button x:Name="Dok_DokuFile_Button" HorizontalAlignment="Left" Height="35" Width="300" Margin="100,754,0,0" VerticalAlignment="Top" Content="Upload File" Click="Dok_DokuFile_Button_Click" />

@@ -117,7 +117,7 @@ namespace VindegadeKS_WPF
                     //Set up the attribute 'SetUp' which is used to determine the appearance of the ListBoxItem 
                     //Forloop to go through all items in the items-list, to add and fill the 'SetUp' attribute
 
-                    appointments[i].Setup = $"{appointments[i].ListBoxLesName} - {appointments[i].ListBoxLesType} \n{appointments[i].ListBoxApmtDate}";
+                    // appointments[i].Setup = $"{appointments[i].ListBoxLesName} - {appointments[i].ListBoxLesType} \n{appointments[i].ListBoxApmtDate}";
                 }
                 
                 //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
