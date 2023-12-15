@@ -275,7 +275,7 @@ namespace VindegadeKS_WPF
                 //Sets idOfSelectedListBoxItem to equal the ID of selected AppointmentListBox-item
                 idOfSelectedListBoxItem = (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxApmtId;
 
-                //Runs AppointmentDataToBeEdited to fill CurrentAppointment with data from the selected AppointmentListBox-item. 
+                //Runs AppointmentDataToBeEdited to fill CurrentAppointment with data from the selected AppointmentListBox-item based on the idOfSelectedListBoxItem. 
                 AppointmentDataToBeEdited(idOfSelectedListBoxItem);
 
                 //Sets edit to false, as it is impossible for it to be true currently
