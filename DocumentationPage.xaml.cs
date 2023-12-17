@@ -438,7 +438,7 @@ namespace VindegadeKS_WPF
 
         private void LockInputFields()
         {
-            Dok_DisDocType_ComboBox.IsEnabled = false;
+            
             Dok_PickStudent_ComboBox.IsEnabled = false;
             Dok_PickType_ComboBox.IsEnabled = false;
             Dok_StartDate_DateTimePicker.IsEnabled = false;
