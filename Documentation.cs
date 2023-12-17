@@ -9,19 +9,25 @@ namespace VindegadeKS_WPF
     public class Documentation
     {
         public int DocId { get; set; }
-        public DateOnly DocStartDate { get; set; }
-        public DateOnly DocEndDate { get; set; }
-        public string DocType { get; set; }
+        public string DocStuCPR { get; set; }
+        public DateTime DocStartDate { get; set; }
+        public DateTime DocEndDate { get; set; }
+        public DocTypeEnum DocType { get; set; }
 
-        public Documentation(int _docId, DateOnly _docStartDate, DateOnly _docEndDate, string _docType)
+        public byte[] DocFile { get; set; }
+
+        public Documentation(int _docId, string _stuCPR,DateTime _docStartDate, DateTime _docEndDate, DocTypeEnum  _docType)
         {
             DocId = _docId;
+            DocStuCPR = _stuCPR;
             DocStartDate = _docStartDate;
             DocEndDate = _docEndDate;
             DocType = _docType;
         }
 
-        public Documentation() : this(0, default, default, "")
+        public Documentation() : this(0,"", default, default, default)
         { }
+
+        public enum DocTypeEnum { LægeErklæring, SpecialErklæring, FørsteHjælp}
     }
 }
