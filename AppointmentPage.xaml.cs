@@ -22,6 +22,7 @@ using System.Data;
 using static System.Net.Mime.MediaTypeNames;
 using System.Text.RegularExpressions;
 using System.Security.Policy;
+using System.Windows.Media.Animation;
 
 namespace VindegadeKS_WPF
 {
@@ -30,95 +31,239 @@ namespace VindegadeKS_WPF
     /// </summary>
     public partial class AppointmentPage : Page
     {
+        //The AppointmentPage constructor
         public AppointmentPage()
         {
             InitializeComponent();
-            AddLessonComboBoxFunction();
-            AddInstructorComboBoxFunction();
-            AddStudentComboBoxFunction();
-            AddClassComboBoxFunction();
-            ListBoxFunction();
-            LockInputFields();
 
-            //Controls which button the user can interact with - User needs able to edit and delete, but not save
+            ComboBoxStartUp(); //Runs ComboBoxStartUp with all of the set up
+                               //for the ComboBoxes to minimize clutter
+
+            ListBoxFunction(); // Runs ListBoxFunction when the page is opened
+
+            LockInputFields(); // Runs LockInputFields on startup so nothing
+                               // can be entered before the user presses the Add/Tilføj-button
+
+            //Controls which button the user can interact with.
+            //Upon startup only the Add/Tilføj-Button is enabled
+            Apmt_Add_Button.IsEnabled = true;
             Apmt_Save_Button.IsEnabled = false;
             Apmt_Edit_Button.IsEnabled = false;
             Apmt_Delete_Button.IsEnabled = false;
         }
 
+        #region Variables and AppointmentListBox-class
+        // The lists and 'ToBeRetrieved'-variables are declared outside the class methods
+        // in order for all the methods to be able to access and use their alotted memory
+        // on the heap 
         List<Lesson> lessons;
         List<Instructor> instructors;
         List<Student> students;
         List<Class> classes;
 
-        private void OnLoad(object sender, RoutedEventArgs e)
-        {
-            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
-            {
-                con.Open();
+        AppointmentListBox appointmentDetailsToBeRetrieved;
+        Lesson lessonToBeRetrieved;
+        Instructor instructorToBeRetrieved;
+        Student studentToBeRetrieved;
+        Class classToBeRetrieved;
 
-                SqlCommand countLessons = new SqlCommand("SELECT COUNT(PK_LesID) from VK_Lessons", con);
-                int intCount = (int)countLessons.ExecuteScalar();
-
-                if (intCount != lessons.Count())
-                {
-                    Apmt_PickLesson_ComboBox.Items.Clear();
-                    AddLessonComboBoxFunction();
-                }
-
-                SqlCommand countInstructors = new SqlCommand("SELECT COUNT(PK_InstID) from VK_Instructors", con);
-                intCount = (int)countInstructors.ExecuteScalar();
-                
-                if (intCount != instructors.Count())
-                {
-                    Apmt_PickInstructor_ComboBox.Items.Clear();
-                    AddInstructorComboBoxFunction();
-                }
-
-                SqlCommand countStudents = new SqlCommand("SELECT COUNT(PK_StuCPR) from VK_Students", con);
-                intCount = (int)countStudents.ExecuteScalar();
-
-                if (intCount != students.Count())
-                {
-                    Apmt_PickStudent_ComboBox.Items.Clear();
-                    AddStudentComboBoxFunction();
-                }
-
-                SqlCommand countClasses = new SqlCommand("SELECT COUNT(PK_ClassName) from VK_Classes", con);
-                intCount = (int)countClasses.ExecuteScalar();
-
-                if (intCount != classes.Count())
-                {
-                    Apmt_PickClass_ComboBox.Items.Clear();
-                    AddClassComboBoxFunction();
-                }
-            }
-        }
-
-        public Appointment CurrentAppointment = new Appointment();
+        // The Current-instances are declared AND initialised outside
+        // of the methods to preserve their integrety (keep them the same)
+        // whereever they are used. They are used to hold the
+        // respective instanse currently selected in the ComboBox before it is
+        // saved or edited.
+        public Appointment CurrentAppointment = new Appointment(); 
         public Lesson CurrentLesson = new Lesson();
         public Instructor CurrentInstructor = new Instructor();
         public Student CurrentStudent = new Student();
         public Class CurrentClass = new Class();
-        public AppointmentListBox appointmentDetailsToBeRetrieved;
-        public Lesson lessonToBeRetrieved;
-        public Instructor instructorToBeRetrieved;
-        public Student studentToBeRetrieved;
-        public Class classToBeRetrieved;
-        int currentItem;
+
+        // The idOfSelectedListBoxItem is used to hold the ListBoxApmtId
+        // selected in the ListBox. It is an integer used as a parameter
+        // in the DeleteAppointment-method.
+        int idOfSelectedListBoxItem;
+
+        //The boolian edit-variable is a switch, used to control when the
+        //save/gem-button is saving a new dataset to the database vs when
+        //it is editing an existing one. It is set to true, when the
+        //edit/rediger-button is pressed whereafter the save/gem-button
+        //edits instead of saves.
         bool edit = false;
 
+        //A page-specific class (with constructors) used by the Appointment-page
+        //to store data from the tables VK_Appointments, VK_Lessons, VK_Classes,
+        //VK_Students, VK_Instructors to be displayed in the AppointmentListBox
+        //as well as an extra attribute, Setup, used to hold the strings to be
+        //displayed (we could have overwritten the ToString-Method of the Object-
+        //class instead)
+        public class AppointmentListBox
+        {
+            public int ListBoxApmtId { get; set; }
+            public string ListBoxLesName { get; set; }
+            public string ListBoxLesType { get; set; }
+            public string ListBoxClassName { get; set; }
+            public string ListBoxClassLicenseType { get; set; }
+            public string ListBoxStuName { get; set; }
+            public string ListBoxInstName { get; set; }
+            public DateTime ListBoxApmtDate { get; set; }
+            public string Setup { get; set; }
+            
+            public AppointmentListBox(int _listBoxApmtId,
+                                      string _listBoxLesName, 
+                                      string _listBoxLesType,
+                                      string _listBoxClassName,
+                                      string _listBoxClassLicenseType,
+                                      string _listBoxStuName,
+                                      string _listBoxInstName,
+                                      DateTime _listBoxApmtDate,
+                                      string _setup)
+            {
+                ListBoxApmtId = _listBoxApmtId;
+                ListBoxLesName = _listBoxLesName;
+                ListBoxLesType = _listBoxLesType;
+                ListBoxClassName = _listBoxClassName;
+                ListBoxClassLicenseType = _listBoxClassLicenseType;
+                ListBoxStuName = _listBoxStuName;
+                ListBoxInstName = _listBoxInstName;
+                ListBoxApmtDate = _listBoxApmtDate;
+                Setup = _setup;
+            }
+
+            public AppointmentListBox() : this(0 ,"", "", "", "", "", "", DateTime.Now, "")
+            { }
+        }
+        #endregion
+
+        #region Buttons
+        //Enables the user to add new Appointment
+        private void Apmt_Add_Button_Click(object sender, RoutedEventArgs e)
+        {
+            UnlockInputFields(); //Unlocks the input fields
+
+            edit = false; //Sets edit to false, as it is impossible
+                          //for it to be true currently
+
+            //Controls which button the user can interact with.
+            //User needs to save, but shouldn't interact with Edit/Delete
+            //as Add is adding a new Lesson
+            Apmt_Save_Button.IsEnabled = true;
+            Apmt_Edit_Button.IsEnabled = false;
+            Apmt_Delete_Button.IsEnabled = false;
+        }
+
+        //Saves the Appointment from the input fields
+        private void Apmt_Save_Button_Click(object sender, RoutedEventArgs e)
+        {
+            //If-statement checking wether the edit-bool is true or false. Only
+            //if the edit-button has been pressed is the edit-bool true. 
+            //If it's false edited the selected data is to be saved as a new
+            //entity in the database - run SaveNewLesson(CurrentAppointment).
+            //If it is true an old entity in the database is to be edited -
+            //run UpdateLesson(CurrentAppointment)
+            if (edit == false)
+            { SaveAppointment(CurrentAppointment, CurrentInstructor, CurrentLesson, CurrentClass, CurrentStudent); }
+            else
+            { EditAppointment(CurrentAppointment, CurrentInstructor, CurrentLesson, CurrentClass, CurrentStudent); }
+
+            //Removes the displayed (saved or edited) data in the stackpanel
+            //textblocks and sets the default text to category+blank to
+            //indicate to the user that the save or edit-method have been run  
+            Apmt_DisLesson_TextBlock.Text = "Lektion: ";
+            Apmt_DisLessonType_TextBlock.Text = "Lektionstype: ";
+            Apmt_DisClass_TextBlock.Text = "Hold: ";
+            Apmt_DisClassLicenseType_TextBlock.Text = "Kørekorttype: ";
+            Apmt_DisStudent_TextBlock.Text = "Elev: ";
+            Apmt_DisInstructor_TextBlock.Text = "Underviser: ";
+            Apmt_DisDateTime_TextBlock.Text = "Aftale: ";
+
+            //Clears and locks the input fields and reruns the ListBoxFunction
+            //to make sure it displays the updated list of appointments
+            //currently in the database
+            ClearInputFields();
+            LockInputFields();
+            ListBoxFunction();
+
+            //Sets edit to false, as it is impossible
+            //for it to be true currently
+            edit = false;
+
+            //Controls which button the user can interact with.
+            //User needs to be able to Add more Lessons, but nothing else
+            Apmt_Add_Button.IsEnabled = true;
+            Apmt_Edit_Button.IsEnabled = false;
+            Apmt_Save_Button.IsEnabled = false;
+            Apmt_Delete_Button.IsEnabled = false;
+        }
+
+        //Lets the user edit previously created Appointment
+        private void Apmt_Edit_Button_Click(object sender, RoutedEventArgs e)
+        {
+            //Unlocks the input fields
+            UnlockInputFields();
+
+            //Sets edit to true, as the user is currently editing
+            //the Appointment
+            edit = true;
+
+            //Controls which button the user can interact with.
+            //User needs able to save, but nothing else
+            Apmt_Add_Button.IsEnabled = false;
+            Apmt_Save_Button.IsEnabled = true;
+            Apmt_Edit_Button.IsEnabled = false;
+            Apmt_Delete_Button.IsEnabled = false;
+
+            //Sets the ComboBox input fields to be equal to the
+            //data from the AppointmentListBox
+            Apmt_PickLesson_ComboBox.Text = $"{(Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxLesName}, {(Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxLesType}";
+            Apmt_PickClass_ComboBox.Text = $"{(Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxClassName}, {(Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxClassLicenseType}";
+            Apmt_PickStudent_ComboBox.Text = $"{(Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxStuName}";
+            Apmt_PickInstructor_ComboBox.Text = $"{(Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxInstName}";
+            Apmt_PickDateTime_DateTimePicker.Text = $"{(Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxApmtDate}";
+        }
+
+        //Lets the user delete previously created Appointments
+        private void Apmt_Delete_Button_Click(object sender, RoutedEventArgs e)
+        {
+            //Runs DeleteApppointment while feeding it idOfSelectedListBoxItem
+            DeleteAppointment(idOfSelectedListBoxItem);
+
+            //Clears and locks the input fields and reruns the ListBoxFunction
+            //to make sure it displays the updated list of appointments
+            //currently in the database
+            ClearInputFields();
+            LockInputFields();
+            ListBoxFunction();
+
+            //Removes the displayed (deleted) data from the stackpanel
+            //textblocks and sets the default text to category+blank to
+            //indicate to the user that the delete-method have been run  
+            Apmt_DisLesson_TextBlock.Text = "Lektion: ";
+            Apmt_DisLessonType_TextBlock.Text = "Lektionstype: ";
+            Apmt_DisClass_TextBlock.Text = "Hold: ";
+            Apmt_DisClassLicenseType_TextBlock.Text = "Kørekorttype: ";
+            Apmt_DisStudent_TextBlock.Text = "Elev: ";
+            Apmt_DisInstructor_TextBlock.Text = "Underviser: ";
+            Apmt_DisDateTime_TextBlock.Text = "Aftale: ";
+
+            //Controls which button the user can interact with.
+            //User needs able to add, but nothing else
+            Apmt_Add_Button.IsEnabled = true;
+            Apmt_Edit_Button.IsEnabled = false;
+            Apmt_Save_Button.IsEnabled = false;
+            Apmt_Delete_Button.IsEnabled = false;
+        }
+        #endregion
+
+        #region ListBox
         //What happens when you select an item in the ListBox
         private void Apmt_DisApmt_ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //Safety check, to make sure that the selected item exists
             if (Apmt_DisApmt_ListBox.SelectedItem != null)
             {
-                //Everything inside of the if-statement will likely have to be personalised 
-
-                //Changes the text from the display window 
-                //After the equal sign; (#ListBoxName.SelectedItem as #itemClass).#attribute;
-                //The parts after a #, are the parts that needs to change based on your page
+                //Changes the data displayed in the textblocks ín the
+                //stackpanel display window, by setting them equal to the
+                //properties in the selected AppointmentListBox-item.
                 Apmt_DisLesson_TextBlock.Text = "Lektion: " + (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxLesName;
                 Apmt_DisLessonType_TextBlock.Text = "Lektionstype: " + (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxLesType;
                 Apmt_DisClass_TextBlock.Text = "Hold: " + (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxClassName;
@@ -127,13 +272,18 @@ namespace VindegadeKS_WPF
                 Apmt_DisInstructor_TextBlock.Text = "Underviser: " + (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxInstName;
                 Apmt_DisDateTime_TextBlock.Text = "Aftale: " + (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxApmtDate;
 
-                //Sets currentItem to equal the ID of selected item
-                currentItem = (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxApmtId;
+                //Sets idOfSelectedListBoxItem to equal the ID of selected AppointmentListBox-item
+                idOfSelectedListBoxItem = (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxApmtId;
+
+                //Runs AppointmentDataToBeEdited to fill CurrentAppointment with data from the selected AppointmentListBox-item based on the idOfSelectedListBoxItem. 
+                AppointmentDataToBeEdited(idOfSelectedListBoxItem);
 
                 //Sets edit to false, as it is impossible for it to be true currently
                 edit = false;
 
-                //Controls which button the user can interact with - User needs able to edit and delete, but not save
+                //Controls which button the user can interact with.
+                //User needs able to edit and delete (and add), but not save.
+                Apmt_Add_Button.IsEnabled = true;
                 Apmt_Save_Button.IsEnabled = false;
                 Apmt_Edit_Button.IsEnabled = true;
                 Apmt_Delete_Button.IsEnabled = true;
@@ -149,137 +299,349 @@ namespace VindegadeKS_WPF
                 //Opens said connection
                 con.Open();
 
-                //Creates a count SqlCommand, which gets the number of rows in the table 
+                //Creates a count SqlCommand, which gets the number of rows in the specified table 
                 SqlCommand count = new SqlCommand("SELECT COUNT(PK_ApmtID) from VK_Appointments", con);
 
                 //Saves count command result to int
                 int intCount = (int)count.ExecuteScalar();
-                
-                //Make a list of 5-tuples containing instanses of each class necessary in appointments
 
+                //Instansiate a new list AppointmentListBox-items
                 List<AppointmentListBox> appointments = new List<AppointmentListBox>();
-                
-                //Forloop which adds intCount number of new items to items-list
+
+                //For-loop which adds intCount number of new items to items-list
                 for (int i = 0; i < intCount; i++)
                 {
-                    //Calls RetrieveLessonData method, sending i as index
+                    //Calls RetrieveAppointmentData-method, sending i as index
                     RetrieveAppointmentData(i);
 
-                    //Add new items from the item class with specific attributes to the list
-                    //Will later be remade to automatically add items based on the database
+                    //Add new AppointmentListBox-items from the AppointmentListBox-class with specific attributes to the list
                     appointments.Add(appointmentDetailsToBeRetrieved);
 
+<<<<<<< HEAD
                     //Only necessary for multi-attribute ListBoxItem
                     //Set up the attribute 'SetUp' which is used to determine the appearance of the ListBoxItem 
                     //Forloop to go through all items in the items-list, to add and fill the 'SetUp' attribute
 
+=======
+                    //Set up the attribute 'Setup' which is used to determine
+                    //the appearance of the AppointmentListBox-item
+                    //For-loop to go through all appointments in the
+                    //appointments-list, to add and fill the Setup-attribute
+>>>>>>> master
                     appointments[i].Setup = $"{appointments[i].ListBoxLesName} - {appointments[i].ListBoxLesType} \n{appointments[i].ListBoxApmtDate}";
                 }
-                
-                //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
+
+                //Set the ItemsSource to the appointments-list, so that the
+                //ListBox uses the list to make the AppointmentListBox-items
                 Apmt_DisApmt_ListBox.ItemsSource = appointments;
             }
         }
+        #endregion
 
+        #region ComboBox Setup Methods
+        //Run by the AppointmentPage-constructor to minimize the clutter in the constructor
+        private void ComboBoxStartUp()
+        {
+            //Runs the methods defined below
+            AddLessonComboBoxFunction();
+            AddInstructorComboBoxFunction();
+            AddStudentComboBoxFunction();
+            AddClassComboBoxFunction();
+        }
+
+        //Set up the AddLessonComboBoxFunction
         private void AddLessonComboBoxFunction()
         {
+            //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
+                //Opens said connection
                 con.Open();
 
-                //Make lessons
+                //Make a count command to find how many lassons exist in VK_Lessons
                 SqlCommand count = new SqlCommand("SELECT COUNT(PK_LesID) from VK_Lessons", con);
+
+                //Run the command and saves the resultat in intCount
                 int intCount = (int)count.ExecuteScalar();
 
+                //Initialize the lessons-list previously declared 
                 lessons = new List<Lesson>();
 
+                //Forloop which runs intCount amount of times
                 for (int i = 0; i < intCount; i++)
                 {
+                    //Retrives the data from VK_Lessons at index i
                     RetrieveLessonData(i);
 
+                    //Adds the lesson retrieved by RetrieveLessonData to the list
                     lessons.Add(lessonToBeRetrieved);
 
+                    //Sets Setup to what should be displayed in the ComboBox
                     lessonToBeRetrieved.Setup = $"{lessonToBeRetrieved.LesName}, {lessonToBeRetrieved.LesType}";
-                    
+
+                    //Displayes the string in setup as an item in the ComboBox 
                     Apmt_PickLesson_ComboBox.Items.Add(lessonToBeRetrieved.Setup);
                 }
             }
         }
-        private void AddInstructorComboBoxFunction()
-        {
-            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
-            {
-                con.Open();
 
-                //Make classes
-                SqlCommand count = new SqlCommand("SELECT COUNT(PK_InstID) from VK_Instructors", con);
-                int intCount = (int)count.ExecuteScalar();
-
-                instructors = new List<Instructor>();
-
-                for (int i = 0; i < intCount; i++)
-                {
-                    RetrieveInstructorData(i);
-
-                    instructors.Add(instructorToBeRetrieved);
-
-                    instructorToBeRetrieved.Setup = $"{instructorToBeRetrieved.InstLastName}, {instructorToBeRetrieved.InstFirstName}";
-
-                    Apmt_PickInstructor_ComboBox.Items.Add(instructorToBeRetrieved.Setup);
-                }
-            }
-        }
-        
-        private void AddStudentComboBoxFunction()
-        {
-            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
-            {
-                con.Open();
-
-                //Make students
-                SqlCommand count = new SqlCommand("SELECT COUNT(PK_StuCPR) from VK_Students", con);
-                int intCount = (int)count.ExecuteScalar();
-
-                students = new List<Student>();
-
-                for (int i = 0; i < intCount; i++)
-                {
-                    RetrieveStudentData(i);
-
-                    students.Add(studentToBeRetrieved);
-
-                    studentToBeRetrieved.Setup = $"{studentToBeRetrieved.StuLastName}, {studentToBeRetrieved.StuFirstName}";
-
-                    Apmt_PickStudent_ComboBox.Items.Add(studentToBeRetrieved.Setup);
-                }
-            }
-        }
-
+        //Set up the AddClassComboBoxFunction
         private void AddClassComboBoxFunction()
         {
+            //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
+                //Opens said connection
                 con.Open();
 
-                //Make classes
+                //Make a count command to find how many classes exist in VK_Classes
                 SqlCommand count = new SqlCommand("SELECT COUNT(PK_ClassName) from VK_Classes", con);
+
+                //Run the command and saves the resultat in intCount
                 int intCount = (int)count.ExecuteScalar();
 
+                //Initialize the classes-list previously declared 
                 classes = new List<Class>();
 
+                //Forloop which runs intCount amount of times
                 for (int i = 0; i < intCount; i++)
                 {
+                    //Retrives the data from VK_Classes at index i
                     RetrieveClassData(i);
 
+                    //Adds the class retrieved by RetrieveClassData to the list
                     classes.Add(classToBeRetrieved);
 
+                    //Sets Setup to what should be displayed in the ComboBox
                     classToBeRetrieved.Setup = $"{classToBeRetrieved.ClassName}, {classToBeRetrieved.ClassLicenseType}";
 
+                    //Displayes the string in setup as an item in the ComboBox 
                     Apmt_PickClass_ComboBox.Items.Add(classToBeRetrieved.Setup);
                 }
             }
         }
 
+        //Set up the AddStudentComboBoxFunction
+        private void AddStudentComboBoxFunction()
+        {
+            //Setting up a connection to the database
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                //Opens said connection
+                con.Open();
+
+                //Make a count command to find how many students exist in VK_Students
+                SqlCommand count = new SqlCommand("SELECT COUNT(PK_StuCPR) from VK_Students", con);
+
+                //Run the command and saves the resultat in intCount
+                int intCount = (int)count.ExecuteScalar();
+
+                //Initialize the students-list previously declared 
+                students = new List<Student>();
+
+                //Forloop which runs intCount amount of times
+                for (int i = 0; i < intCount; i++)
+                {
+                    //Retrives the data from VK_Students at index i
+                    RetrieveStudentData(i);
+
+                    //Adds the student retrieved by RetrieveStudentData to the list
+                    students.Add(studentToBeRetrieved);
+
+                    //Sets Setup to what should be displayed in the ComboBox
+                    studentToBeRetrieved.Setup = $"{studentToBeRetrieved.StuLastName}, {studentToBeRetrieved.StuFirstName}";
+
+                    //Displayes the string in setup as an item in the Combobox 
+                    Apmt_PickStudent_ComboBox.Items.Add(studentToBeRetrieved.Setup);
+                }
+            }
+        }
+
+        //Set up the AddInstructorComboBoxFunction
+        private void AddInstructorComboBoxFunction()
+        {
+            //Setting up a connection to the database
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                //Opens said connection
+                con.Open();
+
+                //Make a count command to find how many instructors exist in VK_Instructors
+                SqlCommand count = new SqlCommand("SELECT COUNT(PK_InstID) from VK_Instructors", con);
+
+                //Run the command and saves the resultat in intCount
+                int intCount = (int)count.ExecuteScalar();
+
+                //Initialize the instructors-list previously declared 
+                instructors = new List<Instructor>();
+
+                //Forloop which runs intCount amount of times
+                for (int i = 0; i < intCount; i++)
+                {
+                    //Retrives the data from VK_Instructors at index i
+                    RetrieveInstructorData(i);
+
+                    //Adds the instructor retrieved by RetrieveInstructorData to the list
+                    instructors.Add(instructorToBeRetrieved);
+
+                    //Sets Setup to what should be displayed in the ComboBox
+                    instructorToBeRetrieved.Setup = $"{instructorToBeRetrieved.InstLastName}, {instructorToBeRetrieved.InstFirstName}";
+
+                    //Displayes the string in setup as an item in the ComboBox 
+                    Apmt_PickInstructor_ComboBox.Items.Add(instructorToBeRetrieved.Setup);
+                }
+            }
+        }
+        #endregion
+
+        #region ComboBox controls (and Datetimepicker control)
+        //Event for when a lesson is selected in Apmt_PickLesson_ComboBox
+        private void Apmt_PickLesson_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //Retrives the data from VK_Lessons at the index of the selected ComboBox-item 
+            RetrieveLessonData(Apmt_PickLesson_ComboBox.SelectedIndex);
+
+            //Sets the LesId-property of the previously initialized CurrentLesson
+            //to the same as the LesId-property of the RetrieveLessonData-item,
+            //lessonToBeRetrieved. CurrentLesson will hold the data to be saved or edited.
+            CurrentLesson.LesId = lessonToBeRetrieved.LesId;
+        }
+
+        //Event for when a class is selected in Apmt_PickClass_ComboBox
+        private void Apmt_PickClass_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //Retrives the data from VK_Classes at the index of the selected ComboBox-item 
+            RetrieveClassData(Apmt_PickClass_ComboBox.SelectedIndex);
+
+            //Sets the all the properties (used to construct the ClassName-property)
+            //of the previously initialized CurrentClass to the same as the
+            //corresponding properties of the RetrieveClassData-item, classToBeRetrieved.
+            //CurrentClass will hold the data to be saved or edited.
+            CurrentClass.ClassQuarter = classToBeRetrieved.ClassQuarter;
+            CurrentClass.ClassYear = classToBeRetrieved.ClassYear;
+            CurrentClass.ClassNumber = classToBeRetrieved.ClassNumber;
+            CurrentClass.ClassName = classToBeRetrieved.ClassName;
+        }
+
+        //Event for when a student is selected in Apmt_PickStudent_ComboBox
+        private void Apmt_PickStudent_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //Retrives the data from VK_Students at the index of the selected ComboBox-item
+            RetrieveStudentData(Apmt_PickStudent_ComboBox.SelectedIndex);
+
+            //Sets the StuCPR-property of the previously initialized CurrentStudent
+            //to the same as the StuCPR-property of the RetrieveStudentData-item,
+            //studentToBeRetrieved. CurrentStudent will hold the data to be saved or edited.
+            CurrentStudent.StuCPR = studentToBeRetrieved.StuCPR;
+        }
+
+        //Event for when a instructor is selected in Apmt_PickInstructor_ComboBox
+        private void Apmt_PickInstructor_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //Retrives the data from VK_Instructors at the index of the selected ComboBox-item
+            RetrieveInstructorData(Apmt_PickInstructor_ComboBox.SelectedIndex);
+
+            //Sets the InstId-property of the previously initialized CurrentInstructor
+            //to the same as the InstId-property of the RetrieveInstructorData-item,
+            //instructorToBeRetrieved. CurrentInstructor will hold the data to be saved or edited.
+            CurrentInstructor.InstId = instructorToBeRetrieved.InstId;
+        }
+
+        //Event for when a DateTime is selected in Apmt_PickDateTime_DateTimePicker
+        private void Apmt_PickDateTime_DateTimePicker_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            //Sets the ApmtDate-property of the previously initialized CurrentAppointment
+            //to the same as the value of the DateTimePicker.
+            //CurrentAppointment will hold the data to be saved or edited.
+            CurrentAppointment.ApmtDate = (DateTime)Apmt_PickDateTime_DateTimePicker.Value;
+        }
+
+        //The OnLoad-method ensures that instanses of Lesson, Instructor, Student and Class, created 
+        //while the program is running, is displayed in the ComboBoxes on the AppoinmentPage. Without this
+        //method only instanses of Lesson, Instructor, Student and Class already in the database at 
+        //the initialization of the program would be displayed 
+        private void OnLoad(object sender, RoutedEventArgs e)
+        {
+            //Setting up a connection to the database
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                //Opens said connection
+                con.Open();
+
+                //Make a count command to find how many lessons exist in VK_Lessons
+                SqlCommand countLessons = new SqlCommand("SELECT COUNT(PK_LesID) from VK_Lessons", con);
+
+                //Run the command and saves the resultat in intCount. intCount is reused later.
+                int intCount = (int)countLessons.ExecuteScalar();
+
+                //The if-statement checks if the intCount is different from the amount of
+                //lessons in the lessons-list by way of the Count-method.
+                if (intCount != lessons.Count())
+                {
+                    Apmt_PickLesson_ComboBox.Items.Clear(); //If so, the items in Apmt_PickLesson_ComboBox
+                                                            //is cleared by way of the Clear-method.
+
+                    AddLessonComboBoxFunction(); //and the AddLessonComboBoxFunction is called to
+                                                 //fill the ComboBox again.
+                }
+
+                //Make a count command to find how many instructors exist in VK_Instructors.
+                SqlCommand countInstructors = new SqlCommand("SELECT COUNT(PK_InstID) from VK_Instructors", con);
+
+                //Run the command and saves the resultat in intCount. intCount is reused.
+                intCount = (int)countInstructors.ExecuteScalar();
+
+                //The if-statement checks if the intCount is different from the amount of
+                //instructors in the instructors-list by way of the Count-method.
+                if (intCount != instructors.Count())
+                {
+                    Apmt_PickInstructor_ComboBox.Items.Clear(); //If so, the items in Apmt_PickInstructor_ComboBox
+                                                                //is cleared by way of the Clear-method
+
+                    AddInstructorComboBoxFunction(); //And the AddInstructorComboBoxFunction is called to fill
+                                                     //the ComboBox again.
+                }
+
+                //Make a count command to find how many students exist in VK_Students
+                SqlCommand countStudents = new SqlCommand("SELECT COUNT(PK_StuCPR) from VK_Students", con);
+
+                //Run the command and saves the resultat in intCount. intCount is reused.
+                intCount = (int)countStudents.ExecuteScalar();
+
+                //The if-statement checks if the intCount is different from the amount of
+                //students in the students-list by way of the Count-method.
+                if (intCount != students.Count())
+                {
+                    Apmt_PickStudent_ComboBox.Items.Clear(); //If so, the items in Apmt_PickStudent_ComboBox
+                                                             //is cleared by way of the Clear-method
+
+                    AddStudentComboBoxFunction(); //And the AddStudentComboBoxFunction is called to fill
+                                                  //the ComboBox again.
+                }
+
+                //Make a count command to find how many classes exist in VK_Classes
+                SqlCommand countClasses = new SqlCommand("SELECT COUNT(PK_ClassName) from VK_Classes", con);
+
+                //Run the command and saves the resultat in intCount. intCount is reused.
+                intCount = (int)countClasses.ExecuteScalar();
+
+                //The if-statement checks if the intCount is different from the amount of
+                //classes in the classes-list by way of the Count-method.
+                if (intCount != classes.Count())
+                {
+                    Apmt_PickClass_ComboBox.Items.Clear(); //If so, the items in Apmt_PickClass_ComboBox
+                                                           //is cleared by way of the Clear-method
+
+                    AddClassComboBoxFunction(); //And the AddClassComboBoxFunction is called to fill
+                                                //the ComboBox again.
+                }
+            }
+        }
+        #endregion
+
+        #region Retrieve methods
+        //Retrieves the lesson of a specific row in the database
+        //where the row number is equal to dbRowNumber + 1
         public void RetrieveLessonData(int dbRowNumber)
         {
             //Setting up a connection to the database
@@ -287,7 +649,8 @@ namespace VindegadeKS_WPF
             {
                 //Opens said connection
                 con.Open();
-                //Creates a four cmd SqlCommand, which SELECTs specific rows from each table in the DB 
+
+                //Creates an SqlCommand, cmdLes, which SELECTs specific rows from each table in the DB 
                 SqlCommand cmdLes = new SqlCommand("SELECT PK_LesID, LesName, LesType, LesDescription FROM VK_Lessons ORDER BY PK_LesID ASC OFFSET @dbRowNumber ROWS FETCH NEXT 1 ROW ONLY", con);
 
                 //Set dbRowNumber to 0 if under 0
@@ -298,20 +661,21 @@ namespace VindegadeKS_WPF
                 //Gives @dbRowNumber the value of dbRowNumber
                 cmdLes.Parameters.AddWithValue("@dbRowNumber", dbRowNumber);
 
-                //Set up a data reader called dr, which reads the data from cmd (the previous sql command)
+                //Set up a data reader called dr, which reads the data from cmdLes (the previous sql command)
                 using (SqlDataReader dr = cmdLes.ExecuteReader())
                 {
                     //While-loop running while dr is reading 
                     while (dr.Read())
                     {
-                        //Sets lesToBeRetrieve a new empty Lesson, which is then filled
+                        //Sets lessonToBeRetrieved a new empty Lesson, which is then filled
                         lessonToBeRetrieved = new Lesson(int.Parse(dr["PK_LesID"].ToString()), dr["LesName"].ToString(), dr["LesType"].ToString(), dr["LesDescription"].ToString());
                     }
                 }
             }
         }
 
-        //Retrieves the data of a specific row in the database where the row number is equal to dbRowNum + 1
+        //Retrieves the instructor of a specific row in the database
+        //where the row number is equal to dbRowNumber + 1
         public void RetrieveInstructorData(int dbRowNumber)
         {
             //Setting up a connection to the database
@@ -319,7 +683,8 @@ namespace VindegadeKS_WPF
             {
                 //Opens said connection
                 con.Open();
-                //Creates a four cmd SqlCommand, which SELECTs specific rows from each table in the DB 
+
+                //Creates an SqlCommand, cmdInst, which SELECTs specific rows from each table in the DB 
                 SqlCommand cmdInst = new SqlCommand("SELECT PK_InstID, InstFirstName, InstLastName, InstPhone, InstEmail FROM VK_Instructors ORDER BY PK_InstID ASC OFFSET @dBRowNumber ROWS FETCH NEXT 1 ROW ONLY", con);
 
                 //Set dbRowNumber to 0 if under 0
@@ -330,17 +695,21 @@ namespace VindegadeKS_WPF
                 //Gives @dbRowNumber the value of dbRowNumber
                 cmdInst.Parameters.AddWithValue("@dbRowNumber", dbRowNumber);
 
+                //Set up a data reader called dr, which reads the data from cmdInst (the previous sql command)
                 using (SqlDataReader dr = cmdInst.ExecuteReader())
                 {
+                    //While-loop running while dr is reading 
                     while (dr.Read())
                     {
+                        //Sets instructorToBeRetrieved, a new empty Instructor, which is then filled
                         instructorToBeRetrieved = new Instructor(int.Parse(dr["PK_InstID"].ToString()), dr["InstFirstName"].ToString(), dr["InstLastName"].ToString(), dr["InstPhone"].ToString(), dr["InstEmail"].ToString());
                     }
                 }
             }
         }
-        
-        //Retrieves the data of a specific row in the database where the row number is equal to dbRowNumber + 1
+
+        //Retrieves the student of a specific row in the database
+        //where the row number is equal to dbRowNumber + 1
         public void RetrieveStudentData(int dbRowNumber)
         {
             //Setting up a connection to the database
@@ -348,7 +717,8 @@ namespace VindegadeKS_WPF
             {
                 //Opens said connection
                 con.Open();
-                //Creates a four cmd SqlCommand, which SELECTs specific rows from each table in the DB 
+
+                //Creates an SqlCommand, cmdStu, which SELECTs specific rows from each table in the DB 
                 SqlCommand cmdStu = new SqlCommand("SELECT PK_StuCPR, StuFirstName, StuLastName, StuPhone, StuEmail FROM VK_Students ORDER BY PK_StuCPR ASC OFFSET @dBRowNumber ROWS FETCH NEXT 1 ROW ONLY", con);
 
                 //Set dbRowNumber to 0 if under 0
@@ -359,17 +729,21 @@ namespace VindegadeKS_WPF
                 //Gives @dbRowNumber the value of dbRowNumber
                 cmdStu.Parameters.AddWithValue("@dbRowNumber", dbRowNumber);
 
+                //Set up a data reader called dr, which reads the data from cmdStu (the previous sql command)
                 using (SqlDataReader dr = cmdStu.ExecuteReader())
                 {
+                    //While-loop running while dr is reading 
                     while (dr.Read())
                     {
+                        //Sets studentToBeRetrieved, a new empty Student, which is then filled
                         studentToBeRetrieved = new Student(dr["PK_StuCPR"].ToString(), dr["StuFirstName"].ToString(), dr["StuLastName"].ToString(), dr["StuPhone"].ToString(), dr["StuEmail"].ToString());
                     }
                 }
             }
         }
-        
-        //Retrieves the data of a specific row in the database where the row number is equal to dbRowNum + 1
+
+        //Retrieves the class of a specific row in the database
+        //where the row number is equal to dbRowNumber + 1
         public void RetrieveClassData(int dbRowNumber)
         {
             //Setting up a connection to the database
@@ -377,7 +751,8 @@ namespace VindegadeKS_WPF
             {
                 //Opens said connection
                 con.Open();
-                //Creates a four cmd SqlCommand, which SELECTs specific rows from each table in the DB 
+
+                //Creates an SqlCommand, cmdClass, which SELECTs specific rows from each table in the DB 
                 SqlCommand cmdClass = new SqlCommand("SELECT PK_ClassName, ClassYear, ClassNumber, ClassQuarter, ClassLicenseType FROM VK_Classes ORDER BY PK_ClassName ASC OFFSET @dbRowNumber ROWS FETCH NEXT 1 ROW ONLY", con);
 
                 //Set dbRowNumber to 0 if under 0
@@ -388,17 +763,21 @@ namespace VindegadeKS_WPF
                 //Gives @dbRowNumber the value of dbRowNumber
                 cmdClass.Parameters.AddWithValue("@dbRowNumber", dbRowNumber);
 
+                //Set up a data reader called dr, which reads the data from cmdClass (the previous sql command)
                 using (SqlDataReader dr = cmdClass.ExecuteReader())
                 {
+                    //While-loop running while dr is reading 
                     while (dr.Read())
                     {
+                        //Sets classToBeRetrieved, a new empty Class, which is then filled
                         classToBeRetrieved = new Class((Quarter)Enum.Parse(typeof(Quarter), dr["ClassQuarter"].ToString()), dr["ClassYear"].ToString(), dr["ClassNumber"].ToString(), (LicenseType)Enum.Parse(typeof(LicenseType), dr["ClassLicenseType"].ToString()), dr["PK_ClassName"].ToString());
                     }
                 }
             }
         }
 
-        //Retrieves the data of a specific row in the database where the row number is equal to dbRowNum + 1
+        //Retrieves the appointment of a specific row in the database
+        //where the row number is equal to dbRowNumber + 1
         public void RetrieveAppointmentData(int dbRowNumber)
         {
             //Setting up a connection to the database
@@ -407,7 +786,7 @@ namespace VindegadeKS_WPF
                 //Opens said connection
                 con.Open();
 
-                //Creates a SqlCommand, which SELECTs specific rows from all five tables in the DB and joins them 
+                //Creates an SqlCommand, cmdApmt, which SELECTs specific rows from all five tables in the DB and joins them 
                 SqlCommand cmdApmt = new SqlCommand("SELECT " +
                                                     "VK_Lessons.LesName, " +
                                                     "VK_Lessons.LesType, " +
@@ -450,10 +829,14 @@ namespace VindegadeKS_WPF
                 //Gives @dbRowNumber the value of dbRowNumber
                 cmdApmt.Parameters.AddWithValue("@dbRowNumber", dbRowNumber);
 
+                //Set up a data reader called dr, which reads the data from cmdApmt (the previous sql command)
                 using (SqlDataReader dr = cmdApmt.ExecuteReader())
                 {
+                    //While-loop running while dr is reading 
                     while (dr.Read())
                     {
+                        //Sets appointmentDetailsToBeRetrieved, a new empty Appointment,
+                        //which is then filled with specific data SELECT'ed from the database. 
                         appointmentDetailsToBeRetrieved = new AppointmentListBox(Convert.ToInt32(dr["PK_ApmtID"]),
                                                                                  dr["LesName"].ToString(),
                                                                                  dr["LesType"].ToString(),
@@ -467,67 +850,60 @@ namespace VindegadeKS_WPF
                 }
             }
         }
+        #endregion
 
-        public class AppointmentListBox
-        {
-            public int ListBoxApmtId { get; set; }
-            public string ListBoxLesName { get; set; }
-            public string ListBoxLesType { get; set; }
-            public string ListBoxClassName { get; set; }
-            public string ListBoxClassLicenseType { get; set; }
-            public string ListBoxStuName { get; set; }
-            public string ListBoxInstName { get; set; }
-            public DateTime ListBoxApmtDate { get; set; }
-            public string Setup { get; set; }
-            
-            public AppointmentListBox(int _listBoxApmtId,
-                                      string _listBoxLesName, 
-                                      string _listBoxLesType,
-                                      string _listBoxClassName,
-                                      string _listBoxClassLicenseType,
-                                      string _listBoxStuName,
-                                      string _listBoxInstName,
-                                      DateTime _listBoxApmtDate,
-                                      string _setup)
-            {
-                ListBoxApmtId = _listBoxApmtId;
-                ListBoxLesName = _listBoxLesName;
-                ListBoxLesType = _listBoxLesType;
-                ListBoxClassName = _listBoxClassName;
-                ListBoxClassLicenseType = _listBoxClassLicenseType;
-                ListBoxStuName = _listBoxStuName;
-                ListBoxInstName = _listBoxInstName;
-                ListBoxApmtDate = _listBoxApmtDate;
-                Setup = _setup;
-            }
-
-            public AppointmentListBox() : this(0 ,"", "", "", "", "", "", DateTime.Now, "")
-            { }
-        }
-
+        #region Save, edit and delete methods
+        //Saves the data of a new Appointment by creating a new row
+        //in the database from appointmentToBeCreated
         public void SaveAppointment(Appointment appointmentToBeCreated, Instructor instructorToBeCreated, Lesson lessonToBeCreated, Class classToBeCreated, Student studentToBeCreated)
         {
+            //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
+                //Opens said connection
                 con.Open();
+
+                //Creates an SqlCommand, cmdApmt, which enables the ability to
+                //INSERT the corresponding attributes INTO the table VK_Appointments in a new row.
                 SqlCommand cmdApmt = new SqlCommand("INSERT INTO VK_Appointments (ApmtDate, FK_InstID, FK_LesID, FK_ClassName) " +
                                                     "VALUES(@ApmtDate, @FK_InstID, @FK_LesID, @FK_ClassName) " +
                                                     "SELECT @@IDENTITY", con);
+
+                //Sets the database properties for columns ApmtDate, FK_InstID, FK_LesID, FK_ClassName in
+                //VK_Appointments to the corresponding values in appointmentToBeCreated, instructorToBeCreated,
+                //lessonToBeCreated and classToBeCreated.
                 cmdApmt.Parameters.Add("@ApmtDate", SqlDbType.DateTime2).Value = appointmentToBeCreated.ApmtDate;
                 cmdApmt.Parameters.Add("@FK_InstID", SqlDbType.Int).Value = instructorToBeCreated.InstId;
                 cmdApmt.Parameters.Add("@FK_LesID", SqlDbType.Int).Value = lessonToBeCreated.LesId;
                 cmdApmt.Parameters.Add("@FK_ClassName", SqlDbType.NVarChar).Value = classToBeCreated.ClassName;
+
+                //Tells the database to execute the sqlcommand cmdApmt and assign an int to ApmtId and set
+                //appointmentToBeCreated.ApmtId to said Id - row is selected by autoincrement.
                 appointmentToBeCreated.ApmtId = Convert.ToInt32(cmdApmt.ExecuteScalar());
 
+
+                //Creates an SqlCommand, cmdStu, which enables the ability to
+                //INSERT the corresponding attributes INTO the connecting table VK_Student_Appointment in a new row.
+                //We used two SqlCommands since we wanted to insert into two different tables simultaneously.
                 SqlCommand cmdStu = new SqlCommand("INSERT INTO VK_Student_Appointment (CK_StuCPR, CK_ApmtID) " +
                                                    "VALUES(@CK_StuCPR, @CK_ApmtID) " +
                                                    "SELECT @@IDENTITY", con);
+
+                //Sets the database properties for columns CK_StuCPR, CK_ApmtID in
+                //VK_Student_Appointment to the corresponding values in studentToBeCreated, appointmentToBeCreated.
                 cmdStu.Parameters.Add("@CK_StuCPR", SqlDbType.NVarChar).Value = studentToBeCreated.StuCPR;
                 cmdStu.Parameters.Add("@CK_ApmtID", SqlDbType.Int).Value = appointmentToBeCreated.ApmtId;
+
+                //Tells the database to execute the sqlcommand cmdStu, connecting the two composite keys in
+                //the connecting table.
                 cmdStu.ExecuteScalar();
             }
         }
         
+
+        //Mangler check af kommentarer herunder !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
         //Edits the data of a previously existing Appointment
         public void EditAppointment(Appointment appointmentToBeCreated, Instructor instructorToBeCreated, Lesson lessonToBeCreated, Class classToBeCreated, Student studentToBeCreated)
         {
@@ -543,10 +919,35 @@ namespace VindegadeKS_WPF
 
                 //Gives @attribute the value of attribute
                 cmdApmt.Parameters.AddWithValue("@ApmtDate", appointmentToBeCreated.ApmtDate);
-                cmdApmt.Parameters.AddWithValue("@InstID", instructorToBeCreated.InstId);
-                cmdApmt.Parameters.AddWithValue("@LesID", lessonToBeCreated.LesId);
-                cmdApmt.Parameters.AddWithValue("@ClassName", classToBeCreated.ClassName);
                 cmdApmt.Parameters.AddWithValue("@ApmtID", appointmentToBeCreated.ApmtId);
+
+                if (instructorToBeCreated != null)
+                {
+                    cmdApmt.Parameters.AddWithValue("@InstID", instructorToBeCreated.InstId);
+                }
+                else 
+                {
+                    cmdApmt.Parameters.AddWithValue("@InstID", appointmentToBeCreated.FK_InstId);
+                }
+
+                if (lessonToBeCreated != null)
+                {
+                    cmdApmt.Parameters.AddWithValue("@LesID", lessonToBeCreated.LesId);
+                }
+                else
+                {
+                    cmdApmt.Parameters.AddWithValue("@InstID", appointmentToBeCreated.FK_LesId); 
+                }
+
+                if (classToBeCreated != null)
+                {
+                    cmdApmt.Parameters.AddWithValue("@ClassName", classToBeCreated.ClassName);
+                }
+                else
+                {
+                    cmdApmt.Parameters.AddWithValue("@ClassName", appointmentToBeCreated.FK_ClassName);
+                }
+
                 cmdApmt.ExecuteNonQuery();
 
                 SqlCommand cmdStu = new SqlCommand("UPDATE VK_Student_Appointment SET CK_StuCPR = @StuCPR " +
@@ -559,8 +960,43 @@ namespace VindegadeKS_WPF
             }
         }
 
+        //Retrieves the appointment of a specific row in the database
+        //where the row number is equal to dbRowNumber + 1
+        public void AppointmentDataToBeEdited(int _apmtId)
+        {
+            //Setting up a connection to the database
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                //Opens said connection
+                con.Open();
+
+                //Creates an SqlCommand, cmdApmt, which SELECTs specific rows from all five tables in the DB and joins them 
+                SqlCommand cmdApmt = new SqlCommand("SELECT * FROM VK_Appointments WHERE PK_ApmtID = @ApmtId", con);
+
+
+                //Gives @dbRowNumber the value of dbRowNumber
+                cmdApmt.Parameters.AddWithValue("@ApmtId", _apmtId);
+
+                //Set up a data reader called dr, which reads the data from cmdApmt (the previous sql command)
+                using (SqlDataReader dr = cmdApmt.ExecuteReader())
+                {
+                    //While-loop running while dr is reading 
+                    while (dr.Read())
+                    {
+                        //Sets appointmentDetailsToBeRetrieved, a new empty Appointment,
+                        //which is then filled with specific data SELECT'ed from the database. 
+                        CurrentAppointment.ApmtId = Convert.ToInt32(dr["PK_ApmtID"]);
+                        CurrentAppointment.ApmtDate = (DateTime)dr["ApmtDate"];
+                        CurrentAppointment.FK_LesId = Convert.ToInt32(dr["FK_LesId"]);
+                        CurrentAppointment.FK_InstId = Convert.ToInt32(dr["FK_InstId"]);
+                        CurrentAppointment.FK_ClassName = dr["FK_ClassName"].ToString();
+                    }
+                }
+            }
+        }
+
         public void DeleteAppointment(int appointmentIdToBeDeleted) // DeleteAppointment-metoden defineres med parameteren int appointmentIdToBeDeleted,
-                                                                    // Metoden tager CurrentAppointment.ListBoxApmtId (som har referencesemantisk lighed med currentItem)
+                                                                    // Metoden tager CurrentAppointment.ListBoxApmtId (som har referencesemantisk lighed med idOfSelectedListBoxItem)
                                                                     // som argument, når den kaldes
         {
             // Sql-Connection definerer forbindelsen 'con' til databasen
@@ -580,88 +1016,9 @@ namespace VindegadeKS_WPF
 
             ClearInputFields(); // Input-felterne cleares for at indikere, at sletningen er gennemført
         }
+        #endregion
 
-        private void Apmt_Add_Button_Click(object sender, RoutedEventArgs e)
-        {
-            UnlockInputFields();
-            Apmt_Save_Button.IsEnabled = true;
-            Apmt_Edit_Button.IsEnabled = false;
-        }
-
-        private void Apmt_Save_Button_Click(object sender, RoutedEventArgs e)
-        {
-            if (edit == false)
-            { SaveAppointment(CurrentAppointment, CurrentInstructor, CurrentLesson, CurrentClass, CurrentStudent); }
-            else
-            {
-                /*
-                char delimitor = ',';
-                int delimitorIndex = Apmt_PickLesson_ComboBox.Text.IndexOf(delimitor);
-                CurrentLesson.LesName = Apmt_PickLesson_ComboBox.Text.Substring(0, delimitorIndex);
-                CurrentLesson.LesType = Apmt_PickLesson_ComboBox.Text.Substring(delimitorIndex +2);
-                delimitorIndex = Apmt_PickClass_ComboBox.Text.IndexOf(delimitor);
-                CurrentClass.ClassName = Apmt_PickClass_ComboBox.Text.Substring(0, delimitorIndex);
-                CurrentClass.ClassLicenseType = (LicenseType)Enum.Parse(typeof(LicenseType), Apmt_PickClass_ComboBox.Text.Substring(delimitorIndex + 2));
-                delimitorIndex = Apmt_PickStudent_ComboBox.Text.IndexOf(delimitor);
-                CurrentStudent.StuFirstName = Apmt_PickStudent_ComboBox.Text.Substring(0, delimitorIndex);
-                CurrentStudent.StuLastName = Apmt_PickStudent_ComboBox.Text.Substring(delimitorIndex +2);
-                delimitorIndex = Apmt_PickInstructor_ComboBox.Text.IndexOf(delimitor);
-                CurrentInstructor.InstFirstName = Apmt_PickInstructor_ComboBox.Text.Substring(0, delimitorIndex);
-                CurrentInstructor.InstLastName = Apmt_PickInstructor_ComboBox.Text.Substring(delimitorIndex + 2);
-                CurrentAppointment.ApmtDate = (DateTime)Apmt_PickDateTime_DateTimePicker.Value;
-                */
-
-                EditAppointment(CurrentAppointment, CurrentInstructor, CurrentLesson, CurrentClass, CurrentStudent);
-            }
-
-            Apmt_DisLesson_TextBlock.Text = "Lektion: ";
-            Apmt_DisLessonType_TextBlock.Text = "Lektionstype: ";
-            Apmt_DisClass_TextBlock.Text = "Hold: ";
-            Apmt_DisClassLicenseType_TextBlock.Text = "Kørekorttype: ";
-            Apmt_DisStudent_TextBlock.Text = "Elev: ";
-            Apmt_DisInstructor_TextBlock.Text = "Underviser: ";
-            Apmt_DisDateTime_TextBlock.Text = "Aftale: ";
-
-            ClearInputFields();
-            LockInputFields();
-            ListBoxFunction();
-            edit = false;
-            Apmt_Edit_Button.IsEnabled = false;
-            Apmt_Save_Button.IsEnabled = false;
-            Apmt_Delete_Button.IsEnabled = false;
-        }
-
-        private void Apmt_Edit_Button_Click(object sender, RoutedEventArgs e)
-        {
-            edit = true;
-            Apmt_Save_Button.IsEnabled = true;
-            UnlockInputFields();
-
-            Apmt_PickLesson_ComboBox.Text = $"{(Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxLesName}, {(Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxLesType}";
-            Apmt_PickClass_ComboBox.Text = $"{(Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxClassName}, {(Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxClassLicenseType}";
-            Apmt_PickStudent_ComboBox.Text = $"{(Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxStuName}";
-            Apmt_PickInstructor_ComboBox.Text = $"{(Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxInstName}";
-            Apmt_PickDateTime_DateTimePicker.Text = $"{(Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxApmtDate}";
-        }
-
-        private void Apmt_Delete_Button_Click(object sender, RoutedEventArgs e)
-        {
-            DeleteAppointment(currentItem);
-            ListBoxFunction();
-
-            Apmt_DisLesson_TextBlock.Text = "Lektion: ";
-            Apmt_DisLessonType_TextBlock.Text = "Lektionstype: ";
-            Apmt_DisClass_TextBlock.Text = "Hold: ";
-            Apmt_DisClassLicenseType_TextBlock.Text = "Kørekorttype: ";
-            Apmt_DisStudent_TextBlock.Text = "Elev: ";
-            Apmt_DisInstructor_TextBlock.Text = "Underviser: ";
-            Apmt_DisDateTime_TextBlock.Text = "Aftale: ";
-
-            Apmt_Edit_Button.IsEnabled = false;
-            Apmt_Save_Button.IsEnabled = false;
-            Apmt_Delete_Button.IsEnabled = false;
-        }
-
+        #region Quality of life funktions
         private void ClearInputFields()
         {
             Apmt_PickLesson_ComboBox.SelectedItem = null;
@@ -686,37 +1043,6 @@ namespace VindegadeKS_WPF
             Apmt_PickStudent_ComboBox.IsEnabled = true;
             Apmt_PickInstructor_ComboBox.IsEnabled = true;
         }
-
-        private void Apmt_PickLesson_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            RetrieveLessonData(Apmt_PickLesson_ComboBox.SelectedIndex);
-            CurrentLesson.LesId = lessonToBeRetrieved.LesId;
-        }
-
-        private void Apmt_PickClass_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            RetrieveClassData(Apmt_PickClass_ComboBox.SelectedIndex);
-            CurrentClass.ClassQuarter = classToBeRetrieved.ClassQuarter;
-            CurrentClass.ClassYear = classToBeRetrieved.ClassYear;
-            CurrentClass.ClassNumber = classToBeRetrieved.ClassNumber;
-            CurrentClass.ClassName = classToBeRetrieved.ClassName;
-        }
-
-        private void Apmt_PickStudent_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            RetrieveStudentData(Apmt_PickStudent_ComboBox.SelectedIndex);
-            CurrentStudent.StuCPR = studentToBeRetrieved.StuCPR;
-        }
-
-        private void Apmt_PickInstructor_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            RetrieveInstructorData(Apmt_PickInstructor_ComboBox.SelectedIndex);
-            CurrentInstructor.InstId = instructorToBeRetrieved.InstId;
-        }
-        
-        private void Apmt_PickDateTime_DateTimePicker_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
-            CurrentAppointment.ApmtDate = (DateTime)Apmt_PickDateTime_DateTimePicker.Value;
-        }
+        #endregion
     }
 }

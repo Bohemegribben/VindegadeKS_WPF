@@ -12,7 +12,6 @@
       Title="AppointmentPage">
 
     <Grid>
-
         <ListBox x:Name="Apmt_DisApmt_ListBox" Width="220" Height="425" Margin="0, 20, 20, 0" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="20" SelectionChanged="Apmt_DisApmt_ListBox_SelectionChanged">
             <!-- Just copy the next 6 lines -->
             <ListBox.ItemTemplate>
