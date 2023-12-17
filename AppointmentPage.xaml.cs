@@ -892,69 +892,10 @@ namespace VindegadeKS_WPF
                 cmdStu.ExecuteScalar();
             }
         }
-        
 
-        //Mangler check af kommentarer herunder !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-        //Edits the data of a previously existing Appointment
-        public void EditAppointment(Appointment appointmentToBeCreated, Instructor instructorToBeCreated, Lesson lessonToBeCreated, Class classToBeCreated, Student studentToBeCreated)
-        {
-            //Setting up a connection to the database
-            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
-            {
-                //Opens said connection
-                con.Open();
-
-                //Creates a cmd SqlCommand, which UPDATEs the attributes of a specific row in the table, based on the LesId
-                SqlCommand cmdApmt = new SqlCommand("UPDATE VK_Appointments SET ApmtDate = @ApmtDate, FK_InstID = @InstID, FK_LesID = @LesID, FK_ClassName = @ClassName " +
-                                                "WHERE PK_ApmtID = @ApmtID", con);
-
-                //Gives @attribute the value of attribute
-                cmdApmt.Parameters.AddWithValue("@ApmtDate", appointmentToBeCreated.ApmtDate);
-                cmdApmt.Parameters.AddWithValue("@ApmtID", appointmentToBeCreated.ApmtId);
-
-                if (instructorToBeCreated != null)
-                {
-                    cmdApmt.Parameters.AddWithValue("@InstID", instructorToBeCreated.InstId);
-                }
-                else 
-                {
-                    cmdApmt.Parameters.AddWithValue("@InstID", appointmentToBeCreated.FK_InstId);
-                }
-
-                if (lessonToBeCreated != null)
-                {
-                    cmdApmt.Parameters.AddWithValue("@LesID", lessonToBeCreated.LesId);
-                }
-                else
-                {
-                    cmdApmt.Parameters.AddWithValue("@InstID", appointmentToBeCreated.FK_LesId); 
-                }
-
-                if (classToBeCreated != null)
-                {
-                    cmdApmt.Parameters.AddWithValue("@ClassName", classToBeCreated.ClassName);
-                }
-                else
-                {
-                    cmdApmt.Parameters.AddWithValue("@ClassName", appointmentToBeCreated.FK_ClassName);
-                }
-
-                cmdApmt.ExecuteNonQuery();
-
-                SqlCommand cmdStu = new SqlCommand("UPDATE VK_Student_Appointment SET CK_StuCPR = @StuCPR " +
-                                                   "WHERE CK_ApmtID = @ApmtID", con);
-                cmdStu.Parameters.AddWithValue("@StuCPR", studentToBeCreated.StuCPR);
-                cmdStu.Parameters.AddWithValue("@ApmtID", appointmentToBeCreated.ApmtId);
-                cmdStu.ExecuteNonQuery();
-
-                //Tells the database to execute the cmd sql command
-            }
-        }
-
-        //Retrieves the appointment of a specific row in the database
-        //where the row number is equal to dbRowNumber + 1
+        //Retrieves the data of the appointment with ApmtId equal to the method parameter _apmtId.
+        //This method is run when selecting an item in the listbox, so it is basically gathering
+        //data for editing in case the user chooses to edit the selected item in the listbox.
         public void AppointmentDataToBeEdited(int _apmtId)
         {
             //Setting up a connection to the database
@@ -963,21 +904,20 @@ namespace VindegadeKS_WPF
                 //Opens said connection
                 con.Open();
 
-                //Creates an SqlCommand, cmdApmt, which SELECTs specific rows from all five tables in the DB and joins them 
+                //Creates an SqlCommand, cmdApmt, which SELECTs everything (*) from VK_Appointments 
                 SqlCommand cmdApmt = new SqlCommand("SELECT * FROM VK_Appointments WHERE PK_ApmtID = @ApmtId", con);
 
 
-                //Gives @dbRowNumber the value of dbRowNumber
+                //Sets @ApmtId to the value of the method parameter _apmtId
                 cmdApmt.Parameters.AddWithValue("@ApmtId", _apmtId);
 
-                //Set up a data reader called dr, which reads the data from cmdApmt (the previous sql command)
+                //Set up a data reader called dr, which reads the data from cmdApmt
                 using (SqlDataReader dr = cmdApmt.ExecuteReader())
                 {
                     //While-loop running while dr is reading 
                     while (dr.Read())
                     {
-                        //Sets appointmentDetailsToBeRetrieved, a new empty Appointment,
-                        //which is then filled with specific data SELECT'ed from the database. 
+                        //Sets the properties of CurrentAppointment to the data SELECT'ed from the database. 
                         CurrentAppointment.ApmtId = Convert.ToInt32(dr["PK_ApmtID"]);
                         CurrentAppointment.ApmtDate = (DateTime)dr["ApmtDate"];
                         CurrentAppointment.FK_LesId = Convert.ToInt32(dr["FK_LesId"]);
@@ -988,30 +928,125 @@ namespace VindegadeKS_WPF
             }
         }
 
-        public void DeleteAppointment(int appointmentIdToBeDeleted) // DeleteAppointment-metoden defineres med parameteren int appointmentIdToBeDeleted,
-                                                                    // Metoden tager CurrentAppointment.ListBoxApmtId (som har referencesemantisk lighed med idOfSelectedListBoxItem)
-                                                                    // som argument, når den kaldes
+        //Edits the data of an existing Appointment handed to the method via the parameters.
+        //When the edit-button is pressed, the edit bool is set to true, and the ComboBox input fields are set
+        //to be equal to the data from the selected item in the AppointmentListBox. When the item in
+        //the AppointmentListBox was selected the AppointmentDataToBeEdited was run and the CurrentAppointment
+        //was set with the data from the existing appointment. When pressing the save-button while edit bool is true,
+        //EditAppointment is run with CurrentAppointment, CurrentInstructor, CurrentLesson, CurrentClass and CurrentStudent
+        //as arguments. When EditAppointment is run the method checks whether a null-argument was passed to it, ie. whether
+        //the user have made a ComboBox-selection or not. If the user have made a ComboBox-selection in a ComboBox,
+        //CurrentInstructor, CurrentLesson, CurrentClass or CurrentStudent will be holding an argument, and the
+        //specific value therefrom will be passed to the database. //In case the user haven't made a ComboBox-selection,
+        //the corresponding value from CurrentAppointment (the already registered value) will be passed = the entity will remain 
+        //the same.
+        public void EditAppointment(Appointment appointmentToBeEdited, Instructor instructorToBeEdited, Lesson lessonToBeEdited, Class classToBeEdited, Student studentToBeEdited)
         {
-            // Sql-Connection definerer forbindelsen 'con' til databasen
+            //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
-                con.Open(); // 'Open' åbner forbindelsen 'con' til databasen
-                SqlCommand cmd = new SqlCommand("DELETE FROM VK_Appointments WHERE PK_ApmtID = @PK_ApmtId", con); // SqlCommand definerer Sql-query-indholdet
-                                                                                                                  // (en DELETE-kommando rettet mod en specifik
-                                                                                                                  // tabel i databasen) af 'cmd', som skal
-                                                                                                                  // sendes via forbindelsen 'con'
+                //Opens said connection
+                con.Open();
 
-                cmd.Parameters.AddWithValue("@PK_ApmtId", appointmentIdToBeDeleted); // cmd.Parameters.AddWithValue sætter en SQL-variabel (@PK_InstId) lig
-                                                                                    // med parameteren 'instructorIdToBeDeleted', der får sit argument, når
-                                                                                    // metoden bliver kaldt
-                cmd.ExecuteScalar(); // ExecuteScalar-metoden kører kommandoen cmd
+                //Creates the SqlCommand cmdApmt which UPDATEs the attributes of a specific row in VK_Appointments, based on the PK_ApmtID = @ApmtId
+                SqlCommand cmdApmt = new SqlCommand("UPDATE VK_Appointments SET ApmtDate = @ApmtDate, FK_InstID = @InstId, FK_LesID = @LesId, FK_ClassName = @ClassName " +
+                                                "WHERE PK_ApmtID = @ApmtId", con);
+
+                //Gives @ApmtDate the value of ApmtDate
+                cmdApmt.Parameters.AddWithValue("@ApmtDate", appointmentToBeEdited.ApmtDate);
+
+                //Gives @ApmtId the value of ApmtId
+                cmdApmt.Parameters.AddWithValue("@ApmtId", appointmentToBeEdited.ApmtId);
+
+                //If the user have made a ComboBox-selection in the instructor-ComboBox, instructorToBeEdited
+                //will be holding an argument (!= null), and the specific value therefrom will be passed to the database.
+                if (instructorToBeEdited != null)
+                {
+                    cmdApmt.Parameters.AddWithValue("@InstId", instructorToBeEdited.InstId);
+                }
+                //In case the user haven't made a ComboBox-selection (== null), the corresponding value from
+                //CurrentAppointment (the already registered value) will be passed, and the entity will remain the same.
+                else
+                {
+                    cmdApmt.Parameters.AddWithValue("@InstId", appointmentToBeEdited.FK_InstId);
+                }
+
+                //If the user have made a ComboBox-selection in the lesson-ComboBox, lessonToBeEdited
+                //will be holding an argument (!= null), and the specific value therefrom will be passed to the database.
+                if (lessonToBeEdited != null)
+                {
+                    cmdApmt.Parameters.AddWithValue("@LesId", lessonToBeEdited.LesId);
+                }
+                //In case the user haven't made a ComboBox-selection (== null), the corresponding value from
+                //CurrentAppointment (the already registered value) will be passed, and the entity will remain the same.
+                else
+                {
+                    cmdApmt.Parameters.AddWithValue("@InstId", appointmentToBeEdited.FK_LesId); 
+                }
+
+                //If the user have made a ComboBox-selection in the class-ComboBox, classToBeEdited
+                //will be holding an argument (!= null), and the specific value therefrom will be passed to the database.
+                if (classToBeEdited != null)
+                {
+                    cmdApmt.Parameters.AddWithValue("@ClassName", classToBeEdited.ClassName);
+                }
+                //In case the user haven't made a ComboBox-selection (== null), the corresponding value from
+                //CurrentAppointment (the already registered value) will be passed, and the entity will remain the same.
+                else
+                {
+                    cmdApmt.Parameters.AddWithValue("@ClassName", appointmentToBeEdited.FK_ClassName);
+                }
+
+                //Tells the database to execute the sqlcommand cmdApmt.
+                cmdApmt.ExecuteNonQuery();
+
+
+                //Creates the SqlCommand cmdStu which UPDATEs the attributes of a specific row in
+                //VK_Student_Appointment, based on the PK_ApmtID = @ApmtId
+                SqlCommand cmdStu = new SqlCommand("UPDATE VK_Student_Appointment SET CK_StuCPR = @StuCPR " +
+                                                   "WHERE CK_ApmtID = @ApmtId", con);
+
+                //Gives @StuCPR the value of StuCPR
+                cmdStu.Parameters.AddWithValue("@StuCPR", studentToBeEdited.StuCPR);
+
+                //Gives @ApmtId the value of ApmtId
+                cmdStu.Parameters.AddWithValue("@ApmtId", appointmentToBeEdited.ApmtId);
+
+                //Tells the database to execute the SqlCommand cmdStu
+                cmdStu.ExecuteNonQuery();
+            }
+        }
+
+        //The DeleteAppointment method is defined with the parameter appointmentIdToBeDeleted.
+        //The method takes the CurrentAppointment.ListBoxApmtId as argument when called.
+        public void DeleteAppointment(int appointmentIdToBeDeleted)
+        {
+            //Setting up a connection to the database
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                //Opens said connection
+                con.Open();
+
+                //Creates an SqlCommand cmd which DELETEs the attributes of a specific row in
+                //VK_Appointments, based on the PK_ApmtID = @ApmtId
+                SqlCommand cmd = new SqlCommand("DELETE FROM VK_Appointments WHERE PK_ApmtID = @ApmtId", con);
+
+                //Gives @ApmtId the value of appointmentIdToBeDeleted
+                cmd.Parameters.AddWithValue("@ApmtId", appointmentIdToBeDeleted);
+
+                //Tells the database to execute the SqlCommand cmd
+                cmd.ExecuteScalar(); 
             }
 
-            ClearInputFields(); // Input-felterne cleares for at indikere, at sletningen er gennemført
+            //The Input-fields are cleared to indicate that deletion have been executed.
+            ClearInputFields(); 
         }
         #endregion
 
         #region Quality of life funktions
+
+        //Clears the input fields by setting the SelectedItem of the ComboBoxes
+        //to null and the Value of the DateTimePicker to DateTime.Now
         private void ClearInputFields()
         {
             Apmt_PickLesson_ComboBox.SelectedItem = null;
@@ -1021,20 +1056,24 @@ namespace VindegadeKS_WPF
             Apmt_PickDateTime_DateTimePicker.Value = DateTime.Now;
         }
 
+        //Locks the ComboBoxes and the DateTimePicker
         private void LockInputFields()
         {
             Apmt_PickLesson_ComboBox.IsEnabled = false;
             Apmt_PickClass_ComboBox.IsEnabled = false;
             Apmt_PickStudent_ComboBox.IsEnabled = false;
             Apmt_PickInstructor_ComboBox.IsEnabled = false;
+            Apmt_PickDateTime_DateTimePicker.IsEnabled = false;
         }
 
+        //Unlocks the ComboBoxes and the DateTimePicker
         private void UnlockInputFields()
         {
             Apmt_PickLesson_ComboBox.IsEnabled = true;
             Apmt_PickClass_ComboBox.IsEnabled = true;
             Apmt_PickStudent_ComboBox.IsEnabled = true;
             Apmt_PickInstructor_ComboBox.IsEnabled = true;
+            Apmt_PickDateTime_DateTimePicker.IsEnabled = true;
         }
         #endregion
     }
