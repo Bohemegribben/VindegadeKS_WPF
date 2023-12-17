@@ -310,19 +310,7 @@ namespace VindegadeKS_WPF
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
                
-                /*con.Open(); // 'Open' åbner forbindelsen 'con' til databasen
-                 SqlCommand cmd = new SqlCommand("DELETE VK_Class_Student, VK_Students FROM VK_Class_Student JOIN VK_Students ON VK_Class_Student.CK_StuCPR = VK_Students.PK_StuCPR WHERE VK_Class_Student.CK_StuCPR = @CK_StuCPR", con); // SqlCommand definerer Sql-query-indholdet
-                                                                                                                                                                                                                                     // (en DELETE-kommando rettet mod en specifik
-                                                                                                                                                                                                                                     // tabel i databasen) af 'cmd', som skal
-                                                                                                                                                                                                                                     // sendes via forbindelsen 'con'
-
-                 cmd.Parameters.AddWithValue("@PK_StuCPR", StudentCPRToBeDeleted); // cmd.Parameters.AddWithValue sætter en SQL-variabel (@PK_StuCPR) lig
-                                                                                     // med parameteren 'StudentCPRToBeDeleted', der får sit argument, når
-                                                                                     // metoden bliver kaldt
-                 cmd.ExecuteScalar(); // ExecuteScalar-metoden kører kommandoen cmd
-                */
-
-
+                
                 con.Open();
 
                 // Delete from VK_Class_Student where there´s dependencies first to avoid the reference constraint

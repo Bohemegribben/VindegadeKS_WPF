@@ -317,10 +317,17 @@ namespace VindegadeKS_WPF
                     //Add new AppointmentListBox-items from the AppointmentListBox-class with specific attributes to the list
                     appointments.Add(appointmentDetailsToBeRetrieved);
 
+
+                    //Only necessary for multi-attribute ListBoxItem
+                    //Set up the attribute 'SetUp' which is used to determine the appearance of the ListBoxItem 
+                    //Forloop to go through all items in the items-list, to add and fill the 'SetUp' attribute
+
+
                     //Set up the attribute 'Setup' which is used to determine
                     //the appearance of the AppointmentListBox-item
                     //For-loop to go through all appointments in the
                     //appointments-list, to add and fill the Setup-attribute
+
                     appointments[i].Setup = $"{appointments[i].ListBoxLesName} - {appointments[i].ListBoxLesType} \n{appointments[i].ListBoxApmtDate}";
                 }
 

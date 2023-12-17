@@ -15,6 +15,13 @@ namespace VindegadeKS_WPF
         public string StuEmail { get; set; }
         public string Setup;
 
+        public string StuFullName
+        {
+            get
+            {
+                return $"{StuFirstName} {StuLastName}";
+            }
+        }
         // Constructor
         public Student(string _stuCPR, string _stuFirstName, string _stuLastName, string _stuPhone, string _stuEmail)
         {

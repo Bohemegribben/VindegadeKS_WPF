@@ -1,0 +1,95 @@
+﻿<Page x:Class="VindegadeKS_WPF.DocumentationPage"
+     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+     xmlns:local="clr-namespace:VindegadeKS_WPF"
+      mc:Ignorable="d"
+      Background="Snow"
+      d:DesignHeight="1000" d:DesignWidth="680"
+      Title="DocumentationPage">
+
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FFEAEDF0" Offset="0.569"/>
+                <GradientStop Color="#FF8DC4FC" Offset="0"/>
+                <GradientStop Color="#FF65707B" Offset="0.982"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
+
+       
+
+       
+
+        <!-- TextBlock-->
+        <StackPanel Background="AliceBlue" HorizontalAlignment="Left" Height="350" Margin="5,10,0,0" VerticalAlignment="Top" Width="670">
+           
+            
+            <TextBlock x:Name="Dok_DisStartDate_TextBlock" TextWrapping="Wrap" Text="Start Dato: " FontSize="20" Height="50" Margin="10, 10, 10, 0"/>
+            <TextBlock x:Name="Dok_DisEndDate_TextBlock" TextWrapping="Wrap" Text="Slut Dato: " FontSize="20" Height="50" Margin="10, 10, 10, 0"/>
+            <TextBlock x:Name="Dok_DisType_TextBlock" TextWrapping="Wrap" Text="Type: " FontSize="20" Height="50" Margin="10, 10, 10, 0"/>
+            <TextBlock x:Name="Dok_DisDokumenation_TextBlock" TextWrapping="Wrap" Text="Dokumentation: " FontSize="20" Height="50" Margin="10, 10, 10, 0"/>
+        </StackPanel>
+
+
+        <!--Labels-->
+        <Label x:Name="Dok_DisStudent_Label" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Elev" Width="105" Margin="75,401,0,0" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold" d:LayoutOverrides="VerticalAlignment"/>
+        <Label x:Name="Dok_DisPickDocument_Label" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Vælg Dokument du ønsker at redigere" Width="350" Margin="75,479,0,0" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
+        <Label x:Name="Dok_DisStartDate_Label" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Start Dato" Width="105" Margin="75,564,0,0" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
+        <Label x:Name="Dok_DisEndDate_Label" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Slut Dato" Height="30" Width="105" Margin="75,644,0,0" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
+        <Label x:Name="Dok_DisType_Label" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Type" Height="30" Width="105" Margin="75,722,0,0" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
+        <Label x:Name="Dok_DisDoku_Label" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Dokumentation" Height="30" Width="150" Margin="75,820,0,0" FontFamily="Segoe UI Variable Small Light" FontSize="18" FontWeight="Bold"/>
+
+
+
+        <!-- Input Boxes -->
+        
+        <ComboBox x:Name="Dok_PickStudent_ComboBox" HorizontalAlignment="Left" Margin="100,434,0,0" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10" SelectionChanged="Dok_PickStudent_ComboBox_SelectionChanged" />
+        <ComboBox x:Name="Dok_PickDocument_ComboBox" HorizontalAlignment="Left" Margin="100,513,0,0" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10" SelectionChanged="Dok_PickDocument_ComboBox_SelectionChanged" />
+        
+        <xctk:DateTimePicker x:Name="Dok_StartDate_DateTimePicker"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="100,594,0,0" Width="315" Height="50" FontSize="20" Format="Custom" FormatString="yyyy-MM-dd" TimePickerVisibility="Collapsed" ValueChanged="Dok_StartDate_DateTimePicker_ValueChanged" />
+        <xctk:DateTimePicker x:Name="Dok_EndDate_DateTimePicker" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="100,674,0,0" Width="315" Height="50" FontSize="20" Format="Custom" FormatString="yyyy-MM-dd" TimePickerVisibility="Collapsed" ValueChanged="Dok_EndDate_DateTimePicker_ValueChanged" />
+        <ComboBox x:Name="Dok_PickType_ComboBox" HorizontalAlignment="Left" Margin="100,754,0,0" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10" SelectionChanged="Dok_PickType_ComboBox_SelectionChanged" />
+
+        <Button x:Name="Dok_DokuFile_Button" HorizontalAlignment="Left" Height="35" Width="300" Margin="100,850,0,0" VerticalAlignment="Top" Content="Upload File" Click="Dok_DokuFile_Button_Click" />
+        
+
+        <!--Buttons-->
+        <Button x:Name="Dok_Add_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="495,484,0,0" Content="TILFØJ" Height="35" Width="100" FontSize="16" Click="Dok_Add_Button_Click">
+            <Button.Effect>
+                <DropShadowEffect/>
+            </Button.Effect>
+        </Button>
+        <Button x:Name="Dok_Save_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="495,534,0,0" Content="GEM" Height="35" Width="100" FontSize="16" Click="Dok_Save_Button_Click">
+            <Button.Effect>
+                <DropShadowEffect/>
+            </Button.Effect>
+        </Button>
+        <Button x:Name="Dok_Edit_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="495,584,0,0" Content="REDIGER" Height="35" Width="100" FontSize="16" Click="Dok_Edit_Button_Click">
+            <Button.Effect>
+                <DropShadowEffect/>
+            </Button.Effect>
+        </Button>
+        <Button x:Name="Dok_Delete_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="600,664,0,0" Content="SLET" Height="35" Width="60" FontSize="16" Click="Dok_Delete_Button_Click">
+            <Button.Effect>
+                <DropShadowEffect/>
+            </Button.Effect>
+            <Button.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#FFF65252"/>
+                    <GradientStop Color="#FFE3BBBB" Offset="1"/>
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
+
+
+
+    </Grid>
+
+
+
+
+</Page>
