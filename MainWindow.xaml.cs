@@ -20,10 +20,10 @@ namespace VindegadeKS_WPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        //samtlige pages initialiseres inden MainWindow-metoden køres for at undgå reset af pages under navigation 
+        //All pages but the Class_Sub_ShowClass_Page (And Main Window) initialized to avoid reseting the pages under navigation
         DashboardPage dP = new DashboardPage();
         AppointmentPage aP = new AppointmentPage();
-        public ClassPage cP = new ClassPage();
+        ClassPage cP = new ClassPage();
         InstructorPage iP = new InstructorPage();
         LessonPage lP = new LessonPage();
         StudentPage sP = new StudentPage();
@@ -32,18 +32,29 @@ namespace VindegadeKS_WPF
         public MainWindow()
         {
             InitializeComponent();
-            Menu_Dash_Button.Background = Brushes.Gray; //Dashboardknappen gøres grå for at indikere, hvor brugeren 'befinder' sig
-            PageView.Content = dP; //startsiden kaldes
-            cP.pageView = PageView; //Giver ClassPage adgang til rammen PageView
+            
+            //Makes the DashBoard button gray to indicate which page the user is on
+            Menu_Dash_Button.Background = Brushes.Gray;
+            
+            //The Frame PageView's content is set to the DashBoardPage dP
+            PageView.Content = dP;
+            
+            //Gives ClassPage access to the Frame PageView
+            cP.pageView = PageView; 
         }
 
-        //De nedenstående Button_Click-knapper bruges til at navigere mellem de primærsiderne (svarende til klasserne).
-        //Dashboardet er startside, de andre er undersider derfra.
+        //All of the methods underneath, except the bottom most, are Click events from the MainWindow
+        //Handling the navigation between the different pages in the program
         private void Menu_Dash_Button_Click(object sender, RoutedEventArgs e)
         {
-            LightGrayButtons(); //alle knapper gøres lysegrå
+            //All buttons' colors are set to light grey
+            LightGrayButtons();
+
+            //PageView' content is set to the corresponding page
             PageView.Content = dP;
-            Menu_Dash_Button.Background = Brushes.Gray; //knappen gøres grå, når der trykkes på den
+
+            //The Clicked Button is set to gray to show which page the user is currently on
+            Menu_Dash_Button.Background = Brushes.Gray;
         }
 
         private void Menu_Class_Button_Click(object sender, RoutedEventArgs e)
@@ -89,8 +100,8 @@ namespace VindegadeKS_WPF
 
         }
 
-        //LightGrayButtons: Metode der gør alle knapper lysegrå.
-        //Den kaldes som det første, når der trykke på en ny knap
+        //The LightGrayButtons method is a method which set all button to light gray
+        //Used to make sure the gray Button from the previous page is set back to default (Light Gray)
         private void LightGrayButtons() 
         {
             Menu_Dash_Button.Background = Brushes.LightGray;

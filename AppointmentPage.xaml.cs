@@ -562,6 +562,10 @@ namespace VindegadeKS_WPF
         //the initialization of the program would be displayed 
         private void OnLoad(object sender, RoutedEventArgs e)
         {
+            //The ListBoxFunction is called OnLoad to ensure that if enteties have been deleted elsewhere in the program
+            //the affected appointments are also deleted.
+            ListBoxFunction();
+
             //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
