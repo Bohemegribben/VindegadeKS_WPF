@@ -33,158 +33,106 @@ namespace VindegadeKS_WPF
         {
             InitializeComponent();
             LockInputFields();
-          
+
+            // call our ComboBoxStartUp to populate our ComboBoxes
             ComboBoxStartUp();
 
             //Disables the buttons which aren't relevant yet
-            Dok_Save_Button.IsEnabled = false;
-            Dok_Edit_Button.IsEnabled = true;
-            Dok_Delete_Button.IsEnabled = false;
+            Doc_Save_Button.IsEnabled = false;
+            Doc_Edit_Button.IsEnabled = true;
+            Doc_Delete_Button.IsEnabled = false;
         }
 
-        // Create CurrentStudent to contain current object - Needed in: Save_Button_Click & Edit_Button_Click
+        // Create CurrentDocumentation and CurrentStudent to contain current object - Needed in: Save_Button_Click & Edit_Button_Click
         public Documentation CurrentDocumentation = new Documentation();
         public Student CurrentStudent = new Student();
 
-        // Moved out here instead of staying in 'Retrieve', so ListBoxFunction can access - Needed in: ListBoxFunction & RetrieveData
-        public DocListBoxItems documentationToBeRetrieved;
-        
-        public DocListBoxItems studentToBeRetrieved;
+        // create a Student named studentToBeRetrieved - needed in RetrieveStudent
         public Student studentToBeRetrievedStu;
 
+        // byte array fileData, is used in Doc_UploadFile_button to read the contents of the file
+        byte[] fileData;
 
-        // Keeps track of if CurrentLesson is a new object or an old one being edited -
+        // The Bool Edit, keeps track of if CurrentLesson is a new object or an old one being edited -
         // Needed in: Add_Button_Click, Save_Button_Click, Edit_Button_Click & ListBox_SelectionChanged
         bool edit = false;
 
-        //Keeps track of the CPR of ListBoxItem while it's selected - Edit_Button_Click & ListBox_SelectionChanged
+        //Keeps track of the StuCPR while it's selected - Needed in Edit_Button_Click
         string currentItem;
 
+        #region ButtonClicks
 
-
-        #region DocListBoxItemsClass
-        public class DocListBoxItems
+        #region AddButton
+        private void Doc_Add_Button_Click(object sender, RoutedEventArgs e)
         {
-            public int ListBoxDocId { get; set; }
-            public string ListBoxStuCPR { get; set; }
-            public string ListBoxStuFirstName { get; set; }
-            public string ListBoxStuLastName { get; set; }
-            public DateOnly ListBoxDocStartDate { get; set; }
-            public DateOnly ListBoxDocEndDate { get; set; }
-            public string ListBoxDocType { get; set; }
-            public byte[] DocFile { get; set; }
-            public string SetUp { get; set; }
-            public string ListBoxDocDocumentation { get; set; }
-            public string ComboBoxDoctorDoc { get; set; }
-            public string ComboBoxFirstAidDoc { get; set; }
+            Doc_Save_Button.IsEnabled = true;
+            Doc_Edit_Button.IsEnabled = true;
 
-            // To be able to see both First and Last name in our listbox,
-            // we have to concatenate (the joining of two or more strings) our two properties ListBoxStuFirstName and ListBoxStuLastName 
-            public string ListBoxStuFullName
-            {
-                get { return $"{ListBoxStuFirstName} {ListBoxStuLastName}".Trim(); }
-            }
 
-            public DocListBoxItems(int _listBoxDocId,
-                                      string _listBoxStuCPR,
-                                      string _listBoxStuFirstName,
-                                      string _listBoxStuLastName,
-                                      DateOnly _listBoxDocStartDate,
-                                      DateOnly _listBoxDocEndDate,
-                                      string _listBoxDocType,
-                                      byte[] _docFile,
-                                      string setup)
-            {
-                ListBoxDocId = _listBoxDocId;
-                ListBoxStuCPR = _listBoxStuCPR;
-                ListBoxStuFirstName = _listBoxStuFirstName;
-                ListBoxStuLastName = _listBoxStuLastName;
-                ListBoxDocStartDate = _listBoxDocStartDate;
-                ListBoxDocEndDate = _listBoxDocEndDate;
-                ListBoxDocType = _listBoxDocType;
-                DocFile = _docFile;
-                SetUp = setup;
-            }
-
-            public DocListBoxItems() : this(0, "", "", "", default, default, "",default, "")
-            { }
+            Doc_PickStudent_ComboBox.IsEnabled = true;
+            Doc_PickDocument_ComboBox.IsEnabled = false;
+            Doc_PickType_ComboBox.IsEnabled = true;
+            Doc_StartDate_DateTimePicker.IsEnabled = true;
+            Doc_EndDate_DateTimePicker.IsEnabled = true;
 
         }
-
         #endregion
 
 
-
-        #region Buttons
-
-
-        private void Dok_Add_Button_Click(object sender, RoutedEventArgs e)
-        {
-            Dok_Save_Button.IsEnabled = true;
-            Dok_Edit_Button.IsEnabled = true;
-
-
-            Dok_PickStudent_ComboBox.IsEnabled = true;
-            Dok_PickDocument_ComboBox.IsEnabled = false;
-            Dok_PickType_ComboBox.IsEnabled = true;
-            Dok_StartDate_DateTimePicker.IsEnabled = true;
-            Dok_EndDate_DateTimePicker.IsEnabled = true;
-
-        }
-
-        private void Dok_Save_Button_Click(object sender, RoutedEventArgs e)
+        #region SaveButton
+        private void Doc_Save_Button_Click(object sender, RoutedEventArgs e)
         {
 
-          
-
-        // We want add a new documentation with the selected values to a Student or update an existing document
-
-        // Check if the DateTimePicker values are not null
-        if (Dok_StartDate_DateTimePicker.Value.HasValue && Dok_EndDate_DateTimePicker.Value.HasValue)
-        {                   //- Check for HasValue: Since Value is a nullable type (DateTime), we need to check if it has a value before trying to access it. 
-                            //  This is done using the HasValue property.
 
 
-            // Check if in edit mode or not
-            if (edit == false)
-            {
-                // prepare the New Documentation object 
-                Documentation documentationToBeCreated = new Documentation();
-                //First get the selected student´s CPR
-                if (Dok_PickStudent_ComboBox.SelectedItem is Student selectedStudent)
+            // We want add a new documentation with the selected values to a Student or update an existing document
+
+            // Check if the DateTimePicker values are not null
+            if (Doc_StartDate_DateTimePicker.Value.HasValue && Doc_EndDate_DateTimePicker.Value.HasValue)
+            {                   //- Check for HasValue: Since Value is a nullable type (DateTime), we need to check if it has a value before trying to access it. 
+                                //  This is done using the HasValue property.
+
+
+                // Check if in edit mode or not
+                if (edit == false)
                 {
-                    //Here we make sure that when we use DocStuCPR it is pulling information from StuCPR in Students to make sure correct CPR is accessed
-                    documentationToBeCreated.DocStuCPR = selectedStudent.StuCPR;
+                    // prepare the New Documentation object 
+                    Documentation documentationToBeCreated = new Documentation();
+                    //First get the selected student´s CPR
+                    if (Doc_PickStudent_ComboBox.SelectedItem is Student selectedStudent)
+                    {
+                        //Here we make sure that when we use DocStuCPR it is pulling information from StuCPR in Students to make sure correct CPR is accessed
+                        documentationToBeCreated.DocStuCPR = selectedStudent.StuCPR;
+                    }
+                    else
+                    {
+                        // method to handle case where no student is selected 
+                        return;
+                    }
+
+                    // Then get the selected DocType
+                    if (Doc_PickType_ComboBox.SelectedItem is Documentation.DocTypeEnum selectedDocType)
+                    {
+                        documentationToBeCreated.DocType = selectedDocType;
+                    }
+                    else
+                    {
+                        // Handle case where no document type is selected
+                        return;
+                    }
+
+                    //Set Properties
+                    documentationToBeCreated.DocStartDate = Doc_StartDate_DateTimePicker.Value.Value;
+                    documentationToBeCreated.DocEndDate = Doc_EndDate_DateTimePicker.Value.Value;
+                    documentationToBeCreated.DocFile = fileData;
+
+                    SaveDocumentation(documentationToBeCreated);
                 }
                 else
                 {
-                    // method to handle case where no student is selected 
-                    return;
-                }
-
-                // Then get the selected DocType
-                if (Dok_PickType_ComboBox.SelectedItem is Documentation.DocTypeEnum selectedDocType)
-                {
-                    documentationToBeCreated.DocType = selectedDocType;
-                }
-                else
-                {
-                    // Handle case where no document type is selected
-                    return;
-                }
-
-                //Set Properties
-                documentationToBeCreated.DocStartDate = Dok_StartDate_DateTimePicker.Value.Value;
-                documentationToBeCreated.DocEndDate = Dok_EndDate_DateTimePicker.Value.Value;
-                documentationToBeCreated.DocFile = fileData;
-
-                SaveDocumentation(documentationToBeCreated); 
-            }
-            else
-            {
                     //Now we retrieve the selected DocType
 
-                    if (Dok_PickType_ComboBox.SelectedItem is Documentation.DocTypeEnum selectedDocType)
+                    if (Doc_PickType_ComboBox.SelectedItem is Documentation.DocTypeEnum selectedDocType)
                     {
                         CurrentDocumentation.DocType = selectedDocType;
                     }
@@ -194,36 +142,37 @@ namespace VindegadeKS_WPF
                         return;
                     }
                     // Update the CurrentDocumentation with new values from the form
-                    CurrentDocumentation.DocStartDate = Dok_StartDate_DateTimePicker.Value.Value;
-                CurrentDocumentation.DocEndDate = Dok_EndDate_DateTimePicker.Value.Value;
-                CurrentDocumentation.DocFile = fileData; // Assuming fileData is set correctly
+                    CurrentDocumentation.DocStartDate = Doc_StartDate_DateTimePicker.Value.Value;
+                    CurrentDocumentation.DocEndDate = Doc_EndDate_DateTimePicker.Value.Value;
+                    CurrentDocumentation.DocFile = fileData; // Assuming fileData is set correctly
 
-              
-                UpdateDocumentation(CurrentDocumentation);
+
+                    UpdateDocumentation(CurrentDocumentation);
 
                     // Reset comboBox PickDocumentation
-                     Dok_PickDocument_ComboBox.SelectedItem = null;
+                    Doc_PickDocument_ComboBox.SelectedItem = null;
                 }
 
                 //Reset comboboxes
                 ClearInputFields();
 
-            //Controls which button the user can interact with - User needs to be able to Add more Lessons, but nothing else
-            Dok_Add_Button.IsEnabled = true;
-            Dok_Save_Button.IsEnabled = false;
-            Dok_Edit_Button.IsEnabled =true;
-            Dok_Delete_Button.IsEnabled = false;
+                //Controls which button the user can interact with - User needs to be able to Add more Lessons, but nothing else
+                Doc_Add_Button.IsEnabled = true;
+                Doc_Save_Button.IsEnabled = false;
+                Doc_Edit_Button.IsEnabled = true;
+                Doc_Delete_Button.IsEnabled = false;
 
+            }
+
+            else
+            {
+                //error message to user if dates are not selected
+            }
         }
+        #endregion
 
-        else 
-        {
-            //error message to user if dates are not selected
-        } 
-
-    }
-
-        private void Dok_Edit_Button_Click(object sender, RoutedEventArgs e)
+        #region EditButton
+        private void Doc_Edit_Button_Click(object sender, RoutedEventArgs e)
         {
 
             
@@ -237,29 +186,32 @@ namespace VindegadeKS_WPF
             //Searches through the items (students) in our combobox to find the one whose CPR matches the selected student in our listbox
             //  - the one we stored in currentItem. 
             // The Cast<Student>() method is used to treat each item in the ComboBox as a student object
-            var studentToSelect = Dok_PickStudent_ComboBox.Items.Cast<Student>().FirstOrDefault(s => s.StuCPR == currentItem);
+            var studentToSelect = Doc_PickStudent_ComboBox.Items.Cast<Student>().FirstOrDefault(s => s.StuCPR == currentItem);
 
             // If a match is found, then the student is set as the selected item in the ComboBox and display it
             
             if (studentToSelect != null)
             {
-                Dok_PickStudent_ComboBox.SelectedItem = studentToSelect;
+                Doc_PickStudent_ComboBox.SelectedItem = studentToSelect;
             }
 
 
             UnlockInputFields();
 
-            Dok_PickStudent_ComboBox.IsEnabled = true;
-            Dok_Save_Button.IsEnabled = true;
-            Dok_Delete_Button.IsEnabled = true;
+            Doc_PickStudent_ComboBox.IsEnabled = true;
+            Doc_Save_Button.IsEnabled = true;
+            Doc_Delete_Button.IsEnabled = true;
 
         }
+        #endregion
 
-        private void Dok_Delete_Button_Click(object sender, RoutedEventArgs e)
+        #region DeleteButton
+
+        private void Doc_Delete_Button_Click(object sender, RoutedEventArgs e)
         {
        
             //Checks that a Document is selected 
-            if (Dok_PickDocument_ComboBox.SelectedItem != null)
+            if (Doc_PickDocument_ComboBox.SelectedItem != null)
             {
                 
                 //DELETE the Document chosen
@@ -271,18 +223,18 @@ namespace VindegadeKS_WPF
             // Dok_PickDocument_ComboBox.SelectedItem = null;
 
             //Controls which button the user can interact with - User needs to be able to Add more Lessons, but nothing else
-            Dok_Add_Button.IsEnabled = true;
-            Dok_Save_Button.IsEnabled = false;
-            Dok_Edit_Button.IsEnabled = true;
-            Dok_Delete_Button.IsEnabled = false;
+            Doc_Add_Button.IsEnabled = true;
+            Doc_Save_Button.IsEnabled = false;
+            Doc_Edit_Button.IsEnabled = true;
+            Doc_Delete_Button.IsEnabled = false;
         }
+        #endregion
 
         #region FileUpload
 
-        // byte array fileData, is used in DokuFile_button to read the contents of the file, and Save_Button to call the UploadFile method
-        byte[] fileData;
+        
 
-        private void Dok_DokuFile_Button_Click(object sender, RoutedEventArgs e)
+        private void Doc_UploadFile_Button_Click(object sender, RoutedEventArgs e)
         {
 
             // First we create an instance of OpenFIleDialog, to show a dialog so the user can select a file
@@ -302,7 +254,7 @@ namespace VindegadeKS_WPF
 
 
                 // Change the button content to the file name
-                Dok_DokuFile_Button.Content = fileName;
+                Doc_UploadFile_Button.Content = fileName;
 
                 /*
                  try
@@ -325,133 +277,38 @@ namespace VindegadeKS_WPF
         }
 
         #endregion
-        #endregion
-
-        #region ButtonMethods
-
-        #region UploadFile
-
-        public void UploadFile(byte[] fileData) 
-        {
-            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString)) 
-            {
-                con.Open();
-
-                SqlCommand cmd = new SqlCommand("INSERT INTO VK_Documentations (DocumentationFile)" + 
-                    "VALUES (@FileData)" + 
-                    "SELECT @@IDENTITY", con);
-
-                cmd.Parameters.AddWithValue("@FileData", fileData);
-
-                cmd.ExecuteNonQuery();
-
-             
-            }
-
-        }
 
         #endregion
-
-        #region RetrieveDocumentationData
-        public void RetrieveDocumentationData(int dBRowNumber)
-        {
-            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
-            {
-                con.Open();
-                SqlCommand cmd = new SqlCommand("SELECT PK_DocID, DocStartDate, DocEndDate, DocType, FK_StuCPR, DocumentationFile FROM VK_Documentations ORDER BY PK_DocId ASC OFFSET @dBRowNumber ROWS FETCH NEXT 1 ROW ONLY", con);
-
-                if (dBRowNumber < 0)
-                {
-                    dBRowNumber = 0;
-                }
-                cmd.Parameters.AddWithValue("@dBRowNumber", dBRowNumber);
-
-                using (SqlDataReader dr = cmd.ExecuteReader())
-                {
-                    while (dr.Read())
-                    {
-
-                        documentationToBeRetrieved = new DocListBoxItems (0, "", "", "", default, default, "", default, "")
-                        {
-                            ListBoxDocId = int.Parse(dr["PK_DocID"].ToString()),
-                            ListBoxDocStartDate = DateOnly.FromDateTime((DateTime)dr["DocStarDate"]),
-                            ListBoxDocEndDate = DateOnly.FromDateTime((DateTime)dr["DocEndDate"]),
-                            ListBoxDocType = dr["DocType"].ToString(),
-                           
-                        };
-                    }
-                }
-            }
-        }
-
-
-
-        #endregion
-
-        #region RetrieveStudentData
-        public void RetrieveStudentData(int dbRowNumber)
-        {
-            //Setting up a connection to the database
-            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
-            {
-                //Opens said connection
-                con.Open();
-                //Creates a four cmd SqlCommand, which SELECTs specific rows from each table in the DB 
-                SqlCommand cmdStu = new SqlCommand("SELECT PK_StuCPR, StuFirstName, StuLastName, StuPhone, StuEmail FROM VK_Students ORDER BY PK_StuCPR ASC OFFSET @dBRowNumber ROWS FETCH NEXT 1 ROW ONLY", con);
-
-                //Set dbRowNumber to 0 if under 0
-                if (dbRowNumber < 0)
-                {
-                    dbRowNumber = 0;
-                }
-                //Gives @dbRowNumber the value of dbRowNumber
-                cmdStu.Parameters.AddWithValue("@dbRowNumber", dbRowNumber);
-
-                using (SqlDataReader dr = cmdStu.ExecuteReader())
-                {
-                    while (dr.Read())
-                    {
-                        studentToBeRetrievedStu = new Student(dr["PK_StuCPR"].ToString(), dr["StuFirstName"].ToString(), dr["StuLastName"].ToString(), dr["StuPhone"].ToString(), dr["StuEmail"].ToString());
-                    }
-                }
-            }
-        }
-        #endregion
-
-       
-
-        #endregion
-
 
         #region InputFieldsMethods
         private void ClearInputFields()
         {
-            Dok_PickStudent_ComboBox.SelectedItem = null;
+            Doc_PickStudent_ComboBox.SelectedItem = null;
           
-            Dok_PickType_ComboBox.SelectedItem = null;
+            Doc_PickType_ComboBox.SelectedItem = null;
 
-            Dok_StartDate_DateTimePicker.Value = DateTime.Now;
-            Dok_EndDate_DateTimePicker.Value = DateTime.Now;
+            Doc_StartDate_DateTimePicker.Value = DateTime.Now;
+            Doc_EndDate_DateTimePicker.Value = DateTime.Now;
 
-            Dok_DokuFile_Button.Content = "Upload File";
+            Doc_UploadFile_Button.Content = "Upload File";
         }
 
         private void LockInputFields()
         {
             
-            Dok_PickStudent_ComboBox.IsEnabled = false;
-            Dok_PickType_ComboBox.IsEnabled = false;
-            Dok_StartDate_DateTimePicker.IsEnabled = false;
-            Dok_EndDate_DateTimePicker.IsEnabled = false;
+            Doc_PickStudent_ComboBox.IsEnabled = false;
+            Doc_PickType_ComboBox.IsEnabled = false;
+            Doc_StartDate_DateTimePicker.IsEnabled = false;
+            Doc_EndDate_DateTimePicker.IsEnabled = false;
         }
 
         private void UnlockInputFields()
         {
-            Dok_PickStudent_ComboBox.IsEnabled = true;
-            Dok_PickDocument_ComboBox.IsEnabled = true;
-            Dok_PickType_ComboBox.IsEnabled = true;
-            Dok_StartDate_DateTimePicker.IsEnabled = true;
-            Dok_EndDate_DateTimePicker.IsEnabled = true;
+            Doc_PickStudent_ComboBox.IsEnabled = true;
+            Doc_PickDocument_ComboBox.IsEnabled = true;
+            Doc_PickType_ComboBox.IsEnabled = true;
+            Doc_StartDate_DateTimePicker.IsEnabled = true;
+            Doc_EndDate_DateTimePicker.IsEnabled = true;
         }
 
         #endregion
@@ -459,11 +316,11 @@ namespace VindegadeKS_WPF
         #region ComboBoxes
 
         #region SelectionChanged
-        private void Dok_PickStudent_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Doc_PickStudent_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // First we need to check that the selected item is a Student object
 
-            if(Dok_PickStudent_ComboBox.SelectedItem is Student selectedStudent) 
+            if(Doc_PickStudent_ComboBox.SelectedItem is Student selectedStudent) 
             {
                 //Set CurrentStudent to SelectedStudent
                 CurrentStudent = selectedStudent;
@@ -472,38 +329,35 @@ namespace VindegadeKS_WPF
                 List<Documentation> documents = RetrieveAllDocuments();
 
                 // Load the documents into the combobox
-                Dok_PickDocument_ComboBox.ItemsSource = documents;
-                Dok_PickDocument_ComboBox.DisplayMemberPath = "DocType";
-                Dok_PickDocument_ComboBox.SelectedValuePath = "DocId";
-                Dok_PickDocument_ComboBox.SelectedIndex = -1; // reset or set to a default value
+                Doc_PickDocument_ComboBox.ItemsSource = documents;
+                Doc_PickDocument_ComboBox.DisplayMemberPath = "DocType";
+                Doc_PickDocument_ComboBox.SelectedValuePath = "DocId";
+                Doc_PickDocument_ComboBox.SelectedIndex = -1; // reset or set to a default value
             }
 
             else 
             {
                 // if no student is selected or an invalid selection is made we set CurrentStudent to equal null 
                 CurrentStudent = null;
-                Dok_PickDocument_ComboBox = null;
+                Doc_PickDocument_ComboBox = null;
             }
         }
 
-        private void Dok_PickType_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-        private void Dok_PickDocument_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        
+        private void Doc_PickDocument_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // Chekc if the selected item in our PickDocument Combobox is a Document
-            if(Dok_PickDocument_ComboBox.SelectedItem is Documentation selectedDocument) 
+            if(Doc_PickDocument_ComboBox.SelectedItem is Documentation selectedDocument) 
             {
 
                 CurrentDocumentation = selectedDocument;
 
                 //Load document detatils into the controls
-                Dok_StartDate_DateTimePicker.Value = selectedDocument.DocStartDate;
-                Dok_EndDate_DateTimePicker.Value = selectedDocument.DocEndDate;
+                Doc_StartDate_DateTimePicker.Value = selectedDocument.DocStartDate;
+                Doc_EndDate_DateTimePicker.Value = selectedDocument.DocEndDate;
 
                 // Set the SelectedItem of Dok_PickType_ComboBox to the document's type
-                Dok_PickType_ComboBox.SelectedItem = selectedDocument.DocType;
+                Doc_PickType_ComboBox.SelectedItem = selectedDocument.DocType;
 
 
             }
@@ -511,25 +365,13 @@ namespace VindegadeKS_WPF
             {
                 CurrentDocumentation = null;
             } 
-        } 
-
-        private void Dok_DisDocType_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            /*
-            Dok_DisStartDate_TextBlock.Text = "Start Dato: " + (Dok_DisStudents_ListBox.SelectedItem as DocListBoxItems).ListBoxDocStartDate;
-            Dok_DisEndDate_TextBlock.Text = "Slut Dato: " + (Dok_DisStudents_ListBox.SelectedItem as DocListBoxItems).ListBoxDocEndDate;
-            Dok_DisType_TextBlock.Text = "Type: " + (Dok_DisStudents_ListBox.SelectedItem as DocListBoxItems).ListBoxDocType;
-            Dok_DisDokumenation_TextBlock.Text = "Dokumentation: " + (Dok_DisStudents_ListBox.SelectedItem as DocListBoxItems).ListBoxDocDocumentation;
-
-            //Sets currentItem to equal the CPR of selected item
-            currentItem = (Dok_DisStudents_ListBox.SelectedItem as DocListBoxItems).ListBoxStuCPR;
-
-            //Sets edit to false, as it is impossible for it to be true currently
-            edit = false;
-
-
-            */
         }
+
+
+
+
+
+
         #endregion
 
         #region ComboBoxMethods
@@ -541,7 +383,7 @@ namespace VindegadeKS_WPF
             ComboBoxDocType();
 
 
-            
+
         }
 
 
@@ -551,11 +393,11 @@ namespace VindegadeKS_WPF
 
             // First we set the Combox´s ItemSource to the list of Student Objects
             // This tells the ComboBox what collection of items it should display
-            Dok_PickStudent_ComboBox.ItemsSource = students;
+            Doc_PickStudent_ComboBox.ItemsSource = students;
 
             // Then set the DisplayMemberPath to our property "StuFullName", to display students full names
 
-            Dok_PickStudent_ComboBox.DisplayMemberPath = "StuFullName";
+            Doc_PickStudent_ComboBox.DisplayMemberPath = "StuFullName";
 
         }
 
@@ -563,30 +405,16 @@ namespace VindegadeKS_WPF
         {
 
             // Populate the ComboBox with enum values directly
-            Dok_PickType_ComboBox.ItemsSource = Enum.GetValues(typeof(Documentation.DocTypeEnum));
-            Dok_PickType_ComboBox.SelectedIndex = 0;
+            Doc_PickType_ComboBox.ItemsSource = Enum.GetValues(typeof(Documentation.DocTypeEnum));
+            Doc_PickType_ComboBox.SelectedIndex = 0;
         }
 
 
         #endregion
 
-
-
         #endregion
 
-        #region DateTimePickers
-        private void Dok_EndDate_DateTimePicker_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
 
-        }
-
-        private void Dok_StartDate_DateTimePicker_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
-
-        }
-        #endregion
-
-   
 
         #region Database
 
@@ -794,31 +622,7 @@ namespace VindegadeKS_WPF
 
         public void SaveDocumentation(Documentation documentationToBeCreated)
         {
-            /*
-            //First get the selected student´s CPR
-            if (Dok_PickStudent_ComboBox.SelectedItem is Student selectedStudent)
-            {
-                //Here we make sure that when we use DocStuCPR it is pulling information from StuCPR in Students to make sure correct CPR is accessed
-                documentationToBeCreated.DocStuCPR = selectedStudent.StuCPR;
-            }
-            else
-            {
-                // method to handle case where no student is selected 
-                return;
-            }
-
-            // Then get the selected DocType
-            if (Dok_PickType_ComboBox.SelectedItem is Documentation.DocTypeEnum selectedDocType)
-            {
-                documentationToBeCreated.DocType = selectedDocType;
-            }
-            else
-            {
-                // Handle case where no document type is selected
-                return;
-            }
-            */
-
+            
 
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
              {
