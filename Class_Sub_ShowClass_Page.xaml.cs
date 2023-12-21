@@ -37,18 +37,18 @@ namespace VindegadeKS_WPF
             Class_Sub_Save_Button.IsEnabled = false; //Makes sure that the 'Gem' button is not enabled when the page is opened - There were some issues with it staying enabled if it was open and the user left the page
         }
 
-        #region Variables and ConStuClass
-        ConStuClass conToBeRetrieved; //Used to store the data retrieved when calling either RetrieveConnection or RetrieveStudent both of which stores the data in the class ConStuClass
-        Class classToBeRetrieved; //Used to store the data retrieved when calling RetrieveClass - Is its own class because the class properties has not been added to ConStuClass
+        #region Variables and ClassSubListBox
+        ClassSubListBox conToBeRetrieved; //Used to store the data retrieved when calling either RetrieveConnection or RetrieveStudent both of which stores the data in the class ClassSubListBox
+        Class classToBeRetrieved; //Used to store the data retrieved when calling RetrieveClass - Is its own class because the class properties has not been added to ClassSubListBox
 
-        ConStuClass currentCon = new ConStuClass(); //Instantiation of ConStuClass
+        ClassSubListBox currentCon = new ClassSubListBox(); //Instantiation of ClassSubListBox
         Class currentClass = new Class(); //Instantiation of Class
 
         string currentClassName; //Stores the ClassName of the current class of the page - Used by many methods, when only the name of the current class is needed
         string currentConStuID; //Keeps track of which student has been chosen - Used by DeleteConnection
 
         //A class used by the page storing data from the tables VK_Students and VK_Class_Student, as well as the extra attribute SetUp
-        public class ConStuClass
+        public class ClassSubListBox
         {
             //Attributes from the tables VK_Students and VK_Class_Student
             public string CK_ClassName { get; set; }
@@ -61,8 +61,8 @@ namespace VindegadeKS_WPF
             //Extra attribute used for the GUI
             public string SetUp { get; set; }
             
-            //Constructor for ConStuClass
-            public ConStuClass(string _cK_ClassName, string _cK_StuCPR, string _stuFirstName, string _stuLastName, string _stuPhone, string _stuEmail, string _setUp)
+            //Constructor for ClassSubListBox
+            public ClassSubListBox(string _cK_ClassName, string _cK_StuCPR, string _stuFirstName, string _stuLastName, string _stuPhone, string _stuEmail, string _setUp)
             {
                 CK_ClassName = _cK_ClassName;
                 CK_StuCPR = _cK_StuCPR;
@@ -74,7 +74,7 @@ namespace VindegadeKS_WPF
             }
 
             //Acts as a parameterless default constructor
-            public ConStuClass() : this("", "", "", "", "", "", "") { }
+            public ClassSubListBox() : this("", "", "", "", "", "", "") { }
         }
         #endregion
 
@@ -162,7 +162,7 @@ namespace VindegadeKS_WPF
             if (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem != null)
             {
                 //Sets currentConStuID equal to the CK_StuCPR of selected item - Used by Class_Sub_DelCon_Button_Click
-                currentConStuID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as ConStuClass).CK_StuCPR;
+                currentConStuID = (Class_Sub_ShowClass_DisStu_ListBox.SelectedItem as ClassSubListBox).CK_StuCPR;
             }
         }
 
@@ -181,8 +181,8 @@ namespace VindegadeKS_WPF
                 //Saves count command result to int
                 int intCount = (int)count.ExecuteScalar();
 
-                //Make a list of the class ConStuClass called stu (Name doesn't matter)
-                List<ConStuClass> stu = new List<ConStuClass>();
+                //Make a list of the class ClassSubListBox called stu (Name doesn't matter)
+                List<ClassSubListBox> stu = new List<ClassSubListBox>();
                 
                 //Forloop which adds intCount number of new stu to stu-list
                 for (int i = 0; i < intCount; i++)
@@ -281,8 +281,8 @@ namespace VindegadeKS_WPF
                 //Run the command and saves the resultat in intCount
                 int intCount = (int)count.ExecuteScalar();
 
-                //Make a list of the class ConStuClass
-                List<ConStuClass> types = new List<ConStuClass>();
+                //Make a list of the class ClassSubListBox
+                List<ClassSubListBox> types = new List<ClassSubListBox>();
 
                 //Forloop which runs intCount amount of times
                 for (int i = 0; i < intCount; i++)
@@ -359,7 +359,7 @@ namespace VindegadeKS_WPF
         #region Database Methods
         #region Connection
         //Creates a connect between students and class
-        public void CreateConnection(ConStuClass conToBeCreated)
+        public void CreateConnection(ClassSubListBox conToBeCreated)
         {
             //Setting up a connection to the database
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
@@ -419,7 +419,7 @@ namespace VindegadeKS_WPF
                         stu.Parameters.AddWithValue("@CK_StuCPR", dr["CK_StuCPR"].ToString());
 
                         //Initialization of conToBeRetrived
-                        conToBeRetrieved = new ConStuClass("", "", "", "", "", "", "")
+                        conToBeRetrieved = new ClassSubListBox("", "", "", "", "", "", "")
                         {
                             //Sets the attributes of conToBeRetrieved equal to the data from the current row of the database
                             CK_ClassName = dr["CK_ClassName"].ToString(),
@@ -610,7 +610,7 @@ namespace VindegadeKS_WPF
                     while (dr.Read())
                     {
                         //Sets conToBeRetrieve a new empty ClassStuConnection, which is then filled
-                        conToBeRetrieved = new ConStuClass("", "", "", "", "", "", "")
+                        conToBeRetrieved = new ClassSubListBox("", "", "", "", "", "", "")
                         {
                             //Sets the attributes of conToBeRetrieved equal to the data from the current row of the database
                             CK_StuCPR = dr["PK_StuCPR"].ToString(),
