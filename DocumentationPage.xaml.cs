@@ -487,7 +487,7 @@ namespace VindegadeKS_WPF
                     {
                         
                         // Create a new Student object and populate it with data from the current row
-                        studentToBeRetrievedStu = new Student ("", "", "", "", "")
+                        studentToBeRetrievedStu = new Student ("", "", "", "", "", "")
                         {
                             //Sets the attributes of conToBeRetrieved equal to the data from the current row of the database
                             StuCPR = dr["PK_StuCPR"].ToString(),
@@ -549,25 +549,33 @@ namespace VindegadeKS_WPF
 
             }
 
+            // Return the list of students
             return students;
         }
 
         #endregion
 
-        #region RetrieveDocument
-        
-        // Method to retrieve a document belonging to a single student (needed in combobox selection changed Pick Student)
+        #region RetrieveDocumentsForSeletedStudent
+
+        // Method to retrieve all documents belonging to a single student, identified by stuCPR (needed in combobox selection changed Pick Student)
         public List<Documentation> RetrieveDocument(string stuCPR)
         {
+            // Create a Documentation list to hold the retrieved documents
             List<Documentation> documents = new List<Documentation>();
 
+            // Establish a database connection using the connection string
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
+                // Open the database connection
                 con.Open();
+
+                // Prepare a SQL command to retrieve documents where the foreign key matches the provided student CPR
                 SqlCommand cmd = new SqlCommand("SELECT PK_DocID, DocStartDate, DocEndDate, DocType, FK_StuCPR, DocumentationFile FROM VK_Documentations WHERE FK_StuCPR = @StuCPR ORDER BY PK_DocID ASC", con);
+
+                // Add stuCPR as a parameter to the SQL command to avoid SQL injection
                 cmd.Parameters.AddWithValue("@StuCPR", stuCPR);
 
-
+                // Local function to parse the DocType enum from the database value, so we can populate it with data from the from the database later
                 Documentation.DocTypeEnum ParseDocTypeEnum(object docTypeValue)
                 {
                     if (docTypeValue != DBNull.Value && Enum.TryParse(docTypeValue.ToString(), out Documentation.DocTypeEnum docType))
@@ -576,14 +584,18 @@ namespace VindegadeKS_WPF
                     }
                     else
                     {
-                        return default; // Or a default value for your enum
+                        return default; // Returns a default value for our enum if parsing fails
                     }
                 }
 
+
+                // Execute the command and use SqlDataReader to read the results
                 using (SqlDataReader dr = cmd.ExecuteReader())
                 {
+                    // Iterate through each record in the result set
                     while (dr.Read())
                     {
+                        // Create a new Documentation object and populate it with data from the current row
                         Documentation document = new Documentation
                         {
                             DocId = int.Parse(dr["PK_DocID"].ToString()),
@@ -592,11 +604,13 @@ namespace VindegadeKS_WPF
                             DocType = ParseDocTypeEnum(dr["DocType"])
                         };
 
+                        // Add the populated document to the documents list
                         documents.Add(document);
                     }
                 }
             }
 
+            // Return the list of documents
             return documents;
         }
 
