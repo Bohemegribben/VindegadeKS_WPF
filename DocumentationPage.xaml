@@ -47,7 +47,7 @@
 
         <!-- Input Boxes -->
         
-        <ComboBox x:Name="Doc_PickStudent_ComboBox" HorizontalAlignment="Left" Margin="100,434,0,0" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10" SelectionChanged="Doc_PickStudent_ComboBox_SelectionChanged" />
+        <ComboBox x:Name="Doc_PickStudent_ComboBox" HorizontalAlignment="Left" Margin="100,434,0,0" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10" SelectionChanged="Doc_PickStudent_ComboBox_SelectionChanged_1" />
         <ComboBox x:Name="Doc_PickDocument_ComboBox" HorizontalAlignment="Left" Margin="100,513,0,0" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10" SelectionChanged="Doc_PickDocument_ComboBox_SelectionChanged" />
         
         <xctk:DateTimePicker x:Name="Doc_StartDate_DateTimePicker"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="100,594,0,0" Width="315" Height="50" FontSize="20" Format="Custom" FormatString="yyyy-MM-dd" TimePickerVisibility="Collapsed"  />

@@ -316,17 +316,18 @@ namespace VindegadeKS_WPF
         #region ComboBoxes
 
         #region SelectionChanged
-        private void Doc_PickStudent_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Doc_PickStudent_ComboBox_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
         {
+
             // First we need to check that the selected item is a Student object
 
-            if(Doc_PickStudent_ComboBox.SelectedItem is Student selectedStudent) 
+            if (Doc_PickStudent_ComboBox.SelectedItem is Student selectedStudent)
             {
                 //Set CurrentStudent to SelectedStudent
                 CurrentStudent = selectedStudent;
 
                 //Retrieve documents for the selected student
-                List<Documentation> documents = RetrieveAllDocuments();
+                List<Documentation> documents = RetrieveDocument(selectedStudent.StuCPR);
 
                 // Load the documents into the combobox
                 Doc_PickDocument_ComboBox.ItemsSource = documents;
@@ -335,15 +336,15 @@ namespace VindegadeKS_WPF
                 Doc_PickDocument_ComboBox.SelectedIndex = -1; // reset or set to a default value
             }
 
-            else 
+            else
             {
                 // if no student is selected or an invalid selection is made we set CurrentStudent to equal null 
                 CurrentStudent = null;
                 Doc_PickDocument_ComboBox = null;
             }
+
         }
 
-        
         private void Doc_PickDocument_ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // Chekc if the selected item in our PickDocument Combobox is a Document
@@ -513,9 +514,57 @@ namespace VindegadeKS_WPF
 
         #endregion
 
+        #region RetrieveDocument
+        
+        // Method to retrieve a document belonging to a single student (needed in combobox selection changed Pick Student)
+        public List<Documentation> RetrieveDocument(string stuCPR)
+        {
+            List<Documentation> documents = new List<Documentation>();
+
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
+            {
+                con.Open();
+                SqlCommand cmd = new SqlCommand("SELECT PK_DocID, DocStartDate, DocEndDate, DocType, FK_StuCPR, DocumentationFile FROM VK_Documentations WHERE FK_StuCPR = @StuCPR ORDER BY PK_DocID ASC", con);
+                cmd.Parameters.AddWithValue("@StuCPR", stuCPR);
+
+
+                Documentation.DocTypeEnum ParseDocTypeEnum(object docTypeValue)
+                {
+                    if (docTypeValue != DBNull.Value && Enum.TryParse(docTypeValue.ToString(), out Documentation.DocTypeEnum docType))
+                    {
+                        return docType;
+                    }
+                    else
+                    {
+                        return default; // Or a default value for your enum
+                    }
+                }
+
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        Documentation document = new Documentation
+                        {
+                            DocId = int.Parse(dr["PK_DocID"].ToString()),
+                            DocStartDate = dr["DocStartDate"] != DBNull.Value ? (DateTime)dr["DocStartDate"] : default(DateTime),
+                            DocEndDate = dr["DocEndDate"] != DBNull.Value ? (DateTime)dr["DocEndDate"] : default(DateTime),
+                            DocType = ParseDocTypeEnum(dr["DocType"])
+                        };
+
+                        documents.Add(document);
+                    }
+                }
+            }
+
+            return documents;
+        }
+
+        #endregion 
+
         #region RetrieveAllDocuments
 
-       public List<Documentation> RetrieveAllDocuments()
+        public List<Documentation> RetrieveAllDocuments()
         {
             List<Documentation> documents = new List<Documentation>();
 
@@ -674,5 +723,7 @@ namespace VindegadeKS_WPF
         #endregion
 
         #endregion
+
+      
     }
 }
