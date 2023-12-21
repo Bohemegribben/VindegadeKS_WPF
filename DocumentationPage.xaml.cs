@@ -174,6 +174,8 @@ namespace VindegadeKS_WPF
                 //populate comboboxes again
                 ComboBoxStartUp();
 
+                LockInputFields();
+
                 //Controls which button the user can interact with - User needs to be able to Add more documents and edit again
                 Doc_Add_Button.IsEnabled = true;
                 Doc_Save_Button.IsEnabled = false;
@@ -294,6 +296,7 @@ namespace VindegadeKS_WPF
         {
             
             Doc_PickStudent_ComboBox.IsEnabled = false;
+            Doc_PickDocument_ComboBox.IsEnabled = false;
             Doc_PickType_ComboBox.IsEnabled = false;
             Doc_StartDate_DateTimePicker.IsEnabled = false;
             Doc_EndDate_DateTimePicker.IsEnabled = false;
