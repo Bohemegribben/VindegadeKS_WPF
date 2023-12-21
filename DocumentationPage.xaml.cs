@@ -616,105 +616,50 @@ namespace VindegadeKS_WPF
 
         #endregion 
 
-        #region RetrieveAllDocuments
-
-        public List<Documentation> RetrieveAllDocuments()
-        {
-            List<Documentation> documents = new List<Documentation>();
-
-            //Establish connection to our Database using our connection string that´s defined in our configuration
-            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
-            {
-                //open the connection
-                con.Open();
-
-                //Now we create a SQL Command named "cmd" to select all students from our VK_Students table 
-                //We make the Query to select all students ordered by first name
-                // This command is fetching all rows in one go, eliminating the need to fect rows one by one.
-                SqlCommand cmd = new SqlCommand("SELECT PK_DocID, DocStartDate, DocEndDate, DocType, FK_StuCPR, DocumentationFile FROM VK_Documentations ORDER BY PK_DocID ASC", con);
-
-
-                Documentation.DocTypeEnum ParseDocTypeEnum(object docTypeValue)
-                {
-                    if (docTypeValue != DBNull.Value && Enum.TryParse(docTypeValue.ToString(), out Documentation.DocTypeEnum docType))
-                    {
-                        return docType;
-                    }
-                    else
-                    {
-                        return default; // Or a default value for your enum
-                    }
-                }
-
-                //Executing the command and using SQLdataReader to read the data that is returned from the database
-                using (SqlDataReader dr = cmd.ExecuteReader())
-                {
-                    // Loop through the data rows our database has returned
-                    while (dr.Read())
-                    {
-                        // Create a new Documentation Object and initialize it with data from the current row
-                        Documentation document = new Documentation
-                        {
-                            DocId = int.Parse(dr["PK_DocID"].ToString()),
-                            DocStartDate = dr["DocStartDate"] != DBNull.Value ? (DateTime)dr["DocStartDate"] : default(DateTime),
-                            DocEndDate = dr["DocEndDate"] != DBNull.Value ? (DateTime)dr["DocEndDate"] : default(DateTime),
-                            DocType = ParseDocTypeEnum(dr["DocType"])
-                            //DocType = Enum.Parse<Documentation.DocTypeEnum>(dr["DocType"].ToString())
-
-                        };
-
-                        // Add the newly created Student object to the list
-                        documents.Add(document);
-                    }
-                }
-
-
-            }
-
-            return documents;
-
-
-        } 
-
-        #endregion
-
+    
         #region UpdateDocumentation
+
+        // Method for updatign an existing document in the database belonging to the selected student
         public void UpdateDocumentation(Documentation documentationToUpdate)
         {
           
 
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
+                // Open the database connection
                 con.Open();
 
-                //Creates a SqlCommand named "cmd", which UPDATES the attributes of a specific row in the table, based on the DocID
-                //SqlCommand cmd = new SqlCommand("UPDATE VK_Documentations SET DocStartDate = @DocStartDate, DocEndDate = @DocEndDate, DocType = @DocType, DocumentationFile = @DocumentationFile WHERE PK_DocID = @DocId", con);
-
-                // Since we want to be able to edit a document without uploading a new file we have to use If statements to run our command
+                
+                
+                // Since we want to be able to edit a document without uploading a new file we have to use If statements to run our commands
                 // - depending on whether DocumentationFile is NULL or not
                 SqlCommand cmd;
-                // If the Documentation file isn´t NULL we ask to update tile file
+
+                // Check if the Documentation file is provided (not null and has content)
                 if (documentationToUpdate.DocFile != null && documentationToUpdate.DocFile.Length > 0)
                 {
-                    // Update including the DocumentationFile
+                    // If a file is provided, prepare a SQL command to update all fields, including the DocumentationFile
                     cmd = new SqlCommand("UPDATE VK_Documentations SET DocStartDate = @DocStartDate, DocEndDate = @DocEndDate, DocType = @DocType, DocumentationFile = @DocumentationFile WHERE PK_DocID = @DocId", con);
+
+                    // Add the file as a parameter to the SQL command
                     cmd.Parameters.Add("@DocumentationFile", SqlDbType.VarBinary).Value = documentationToUpdate.DocFile;
                 }
 
                 // If Documentation is NULL, we ask to update Database without changing DocumentationFile
                 else
                 {
-                    // Update without changing the DocumentationFile
+                    // If no file is provided, prepare a SQL command to update all fields except the DocumentationFile
                     cmd = new SqlCommand("UPDATE VK_Documentations SET DocStartDate = @DocStartDate, DocEndDate = @DocEndDate, DocType = @DocType WHERE PK_DocID = @DocId", con);
                 }
 
-                //Gives @attribute the value of attribute
+                // Assign values to the SQL command parameters
                 cmd.Parameters.Add("@DocStartDate", SqlDbType.DateTime).Value = documentationToUpdate.DocStartDate;
                 cmd.Parameters.Add("@DocEndDate", SqlDbType.DateTime).Value = documentationToUpdate.DocEndDate;
                 cmd.Parameters.Add("@DocType", SqlDbType.NVarChar).Value = documentationToUpdate.DocType.ToString();
                 //cmd.Parameters.Add("@DocumentationFile", SqlDbType.VarBinary).Value = documentationToUpdate.DocFile;
                 cmd.Parameters.Add("@DocId", SqlDbType.Int).Value = documentationToUpdate.DocId;
 
+                // Execute the SQL command to update the document
                 cmd.ExecuteNonQuery();
             }
         }
@@ -723,17 +668,23 @@ namespace VindegadeKS_WPF
 
         #region SaveDocumentation
 
+        //Method to save a new document in the database 
         public void SaveDocumentation(Documentation documentationToBeCreated)
         {
-            
 
+            // Establish a connection to the database using the connection string
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
              {
-                 con.Open();
-                 SqlCommand cmd = new SqlCommand("INSERT INTO VK_Documentations (DocStartDate, DocEndDate, DocType, FK_StuCPR, DocumentationFile)" +
+                // Open the database connection
+                con.Open();
+
+                // Prepare a SQL command to insert a new document into VK_Documentations table
+                // The command also retrieves the identity (auto-incremented primary key) of the newly inserted row
+                SqlCommand cmd = new SqlCommand("INSERT INTO VK_Documentations (DocStartDate, DocEndDate, DocType, FK_StuCPR, DocumentationFile)" +
                                                   "VALUES(@DocStartDate, @DocEndDate,@DocType,@FK_StuCPR, @DocumentationFile)" +
                                                   "SELECT @@IDENTITY", con);
 
+                // Add parameters to the SQL command for each field to be inserted
                  cmd.Parameters.Add("@DocStartDate", SqlDbType.Date).Value = documentationToBeCreated.DocStartDate;
                  cmd.Parameters.Add("@DocEndDate", SqlDbType.Date).Value = documentationToBeCreated.DocEndDate;
                  cmd.Parameters.Add("@DocType", SqlDbType.NVarChar).Value = documentationToBeCreated.DocType;
@@ -741,35 +692,37 @@ namespace VindegadeKS_WPF
 
                  cmd.Parameters.Add("@DocumentationFile", SqlDbType.VarBinary).Value = documentationToBeCreated.DocFile;
 
-                 documentationToBeCreated.DocId = Convert.ToInt32(cmd.ExecuteScalar());
-
-                // cmd.ExecuteScalar();
+                // Execute the SQL command and retrieve the new document's ID
+                // Convert the returned object to an integer and assign it to the documentation's ID
+                documentationToBeCreated.DocId = Convert.ToInt32(cmd.ExecuteScalar());
 
              } 
 
-
-            
-
-           // UploadFile(fileData);
         }
         #endregion
 
         #region DeleteDocument
+
+        // Method to delete a specific document from the database
         public void DeleteDocument(Documentation DocumentToBeDeleted)
         {
-            //Setting up a connection to the database
+            // Establish a connection to the database using the connection string
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DatabaseServerInstance"].ConnectionString))
             {
-                //Opens said connection
+                // Open the database connection
                 con.Open();
 
-                //Creates a cmd SqlCommand, which DELETEs a specific row in the table, based on the CK_StuCPR
+                // Create a SqlCommand to delete a specific row in the VK_Documentations table
+                // The deletion is based on the primary key of the document, PK_DocID
                 SqlCommand cmd = new SqlCommand("DELETE FROM VK_Documentations WHERE PK_DocID = @PK_DocID", con);
 
-                //Gives @CK_StuCPR the value of conToBeDeleted
+                
+                // Add the document's ID as a parameter to the SQL command to specify which document to delete
+                // Using parameters helps prevent SQL injection attacks
                 cmd.Parameters.AddWithValue("@PK_DocId", DocumentToBeDeleted.DocId);
 
-                //Tells the database to execute the cmd sql command
+                // Execute the SQL command to delete the document
+                // Scalar execution is used, but you could also use ExecuteNonQuery() since the command does not return a result set
                 cmd.ExecuteScalar();
             }
         }
