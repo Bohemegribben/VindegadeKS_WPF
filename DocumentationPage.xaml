@@ -47,33 +47,33 @@
 
         <!-- Input Boxes -->
         
-        <ComboBox x:Name="Dok_PickStudent_ComboBox" HorizontalAlignment="Left" Margin="100,434,0,0" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10" SelectionChanged="Dok_PickStudent_ComboBox_SelectionChanged" />
-        <ComboBox x:Name="Dok_PickDocument_ComboBox" HorizontalAlignment="Left" Margin="100,513,0,0" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10" SelectionChanged="Dok_PickDocument_ComboBox_SelectionChanged" />
+        <ComboBox x:Name="Doc_PickStudent_ComboBox" HorizontalAlignment="Left" Margin="100,434,0,0" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10" SelectionChanged="Doc_PickStudent_ComboBox_SelectionChanged_1" />
+        <ComboBox x:Name="Doc_PickDocument_ComboBox" HorizontalAlignment="Left" Margin="100,513,0,0" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10" SelectionChanged="Doc_PickDocument_ComboBox_SelectionChanged" />
         
-        <xctk:DateTimePicker x:Name="Dok_StartDate_DateTimePicker"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="100,594,0,0" Width="315" Height="50" FontSize="20" Format="Custom" FormatString="yyyy-MM-dd" TimePickerVisibility="Collapsed" ValueChanged="Dok_StartDate_DateTimePicker_ValueChanged" />
-        <xctk:DateTimePicker x:Name="Dok_EndDate_DateTimePicker" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="100,674,0,0" Width="315" Height="50" FontSize="20" Format="Custom" FormatString="yyyy-MM-dd" TimePickerVisibility="Collapsed" ValueChanged="Dok_EndDate_DateTimePicker_ValueChanged" />
-        <ComboBox x:Name="Dok_PickType_ComboBox" HorizontalAlignment="Left" Margin="100,754,0,0" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10" SelectionChanged="Dok_PickType_ComboBox_SelectionChanged" />
+        <xctk:DateTimePicker x:Name="Doc_StartDate_DateTimePicker"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="100,594,0,0" Width="315" Height="50" FontSize="20" Format="Custom" FormatString="yyyy-MM-dd" TimePickerVisibility="Collapsed"  />
+        <xctk:DateTimePicker x:Name="Doc_EndDate_DateTimePicker" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="100,674,0,0" Width="315" Height="50" FontSize="20" Format="Custom" FormatString="yyyy-MM-dd" TimePickerVisibility="Collapsed" />
+        <ComboBox x:Name="Doc_PickType_ComboBox" HorizontalAlignment="Left" Margin="100,754,0,0" VerticalAlignment="Top" Width="315" Height="50" FontSize="20" Padding="10" />
 
-        <Button x:Name="Dok_DokuFile_Button" HorizontalAlignment="Left" Height="35" Width="300" Margin="100,850,0,0" VerticalAlignment="Top" Content="Upload File" Click="Dok_DokuFile_Button_Click" />
+        <Button x:Name="Doc_UploadFile_Button" HorizontalAlignment="Left" Height="35" Width="300" Margin="100,850,0,0" VerticalAlignment="Top" Content="Upload File" Click="Doc_UploadFile_Button_Click" />
         
 
         <!--Buttons-->
-        <Button x:Name="Dok_Add_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="495,484,0,0" Content="TILFØJ" Height="35" Width="100" FontSize="16" Click="Dok_Add_Button_Click">
+        <Button x:Name="Doc_Add_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="495,484,0,0" Content="TILFØJ" Height="35" Width="100" FontSize="16" Click="Doc_Add_Button_Click">
             <Button.Effect>
                 <DropShadowEffect/>
             </Button.Effect>
         </Button>
-        <Button x:Name="Dok_Save_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="495,534,0,0" Content="GEM" Height="35" Width="100" FontSize="16" Click="Dok_Save_Button_Click">
+        <Button x:Name="Doc_Save_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="495,534,0,0" Content="GEM" Height="35" Width="100" FontSize="16" Click="Doc_Save_Button_Click">
             <Button.Effect>
                 <DropShadowEffect/>
             </Button.Effect>
         </Button>
-        <Button x:Name="Dok_Edit_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="495,584,0,0" Content="REDIGER" Height="35" Width="100" FontSize="16" Click="Dok_Edit_Button_Click">
+        <Button x:Name="Doc_Edit_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="495,584,0,0" Content="REDIGER" Height="35" Width="100" FontSize="16" Click="Doc_Edit_Button_Click">
             <Button.Effect>
                 <DropShadowEffect/>
             </Button.Effect>
         </Button>
-        <Button x:Name="Dok_Delete_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="600,664,0,0" Content="SLET" Height="35" Width="60" FontSize="16" Click="Dok_Delete_Button_Click">
+        <Button x:Name="Doc_Delete_Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="600,664,0,0" Content="SLET" Height="35" Width="60" FontSize="16" Click="Doc_Delete_Button_Click">
             <Button.Effect>
                 <DropShadowEffect/>
             </Button.Effect>

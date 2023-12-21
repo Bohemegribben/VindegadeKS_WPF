@@ -13,7 +13,7 @@ namespace VindegadeKS_WPF
         public string StuLastName { get; set; }
         public string StuPhone { get; set; }
         public string StuEmail { get; set; }
-        public string Setup;
+        public string Setup { get; set; }
 
         public string StuFullName
         {
@@ -22,16 +22,18 @@ namespace VindegadeKS_WPF
                 return $"{StuFirstName} {StuLastName}";
             }
         }
+
         // Constructor
-        public Student(string _stuCPR, string _stuFirstName, string _stuLastName, string _stuPhone, string _stuEmail)
+        public Student(string _stuCPR, string _stuFirstName, string _stuLastName, string _stuPhone, string _stuEmail, string _setup)
         {
             StuCPR = _stuCPR;
             StuFirstName = _stuFirstName;
             StuLastName = _stuLastName;
             StuPhone = _stuPhone;
             StuEmail = _stuEmail;
+            Setup = _setup;
         }
-        public Student() : this("", "", "", "", "")
+        public Student() : this("", "", "", "", "", "")
         { }
     }
 }

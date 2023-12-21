@@ -738,7 +738,7 @@ namespace VindegadeKS_WPF
                     while (dr.Read())
                     {
                         //Sets studentToBeRetrieved, a new empty Student, which is then filled
-                        studentToBeRetrieved = new Student(dr["PK_StuCPR"].ToString(), dr["StuFirstName"].ToString(), dr["StuLastName"].ToString(), dr["StuPhone"].ToString(), dr["StuEmail"].ToString());
+                        studentToBeRetrieved = new Student(dr["PK_StuCPR"].ToString(), dr["StuFirstName"].ToString(), dr["StuLastName"].ToString(), dr["StuPhone"].ToString(), dr["StuEmail"].ToString(), "");
                     }
                 }
             }
