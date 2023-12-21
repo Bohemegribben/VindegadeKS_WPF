@@ -191,11 +191,11 @@ namespace VindegadeKS_WPF
             CurrentStudent.StuCPR = currentItem;
 
             //Sets the input fields to equal the info from the ListBoxItems
-            Stu_CPR_TextBox.Text = (Stu_DisStu_ListBox.SelectedItem as StuListBoxItems).CPR;
-            Stu_FirstName_TextBox.Text = (Stu_DisStu_ListBox.SelectedItem as StuListBoxItems).FirstName;
-            Stu_LastName_TextBox.Text = (Stu_DisStu_ListBox.SelectedItem as StuListBoxItems).LastName;
-            Stu_Phone_TextBox.Text = (Stu_DisStu_ListBox.SelectedItem as StuListBoxItems).Phone;
-            Stu_Email_TextBox.Text = (Stu_DisStu_ListBox.SelectedItem as StuListBoxItems).Email;
+            Stu_CPR_TextBox.Text = (Stu_DisStu_ListBox.SelectedItem as Student).StuCPR;
+            Stu_FirstName_TextBox.Text = (Stu_DisStu_ListBox.SelectedItem as Student).StuFirstName;
+            Stu_LastName_TextBox.Text = (Stu_DisStu_ListBox.SelectedItem as Student).StuLastName;
+            Stu_Phone_TextBox.Text = (Stu_DisStu_ListBox.SelectedItem as Student).StuPhone;
+            Stu_Email_TextBox.Text = (Stu_DisStu_ListBox.SelectedItem as Student).StuEmail;
 
             Stu_Save_Button.IsEnabled = true;
         }
@@ -286,7 +286,7 @@ namespace VindegadeKS_WPF
                 {
                     while (dr.Read())
                     {
-                        StudentToBeRetrieved = new Student("", "", "", "", "")
+                        StudentToBeRetrieved = new Student("", "", "", "", "","")
                         {
                             StuCPR = dr["PK_StuCPR"].ToString(),
                             StuFirstName = dr["StuFirstName"].ToString(),
@@ -338,18 +338,6 @@ namespace VindegadeKS_WPF
         #endregion
 
         #region ListBoxFunctions
-
-
-        public class StuListBoxItems
-        {
-            public string CPR { get; set; }
-            public string FirstName { get; set; }
-            public string LastName { get; set; }
-            public string Phone { get; set; }
-            public string Email { get; set; }
-            public string Setup { get; set; }
-        }
-
         #region ListBoxFunction
 
         // Metode til at indsætte Elever på vores liste
@@ -368,7 +356,7 @@ namespace VindegadeKS_WPF
 
                 //Make a list with the Item Class from below called items (Name doesn't matter)
                 //LesListBoxItems in my case
-                List<StuListBoxItems> items = new List<StuListBoxItems>();
+                List<Student> items = new List<Student>();
 
                 //Forloop which adds intCount number of new items to items-list
                 for (int i = 0; i < intCount; i++)
@@ -378,12 +366,8 @@ namespace VindegadeKS_WPF
 
                     //Adds a new item from the item class with specific attributes to the list
                     //The data added comes from RetrieveLessonData
-                    items.Add(new StuListBoxItems() { CPR = StudentToBeRetrieved.StuCPR, FirstName = StudentToBeRetrieved.StuFirstName, LastName = StudentToBeRetrieved.StuLastName, Phone = StudentToBeRetrieved.StuPhone, Email = StudentToBeRetrieved.StuEmail });
-
-                    //Only necessary for multi-attribute ListBoxItem
-                    //Set up the attribute 'SetUp' which is used to determine the appearance of the ListBoxItem 
-                    //Mine isn't, so it's out commented
-                    //items[i].SetUp = $"{items[i].Name}\n{items[i].Type}\n{items[i].Description}";
+                    items.Add(new Student() { StuCPR = StudentToBeRetrieved.StuCPR, StuFirstName = StudentToBeRetrieved.StuFirstName, StuLastName = StudentToBeRetrieved.StuLastName, StuPhone = StudentToBeRetrieved.StuPhone, StuEmail = StudentToBeRetrieved.StuEmail });
+                    items[i].Setup = $"{items[i].StuFirstName} {items[i].StuLastName}";
                 }
 
                 //Set the ItemsSource to the list, so that the ListBox uses the list to make the ListBoxItems
@@ -410,14 +394,14 @@ namespace VindegadeKS_WPF
                     //After the equal sign; (#ListBoxName.SelectedItem as #itemClass).#attribute;
                     //The parts after a #, are the parts that needs to change based on your page
 
-                    Stu_DisCPR_TextBlock.Text = "CPR: " + (Stu_DisStu_ListBox.SelectedItem as StuListBoxItems).CPR;
-                    Stu_DisFirstName_TextBlock.Text = "Fornavn: " + (Stu_DisStu_ListBox.SelectedItem as StuListBoxItems).FirstName;
-                    Stu_DisLastName_TextBlock.Text = "Efternavn: " + (Stu_DisStu_ListBox.SelectedItem as StuListBoxItems).LastName;
-                    Stu_DisPhone_TextBlock.Text = "Telefon: " + (Stu_DisStu_ListBox.SelectedItem as StuListBoxItems).Phone;
-                    Stu_DisEmail_TextBlock.Text = "Email: " + (Stu_DisStu_ListBox.SelectedItem as StuListBoxItems).Email;
+                    Stu_DisCPR_TextBlock.Text = "CPR: " + (Stu_DisStu_ListBox.SelectedItem as Student).StuCPR;
+                    Stu_DisFirstName_TextBlock.Text = "Fornavn: " + (Stu_DisStu_ListBox.SelectedItem as Student).StuFirstName;
+                    Stu_DisLastName_TextBlock.Text = "Efternavn: " + (Stu_DisStu_ListBox.SelectedItem as Student).StuLastName;
+                    Stu_DisPhone_TextBlock.Text = "Telefon: " + (Stu_DisStu_ListBox.SelectedItem as Student).StuPhone;
+                    Stu_DisEmail_TextBlock.Text = "Email: " + (Stu_DisStu_ListBox.SelectedItem as Student).StuEmail;
 
                     //Sets currentItem to equal the CPR of selected item
-                    currentItem = (Stu_DisStu_ListBox.SelectedItem as StuListBoxItems).CPR;
+                    currentItem = (Stu_DisStu_ListBox.SelectedItem as Student).StuCPR;
 
                     //Sets edit to false, as it is impossible for it to be true currently
                     edit = false;
