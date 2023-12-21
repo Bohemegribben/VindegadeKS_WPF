@@ -23,6 +23,7 @@ using static System.Net.Mime.MediaTypeNames;
 using System.Text.RegularExpressions;
 using System.Security.Policy;
 using System.Windows.Media.Animation;
+using System.Reflection;
 
 namespace VindegadeKS_WPF
 {
@@ -72,7 +73,7 @@ namespace VindegadeKS_WPF
         // whereever they are used. They are used to hold the
         // respective instanse currently selected in the ComboBox before it is
         // saved or edited.
-        public Appointment CurrentAppointment = new Appointment(); 
+        public Appointment CurrentAppointment = new Appointment();
         public Lesson CurrentLesson = new Lesson();
         public Instructor CurrentInstructor = new Instructor();
         public Student CurrentStudent = new Student();
@@ -107,9 +108,9 @@ namespace VindegadeKS_WPF
             public string ListBoxInstName { get; set; }
             public DateTime ListBoxApmtDate { get; set; }
             public string Setup { get; set; }
-            
+
             public AppointmentListBox(int _listBoxApmtId,
-                                      string _listBoxLesName, 
+                                      string _listBoxLesName,
                                       string _listBoxLesType,
                                       string _listBoxClassName,
                                       string _listBoxClassLicenseType,
@@ -129,7 +130,7 @@ namespace VindegadeKS_WPF
                 Setup = _setup;
             }
 
-            public AppointmentListBox() : this(0 ,"", "", "", "", "", "", DateTime.Now, "")
+            public AppointmentListBox() : this(0, "", "", "", "", "", "", DateTime.Now, "")
             { }
         }
         #endregion
@@ -161,9 +162,13 @@ namespace VindegadeKS_WPF
             //If it is true an old entity in the database is to be edited -
             //run UpdateLesson(CurrentAppointment)
             if (edit == false)
-            { SaveAppointment(CurrentAppointment, CurrentInstructor, CurrentLesson, CurrentClass, CurrentStudent); }
+            { 
+                SaveAppointment(CurrentAppointment, CurrentInstructor, CurrentLesson, CurrentClass, CurrentStudent); 
+            }
             else
-            { EditAppointment(CurrentAppointment, CurrentInstructor, CurrentLesson, CurrentClass, CurrentStudent); }
+            { 
+                EditAppointment(CurrentAppointment, CurrentInstructor, CurrentLesson, CurrentClass, CurrentStudent);
+            }
 
             //Removes the displayed (saved or edited) data in the stackpanel
             //textblocks and sets the default text to category+blank to
@@ -218,7 +223,7 @@ namespace VindegadeKS_WPF
             Apmt_PickClass_ComboBox.Text = $"{(Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxClassName}, {(Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxClassLicenseType}";
             Apmt_PickStudent_ComboBox.Text = $"{(Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxStuName}";
             Apmt_PickInstructor_ComboBox.Text = $"{(Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxInstName}";
-            Apmt_PickDateTime_DateTimePicker.Text = $"{(Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxApmtDate}";
+            Apmt_PickDateTime_DateTimePicker.Value = (Apmt_DisApmt_ListBox.SelectedItem as AppointmentListBox).ListBoxApmtDate;
         }
 
         //Lets the user delete previously created Appointments
@@ -317,17 +322,10 @@ namespace VindegadeKS_WPF
                     //Add new AppointmentListBox-items from the AppointmentListBox-class with specific attributes to the list
                     appointments.Add(appointmentDetailsToBeRetrieved);
 
-
-                    //Only necessary for multi-attribute ListBoxItem
-                    //Set up the attribute 'SetUp' which is used to determine the appearance of the ListBoxItem 
-                    //Forloop to go through all items in the items-list, to add and fill the 'SetUp' attribute
-
-
                     //Set up the attribute 'Setup' which is used to determine
                     //the appearance of the AppointmentListBox-item
                     //For-loop to go through all appointments in the
                     //appointments-list, to add and fill the Setup-attribute
-
                     appointments[i].Setup = $"{appointments[i].ListBoxLesName} - {appointments[i].ListBoxLesType} \n{appointments[i].ListBoxApmtDate}";
                 }
 
@@ -1010,7 +1008,6 @@ namespace VindegadeKS_WPF
 
                 //Tells the database to execute the sqlcommand cmdApmt.
                 cmdApmt.ExecuteNonQuery();
-
 
                 //Creates the SqlCommand cmdStu which UPDATEs the attributes of a specific row in
                 //VK_Student_Appointment, based on the PK_ApmtID = @ApmtId
